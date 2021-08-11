@@ -16,3 +16,8 @@ interface Resolver {
 }
 
 export default Resolver
+export {
+    GetValueResult,
+    BeforeSetValueResult,
+    AfterSetValueResult
+}

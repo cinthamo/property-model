@@ -1,3 +1,4 @@
+import PropertyDefinition from "../property/propertyDefinition"
 import Contract from "./contract"
 
 class Type {
