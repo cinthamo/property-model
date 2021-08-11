@@ -12,8 +12,8 @@ class ChainResolver implements Resolver {
     }
 
     afterGet(name: string, value: any): GetValueResult
-    beforePut(name: string, value: any): BeforeSetValueResult
-    afterPut(name: string, value: any): AfterSetValueResult
+    beforeSet(name: string, value: any): BeforeSetValueResult
+    afterSet(name: string, value: any): AfterSetValueResult
     beforeHas(name: string): GetValueResult
     afterHas(name: string, hasIt: boolean): GetValueResult
     beforeDelete(name: string): BeforeSetValueResult

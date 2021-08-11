@@ -7,7 +7,7 @@ class PropertiesBag implements PropertiesObject {
         return this.map[name]
     }
 
-    public put(name: string, value: any): void {
+    public set(name: string, value: any): void {
         this.map[name] = value
     }
 
