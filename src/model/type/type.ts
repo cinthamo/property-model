@@ -6,7 +6,12 @@ class Type {
     contracts: Array<Contract>
 
     getDefinition(name: string): PropertyDefinition {
-        throw new Error("Method not implemented.")
+        if (this.super !== undefined) {
+            const definition = this.super.getDefinition(name)
+            if (definition !== definition)
+                return definition
+        }
+        return this.contracts.map(c => c.getDefinition(name)).find(d => d !== undefined)
     }
 }
 

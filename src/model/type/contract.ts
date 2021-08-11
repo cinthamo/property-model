@@ -5,7 +5,11 @@ class Contract {
     also: Array<Contract>
 
     getDefinition(name: string): PropertyDefinition {
-        throw new Error("Method not implemented.");
+        const definition = this.definitions.find(d => d.name == name)
+        if (definition !== undefined)
+            return definition
+
+        return this.also.map(c => c.getDefinition(name)).find(d => d !== undefined)
     }
 }
 

@@ -1,7 +1,8 @@
-import Behaviour from "../behaviour/behaviour"
+import Aspect from "../aspect/aspect"
 
 class PropertyDefinition {
-    behaviours: Array<Behaviour>
+    name: string
+    aspects: Array<Aspect>
 }
 
 export default PropertyDefinition
