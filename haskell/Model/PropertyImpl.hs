@@ -18,18 +18,37 @@ instance PropertiesObject PropertiesBag where
 
 --- Property With Resolvers ---
 
-data PropertiesWithResolver r = PR r (Map Name (Value (PropertiesWithResolver r)))
+data PropertiesWithResolver resolver = PR resolver (Map Name (Value (PropertiesWithResolver r)))
+data PropertiesWithListener resolver = PR resolver (Map Name (Value (PropertiesWithResolver r)))
+
+
+class Object where
+    get 
+    put 
+
 
 getContext :: PropertiesObject obj => obj -> obj
-getContext o = set "instance" (Obj o)
+getContext obj = set "instance" (Obj obj)
     (set "definition" (Data "") empty)
-{-
+
 instance PropertyObject PropertiesWithResolver where
-    get name (PR r map) =
-        let context = getContext this
-        let (beforeResolved, beforeValue) = beforeGet context name r this
-        if beforeResolved beforeValue else
-            let value = Map.lookup name map
-            let (afterResolved, afterValue) = afterGet context name value r this
-            if (afterResolved) afterValue else value
--}
+    get name obj@(PR resolver map) =//
+        let context = getContext obj
+        let (bResolved, bValue) = beforeGet context name resolver obj
+        if (bResolved)
+            return bValue
+            else
+                let value = Map.lookup name map                
+                let (aResolved, aValue) = afterGet context name value resolver obj
+                if (afterResolved)
+                    return aValue
+                    else
+                        return aValue
+
+
+
+instance PropertiesObject PropertiesWithListener where
+    get name obj =
+
+instance PropertiesObject PropertiesFull where
+    get name obj =
