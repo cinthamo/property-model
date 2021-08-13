@@ -2,16 +2,16 @@ module Model.Resolver where
 
 import Model.Property
 
-type GetValueResult value = (Bool, Maybe value)
-type BeforeSetValueResult value = (Bool, Maybe Bool, Maybe value)
-type AfterSetValueResult = Bool
+data ResolveGet value = GNotResolved | GResolved value
+data ResolveBeforeSet value = BSNotResolved | BSInvalid | BSValue value
+data ResolveAfterSet = ASNotResolved | ASResolved
 
 class Resolver r where
-    beforeGet :: PropertiesObject obj => obj -> Name -> r -> obj -> GetValueResult (Value obj)
-    afterGet :: PropertiesObject obj => obj -> Name -> Value obj -> r -> obj -> GetValueResult (Value obj)
-    beforeSet :: PropertiesObject obj => obj -> Name -> Value obj -> r -> obj -> BeforeSetValueResult obj
-    aftereSet :: PropertiesObject obj => obj -> Name -> Value obj -> r -> obj -> AfterSetValueResult
-    beforeHas :: PropertiesObject obj => obj -> Name -> r -> obj -> GetValueResult Bool
-    afterHas :: PropertiesObject obj => obj -> Name -> Value obj -> r -> obj -> GetValueResult Bool
-    beforeClear :: PropertiesObject obj => obj -> Name -> Value obj -> r -> obj -> BeforeSetValueResult obj
-    afterClear :: PropertiesObject obj => obj -> Name -> Value obj -> r -> obj -> AfterSetValueResult
+    beforeGet :: PropertiesObject obj => obj -> Name -> r -> ResolveGet (Value obj)
+    afterGet :: PropertiesObject obj => obj -> Name -> Value obj -> r -> ResolveGet (Value obj)
+    beforeHas :: PropertiesObject obj => obj -> Name -> r -> ResolveGet Bool
+    afterHas :: PropertiesObject obj => obj -> Name -> Value obj -> r -> ResolveGet Bool
+    beforeSet :: PropertiesObject obj => obj -> Name -> Value obj -> r -> ResolveBeforeSet obj
+    aftereSet :: PropertiesObject obj => obj -> Name -> Value obj -> r -> ResolveAfterSet
+    beforeClear :: PropertiesObject obj => obj -> Name -> Value obj -> r -> ResolveBeforeSet obj
+    afterClear :: PropertiesObject obj => obj -> Name -> Value obj -> r -> ResolveAfterSet
