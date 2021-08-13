@@ -5,51 +5,79 @@ import qualified Data.Map as Map
 import Model.Property
 import Model.Resolver
 
-data PropertiesMap = PM (Map Name (Value (PropertiesMap)))
+data Behaviour = BEmpty | BResolver (Resolver PropertiesMap)
+data PropertiesMap = PM Behaviour (Map Name (Value PropertiesMap))
 
-type PropertyGet = Name -> PropertiesMap -> Maybe (Value (PropertiesMap))
+type PropertyHas = PropertiesMap -> Name -> Bool
+type PropertyGet = PropertiesMap -> Name -> Maybe (Value PropertiesMap)
+type PropertySet = PropertiesMap -> Name -> Value PropertiesMap -> PropertiesMap
+type PropertyClear = PropertiesMap -> Name -> PropertiesMap
 
 --- Properties as Bag ---
 
+hasAsBag :: PropertyHas
+hasAsBag (PM b map) name = Map.member name map
+
 getAsBag:: PropertyGet
-getAsBag name (PM b map) = Map.lookup name map
+getAsBag (PM b map) name = Map.lookup name map
 
-setAsBag :: Name -> Value PropertiesMap -> PropertiesMap -> PropertiesMap
-setAsBag name value (PM b map) = PM b (Map.insert name value map)
+setAsBag :: PropertySet
+setAsBag (PM b map) name value = PM b (Map.insert name value map)
 
-hasAsBag :: Name -> PropertiesMap -> Bool
-hasAsBag name (PM b map) = Map.member name map
-
-clearAsBag :: Name -> PropertiesMap -> PropertiesMap
-clearAsBag name (PM b map) = PM b (Map.delete name map)
+clearAsBag :: PropertyClear
+clearAsBag (PM b map) name = PM b (Map.delete name map)
 
 --- Properties with Resolvers ---
 
-getContext :: behaviour -> PropertiesMap -> PropertiesMap
-getContext b o = set "instance" (Obj o) (emptyMap b)
+emptyResolver :: Resolver PropertiesMap
+emptyResolver = Resolver
+    (\x y -> GNotResolved)
+    (\x y z -> GNotResolved)
+    (\x y -> GNotResolved)
+    (\x y z -> GNotResolved)
 
-getWithResolver:: Resolver behaviour => PropertyGet -> PropertiesMap -> PropertyGet
-getWithResolver valueGet context = \name obj@(PM resolver map) ->
-        case (beforeGet context name resolver) of
-            GNotResolved -> Nothing
+resolver :: Behaviour -> Resolver PropertiesMap
+resolver BEmpty = emptyResolver
+resolver (BResolver r) = r
+
+hasWithResolver :: PropertyHas -> PropertiesMap -> PropertyHas
+hasWithResolver valueHas context = \obj@(PM behaviour map) name ->
+    let r = resolver behaviour in
+        case ((beforeHas r) context name) of
+            GResolved x -> x
+            GNotResolved ->
+                let hasIt = valueHas obj name in
+                    case ((afterHas r) context name hasIt) of
+                        GResolved x -> x
+                        GNotResolved -> hasIt
+
+getWithResolver :: PropertyGet -> PropertiesMap -> PropertyGet
+getWithResolver valueGet context = \obj@(PM behaviour map) name ->
+    let r = resolver behaviour in
+        case ((beforeGet r) context name) of
             GResolved x -> Just x
+            GNotResolved ->
+                let value = valueGet obj name in
+                    case ((afterGet r) context name value) of
+                        GResolved x -> Just x
+                        GNotResolved -> value
 
+{-setWithResolver :: PropertySet -> PropertiesMap -> PropertySet
+setWithResolver valueSet context = \name value obj@(PM behaviour map) ->
+    let r = resolver behaviour in
+        case ((beforeSet r) context name value) of
+-}
 
-        {-case (beforeGet context name resolver) of
-            Just x -> x
-            Nothing -> let value = valueGet name map obj in
-                case (afterGet context name value resolver) of
-                    Just y -> y
-                    Nothing -> (\n o -> value)-}
+--- Context ---
 
---- Properties with Listener ---
-
+getContext :: PropertiesObject obj => obj -> obj
+getContext i = set empty "instance" (Obj i)
 
 --- PropertiesMap Instance ---
 
 instance PropertiesObject PropertiesMap where
-    get name obj = getWithResolver getAsBag (getContext "" obj) name obj
+    has obj = hasWithResolver hasAsBag (getContext obj) obj
+    get obj = getWithResolver getAsBag (getContext obj) obj
     set = setAsBag
-    has = hasAsBag
     clear = clearAsBag
-    emptyMap = PM Map.empty
+    empty = PM BEmpty Map.empty

@@ -1,18 +1,14 @@
 module Model.Property where
 
-import Model.Property
-import Model.Resolver
-
 type Name = String
+
 data Value obj = Data String |
                  Ref Name |
-                 Obj obj |
-                 Res Resolver |
-                 Lis Listener
-
+                 Obj obj
+          
 class PropertiesObject obj where
-    get :: Name -> obj -> Maybe (Value obj)
-    has :: Name -> obj -> Bool
-    set :: Name -> Value obj -> obj -> obj
-    clear :: Name -> obj -> obj
+    get :: obj -> Name -> Maybe (Value obj)
+    has :: obj -> Name -> Bool
+    set :: obj -> Name -> Value obj -> obj
+    clear :: obj -> Name -> obj
     empty :: obj
