@@ -70,11 +70,21 @@ setWithResolver valueSet context = \name value obj@(PM behaviour map) ->
         BSValue x -> continue x
         BSNotResolved -> continue value
         where
-        continue = \v -> let o = valueSet name v in
-        let _ = ((afterSet behaviour) (getContext o) name v) in
-        o
+        continue = \v -> let newObj = valueSet name v in
+        let _ = ((afterSet behaviour) (getContext newObj) name v) in
+        newObj
         
-            
+clearWithResolver :: PropertyClear -> PropertyMap -> PropertyClear
+clearWithResolver valueClear context =  \name value obj@(PM behaviour map) ->
+    let r = resolver behaviour in
+        case ((beforeClear r) context name) of
+        BSCancel -> obj
+        BSNotResolved -> continue value
+        where
+        continue = \v -> let newObj = valueClear name in
+        let _ = ((afterClear behaviour) (getContext newObj) name v) in
+        newObj
+        
 
 --- Context ---
 
