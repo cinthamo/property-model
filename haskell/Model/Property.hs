@@ -7,8 +7,8 @@ data Value obj = Data String |
                  Obj obj
           
 class PropertiesObject obj where
-    get :: obj -> Name -> Maybe (Value obj)
     has :: obj -> Name -> Bool
+    get :: obj -> Name -> Maybe (Value obj)
     set :: obj -> Name -> Value obj -> obj
     clear :: obj -> Name -> obj
     empty :: obj
