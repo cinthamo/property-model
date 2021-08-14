@@ -1,8 +1,8 @@
-module Model.PropertyMap where
+module Model.PropertiesMap where
 
 import Data.Map (Map)
 import qualified Data.Map as Map
-import Model.Property
+import Model.PropertiesObject
 import Model.Resolver
 
 data Behaviour = BEmpty | BResolver (Resolver PropertiesMap)

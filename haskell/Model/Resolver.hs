@@ -1,6 +1,6 @@
 module Model.Resolver where
 
-import Model.Property
+import Model.PropertiesObject
 
 data ResolveGet value = GNotResolved | GResolved value
 data ResolveBeforeSet value = BSNotResolved | BSCancel | BSValue value

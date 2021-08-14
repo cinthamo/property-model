@@ -1,4 +1,4 @@
-module Model.Property where
+module Model.PropertiesObject where
 
 type Name = String
 

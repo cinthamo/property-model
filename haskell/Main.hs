@@ -1,6 +1,6 @@
 module Main where
 
-import Model.PropertyMap
+import Model.PropertiesMap
 
 {-
 main :: IO ()
