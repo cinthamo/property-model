@@ -99,6 +99,6 @@ getContext i = set empty "instance" (Obj i)
 instance PropertiesObject PropertiesMap where
     has obj = hasWithResolver hasAsBag (getContext obj) obj
     get obj = getWithResolver getAsBag (getContext obj) obj
-    set = setAsBag
-    clear = clearAsBag
+    set obj = setWithResolver setAsBag (getContext obj) obj
+    clear obj = clearWithResolver clearAsBag (getContext obj) obj
     empty = PM BEmpty Map.empty
