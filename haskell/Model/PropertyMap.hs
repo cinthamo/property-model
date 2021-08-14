@@ -62,11 +62,19 @@ getWithResolver valueGet context = \obj@(PM behaviour map) name ->
                         GResolved x -> Just x
                         GNotResolved -> value
 
-{-setWithResolver :: PropertySet -> PropertiesMap -> PropertySet
+setWithResolver :: PropertySet -> PropertiesMap -> PropertySet
 setWithResolver valueSet context = \name value obj@(PM behaviour map) ->
     let r = resolver behaviour in
         case ((beforeSet r) context name value) of
--}
+        BSInvalid -> obj
+        BSValue x -> continue x
+        BSNotResolved -> continue value
+        where
+        continue = \v -> let o = valueSet name v in
+        let _ = ((afterSet behaviour) (getContext o) name v) in
+        o
+        
+            
 
 --- Context ---
 

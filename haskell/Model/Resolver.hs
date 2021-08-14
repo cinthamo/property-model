@@ -11,13 +11,8 @@ data Resolver obj = Resolver
     , afterHas :: obj -> Name -> Bool -> ResolveGet Bool
     , beforeGet :: obj -> Name -> ResolveGet (Value obj)
     , afterGet :: obj -> Name -> Maybe (Value obj) -> ResolveGet (Value obj)
+    , beforeSet :: obj -> Name -> Value obj -> ResolveBeforeSet obj)
+    , afterSet :: obj => obj -> Name -> Value obj -> ResolveAfterSet)
+    , beforeClear :: obj -> Name -> Value obj -> r -> ResolveBeforeSet obj)
+    , afterClear :: obj -> Name -> Value obj -> r -> ResolveAfterSet)
     }
-    {-- beforeSet
-    (PropertiesObject obj => obj -> Name -> Value obj -> r -> ResolveBeforeSet obj)
-    -- afterSet
-    (PropertiesObject obj => obj -> Name -> Value obj -> r -> ResolveAfterSet)
-    -- beforeClear
-    (PropertiesObject obj => obj -> Name -> Value obj -> r -> ResolveBeforeSet obj)
-    -- afterClear
-    (PropertiesObject obj => obj -> Name -> Value obj -> r -> ResolveAfterSet)
-    -}
