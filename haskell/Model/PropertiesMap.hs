@@ -76,9 +76,9 @@ setWithResolver valueSet context = \obj@(PM behaviour map) name value ->
         where
             continue = \obj name value r ->
                 let newObj = valueSet obj name value
-      	            _ = ((afterSet r) (getContext newObj) name value)
+                    _ = ((afterSet r) (getContext newObj name) name value)
                 in newObj
-        
+
 clearWithResolver :: PropertyClear -> PropertiesMap -> PropertyClear
 clearWithResolver valueClear context =  \obj@(PM behaviour map) name ->
     let r = resolver behaviour
@@ -86,19 +86,34 @@ clearWithResolver valueClear context =  \obj@(PM behaviour map) name ->
         BSCancel -> obj
         BSNotResolved ->
             let newObj = valueClear obj name
-                _ = ((afterClear r) (getContext newObj) name)
+                _ = ((afterClear r) (getContext newObj name) name)
             in newObj
+
+--- Definition ---
+
+getDefinition :: PropertiesObject obj => obj -> Name -> Maybe obj
+getDefinition obj name =
+    case (get obj "@definitions") of
+        Just (Obj definitions) ->
+            case (get definitions name) of
+                Just (Obj x) -> Just x
+                _ -> Nothing
+        _ -> Nothing
 
 --- Context ---
 
-getContext :: PropertiesObject obj => obj -> obj
-getContext i = set empty "instance" (Obj i)
+getContext :: PropertiesObject obj => obj -> Name -> obj
+getContext i name = 
+    let context = set empty "instance" (Obj i)
+    in case (getDefinition i name) of
+        Nothing -> context
+        Just x -> set context "definition" (Obj x)
 
 --- PropertiesMap Instance ---
 
 instance PropertiesObject PropertiesMap where
-    has obj = hasWithResolver hasAsBag (getContext obj) obj
-    get obj = getWithResolver getAsBag (getContext obj) obj
-    set obj = setWithResolver setAsBag (getContext obj) obj
-    clear obj = clearWithResolver clearAsBag (getContext obj) obj
+    has obj name = hasWithResolver hasAsBag (getContext obj name) obj name
+    get obj name = getWithResolver getAsBag (getContext obj name) obj name
+    set obj name = setWithResolver setAsBag (getContext obj name) obj name
+    clear obj name = clearWithResolver clearAsBag (getContext obj name) obj name
     empty = PM BEmpty Map.empty
