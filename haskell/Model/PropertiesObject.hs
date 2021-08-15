@@ -1,5 +1,6 @@
 module Model.PropertiesObject where
 
+import Model.Const
 import Model.Resolver
 
 data Behaviour obj = BEmpty | BResolver (Resolver obj)

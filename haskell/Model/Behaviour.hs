@@ -17,3 +17,6 @@ emptyResolver = Resolver
 resolver :: PropertiesObject obj => Behaviour obj -> Resolver obj
 resolver BEmpty = emptyResolver
 resolver (BResolver r) = r
+
+emptyB :: PropertiesObject obj => obj
+emptyB = empty BEmpty

@@ -1,6 +1,6 @@
 module Model.Resolver where
 
-type Name = String
+import Model.Const
 
 data Value obj = Data String |
                  Ref Name |

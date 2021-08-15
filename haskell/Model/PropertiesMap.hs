@@ -2,6 +2,7 @@ module Model.PropertiesMap where
 
 import Data.Map (Map)
 import qualified Data.Map as Map
+import Model.Const
 import Model.PropertiesObject
 import Model.Resolver
 import Model.Behaviour
