@@ -5,6 +5,7 @@ import Model.Const
 data Value obj = Data String |
                  Ref Name |
                  Obj obj |
+                 List [Value obj] |
                  Res (Resolver obj)
 
 data ResolveGet value = GNotResolved | GResolved value
@@ -13,12 +14,12 @@ data ResolveAfterSet = ASNotResolved | ASResolved
 data Void
 
 data Resolver obj = Resolver
-    { beforeHas :: obj -> Name -> ResolveGet Bool
-    , afterHas :: obj -> Name -> Bool -> ResolveGet Bool
-    , beforeGet :: obj -> Name -> ResolveGet (Value obj)
-    , afterGet :: obj -> Name -> Maybe (Value obj) -> ResolveGet (Value obj)
-    , beforeSet :: obj -> Name -> Value obj -> ResolveBeforeSet (Value obj)
-    , afterSet :: obj -> Name -> Value obj -> ResolveAfterSet
-    , beforeClear :: obj -> Name -> ResolveBeforeSet Void
-    , afterClear :: obj -> Name -> ResolveAfterSet
+    { beforeHas   :: obj ->                      ResolveGet Bool
+    , afterHas    :: obj -> Bool              -> ResolveGet Bool
+    , beforeGet   :: obj ->                      ResolveGet (Value obj)
+    , afterGet    :: obj -> Maybe (Value obj) -> ResolveGet (Value obj)
+    , beforeSet   :: obj -> Value obj         -> ResolveBeforeSet (Value obj)
+    , afterSet    :: obj -> Value obj         -> ResolveAfterSet
+    , beforeClear :: obj ->                      ResolveBeforeSet Void
+    , afterClear  :: obj ->                      ResolveAfterSet
     }
