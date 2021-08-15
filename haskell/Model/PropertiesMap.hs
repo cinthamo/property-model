@@ -4,9 +4,10 @@ import Data.Map (Map)
 import qualified Data.Map as Map
 import Model.PropertiesObject
 import Model.Resolver
+import Model.Behaviour
+import Model.Context
 
-data Behaviour = BEmpty | BResolver (Resolver PropertiesMap)
-data PropertiesMap = PM Behaviour (Map Name (Value PropertiesMap))
+data PropertiesMap = PM (Behaviour PropertiesMap) (Map Name (Value PropertiesMap))
 
 type PropertyHas = PropertiesMap -> Name -> Bool
 type PropertyGet = PropertiesMap -> Name -> Maybe (Value PropertiesMap)
@@ -28,21 +29,6 @@ clearAsBag :: PropertyClear
 clearAsBag (PM b map) name = PM b (Map.delete name map)
 
 --- Properties with Resolvers ---
-
-emptyResolver :: Resolver PropertiesMap
-emptyResolver = Resolver
-    (\x y -> GNotResolved)
-    (\x y z -> GNotResolved)
-    (\x y -> GNotResolved)
-    (\x y z -> GNotResolved)
-    (\x y z -> BSNotResolved)
-    (\x y z -> ASNotResolved)
-    (\x y -> BSNotResolved)
-    (\x y -> ASNotResolved)
-
-resolver :: Behaviour -> Resolver PropertiesMap
-resolver BEmpty = emptyResolver
-resolver (BResolver r) = r
 
 hasWithResolver :: PropertyHas -> PropertiesMap -> PropertyHas
 hasWithResolver valueHas context = \obj@(PM behaviour map) name ->
@@ -76,44 +62,25 @@ setWithResolver valueSet context = \obj@(PM behaviour map) name value ->
         where
             continue = \obj name value r ->
                 let newObj = valueSet obj name value
-                    _ = ((afterSet r) (getContext newObj name) name value)
+                    newContext = getContextWithInstance context newObj
+                    _ = ((afterSet r) newContext name value)
                 in newObj
 
 clearWithResolver :: PropertyClear -> PropertiesMap -> PropertyClear
-clearWithResolver valueClear context =  \obj@(PM behaviour map) name ->
+clearWithResolver valueClear context = \obj@(PM behaviour map) name ->
     let r = resolver behaviour
     in case ((beforeClear r) context name) of
         BSCancel -> obj
         BSNotResolved ->
             let newObj = valueClear obj name
-                _ = ((afterClear r) (getContext newObj name) name)
+                _ = ((afterClear r) (getContextWithInstance context newObj) name)
             in newObj
-
---- Definition ---
-
-getDefinition :: PropertiesObject obj => obj -> Name -> Maybe obj
-getDefinition obj name =
-    case (get obj "@definitions") of
-        Just (Obj definitions) ->
-            case (get definitions name) of
-                Just (Obj x) -> Just x
-                _ -> Nothing
-        _ -> Nothing
-
---- Context ---
-
-getContext :: PropertiesObject obj => obj -> Name -> obj
-getContext i name = 
-    let context = set empty "instance" (Obj i)
-    in case (getDefinition i name) of
-        Nothing -> context
-        Just x -> set context "definition" (Obj x)
 
 --- PropertiesMap Instance ---
 
 instance PropertiesObject PropertiesMap where
-    has obj name = hasWithResolver hasAsBag (getContext obj name) obj name
-    get obj name = getWithResolver getAsBag (getContext obj name) obj name
-    set obj name = setWithResolver setAsBag (getContext obj name) obj name
-    clear obj name = clearWithResolver clearAsBag (getContext obj name) obj name
-    empty = PM BEmpty Map.empty
+    has refTable obj name = hasWithResolver hasAsBag (getContext refTable obj name) obj name
+    get refTable obj name = getWithResolver getAsBag (getContext refTable obj name) obj name
+    set refTable obj name = setWithResolver setAsBag (getContext refTable obj name) obj name
+    clear refTable obj name = clearWithResolver clearAsBag (getContext refTable obj name) obj name
+    empty behaviour = PM behaviour Map.empty

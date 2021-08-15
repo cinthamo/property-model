@@ -1,14 +1,12 @@
 module Model.PropertiesObject where
 
-type Name = String
+import Model.Resolver
 
-data Value obj = Data String |
-                 Ref Name |
-                 Obj obj
-          
+data Behaviour obj = BEmpty | BResolver (Resolver obj)
+
 class PropertiesObject obj where
-    has :: obj -> Name -> Bool
-    get :: obj -> Name -> Maybe (Value obj)
-    set :: obj -> Name -> Value obj -> obj
-    clear :: obj -> Name -> obj
-    empty :: obj
+    has :: obj -> obj -> Name -> Bool
+    get :: obj -> obj -> Name -> Maybe (Value obj)
+    set :: obj -> obj -> Name -> Value obj -> obj
+    clear :: obj -> obj -> Name -> obj
+    empty :: Behaviour obj -> obj

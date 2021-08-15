@@ -1,6 +1,11 @@
 module Model.Resolver where
 
-import Model.PropertiesObject
+type Name = String
+
+data Value obj = Data String |
+                 Ref Name |
+                 Obj obj |
+                 Res (Resolver obj)
 
 data ResolveGet value = GNotResolved | GResolved value
 data ResolveBeforeSet value = BSNotResolved | BSCancel | BSValue value
