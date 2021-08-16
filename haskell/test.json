@@ -1,0 +1,10 @@
+{
+    "@definitions": {
+        "one": {
+            "@aspects": {
+                "resolver": "^Resolvers.Default"
+            },
+            "default": 1
+        }
+    }
+}

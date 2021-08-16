@@ -5,66 +5,68 @@ import Model.Resolver
 import Model.Const
 import Model.Behaviour
 import Model.EmptyResolver
+import Model.Value
+import Data.Map as M
+import Debug.Trace
 
-getContext :: PropertiesObject obj => obj -> obj -> Name -> obj
-getContext refTable i name = 
-    let obj1    = set emptyObj emptyObj cREF_TABLE (Obj refTable)
-        obj2    = set emptyObj obj1     cNAME      (Ref name)
-        context = set emptyObj obj2     cINSTANCE  (Obj i)
-    in case (getDefinition refTable i name) of
-        Nothing -> context
-        Just x -> set refTable context cDEFINITION (Obj x)
+getContext :: PropertiesObject obj => RefTable obj -> obj -> Name -> Context obj
+getContext refTable i name = Context {
+        refTable = refTable,
+        objects = objects,
+        name = name
+    }
+    where
+        objects =
+            if (name == cMETA_DEFINITIONS) then
+                fromList [(cINSTANCE, i)]
+            else case (getDefinition i name) of
+                Nothing -> fromList [(cINSTANCE, i)]
+                Just d -> fromList [(cINSTANCE, i), (cDEFINITION, d)]
 
-getContextWithInstance :: PropertiesObject obj => obj -> obj -> obj
-getContextWithInstance oldContext i = set emptyObj oldContext cINSTANCE (Obj i)
+getContextWithInstance :: PropertiesObject obj => Context obj -> obj -> Context obj
+getContextWithInstance oldContext i = Context {
+        refTable = refTable oldContext,
+        objects = insert cINSTANCE i (objects oldContext),
+        name = name oldContext
+    }
 
 --- Getters ---
 
 -- get object from context
-getContextObj :: PropertiesObject obj => obj -> Name -> obj
+getContextObj :: PropertiesObject obj => Context obj -> Name -> obj
 getContextObj context name =
-    case (get emptyObj context name) of
-        Just (Obj x) -> x
+    case (M.lookup name (objects context)) of
+        Just x -> x
         _ -> emptyObj
 
--- get name from context
-getContextName :: PropertiesObject obj => obj -> Name
-getContextName context =
-    case (get emptyObj context cNAME) of
-        Just (Ref n) -> n
-        _ -> ""
-
--- get object from context value resolving references
-getObject :: PropertiesObject obj => obj -> Value obj -> obj
-getObject context value =
+-- get object resolving references
+getObject :: PropertiesObject obj => RefTable obj -> Value obj -> obj
+getObject refTable value =
     case (value) of
         Obj x -> x
-        Ref refName -> 
-            let refTable = getContextObj context cREF_TABLE
-            in case (get emptyObj refTable refName) of
-                Just (Obj y) -> y
+        Ref refName ->
+            case (M.lookup refName refTable) of
+                Just (RefObj y) -> y
                 _ -> emptyObj
         _ -> emptyObj
 
 -- get resolver from context value resolving references
-getResolver :: PropertiesObject obj => obj -> (Value obj) -> Resolver obj
-getResolver context value =
+getResolver :: PropertiesObject obj => RefTable obj -> Value obj -> Resolver obj
+getResolver refTable value =
     case (value) of
-        Res x -> x
         Ref refName ->
-            let refTable = getContextObj context cREF_TABLE
-            in case (get emptyObj refTable refName) of
-                Just (Res y) -> y
+            case (M.lookup refName refTable) of
+                Just (RefRes y) -> y
                 _ -> emptyResolver
         _ -> emptyResolver
 
 --- Definition ---
 
-getDefinition :: PropertiesObject obj => obj -> obj -> Name -> Maybe obj
-getDefinition refTable obj name =
-    case (get refTable obj cMETA_DEFINITIONS) of
+getDefinition :: PropertiesObject obj => obj -> Name -> Maybe obj
+getDefinition obj name =
+    case (get M.empty obj cMETA_DEFINITIONS) of
         Just (Obj definitions) ->
-            case (get refTable definitions name) of
+            case (get M.empty definitions name) of
                 Just (Obj x) -> Just x
                 _ -> Nothing
         _ -> Nothing

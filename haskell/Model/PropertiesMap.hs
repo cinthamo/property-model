@@ -7,6 +7,8 @@ import Model.PropertiesObject
 import Model.Resolver
 import Model.Behaviour
 import Model.Context
+import Model.Value
+import Debug.Trace
 
 data PropertiesMap = PM (Behaviour PropertiesMap) (Map Name (Value PropertiesMap))
 
@@ -31,7 +33,7 @@ clearAsBag (PM b map) name = PM b (Map.delete name map)
 
 --- Properties with Resolvers ---
 
-hasWithResolver :: PropertyHas -> PropertiesMap -> PropertyHas
+hasWithResolver :: PropertyHas -> Context PropertiesMap -> PropertyHas
 hasWithResolver valueHas context = \obj@(PM behaviour map) name ->
     let r = resolver behaviour
     in case ((beforeHas r) context) of
@@ -42,7 +44,7 @@ hasWithResolver valueHas context = \obj@(PM behaviour map) name ->
                 GResolved x -> x
                 GNotResolved -> hasIt
 
-getWithResolver :: PropertyGet -> PropertiesMap -> PropertyGet
+getWithResolver :: PropertyGet -> Context PropertiesMap -> PropertyGet
 getWithResolver valueGet context = \obj@(PM behaviour map) name ->
     let r = resolver behaviour
     in case ((beforeGet r) context) of
@@ -53,7 +55,7 @@ getWithResolver valueGet context = \obj@(PM behaviour map) name ->
                 GResolved x -> Just x
                 GNotResolved -> value
 
-setWithResolver :: PropertySet -> PropertiesMap -> PropertySet
+setWithResolver :: PropertySet -> Context PropertiesMap -> PropertySet
 setWithResolver valueSet context = \obj@(PM behaviour map) name value ->
     let r = resolver behaviour
     in case ((beforeSet r) context value) of
@@ -67,7 +69,7 @@ setWithResolver valueSet context = \obj@(PM behaviour map) name value ->
                     _ = ((afterSet r) newContext value)
                 in newObj
 
-clearWithResolver :: PropertyClear -> PropertiesMap -> PropertyClear
+clearWithResolver :: PropertyClear -> Context PropertiesMap -> PropertyClear
 clearWithResolver valueClear context = \obj@(PM behaviour map) name ->
     let r = resolver behaviour
     in case ((beforeClear r) context) of
@@ -85,3 +87,6 @@ instance PropertiesObject PropertiesMap where
     set   refTable obj name = setWithResolver   setAsBag   (getContext refTable obj name) obj name
     clear refTable obj name = clearWithResolver clearAsBag (getContext refTable obj name) obj name
     empty behaviour         = PM behaviour Map.empty
+
+instance Show PropertiesMap where
+    show (PM behaviour map) = show map

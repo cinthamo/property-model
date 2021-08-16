@@ -8,11 +8,11 @@ cINSTANCE = "instance"
 cNAME :: Name
 cNAME = "name"
 
-cREF_TABLE :: Name
-cREF_TABLE = "refTable"
-
 cDEFINITION :: Name
 cDEFINITION = "definition"
+
+cDEFAULT :: Name
+cDEFAULT = "default"
 
 cMETA_DEFINITIONS :: Name
 cMETA_DEFINITIONS = "@definitions"

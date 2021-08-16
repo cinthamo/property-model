@@ -1,12 +1,18 @@
 module Model.Resolver where
 
 import Model.Const
+import Model.Value
+import Data.Map
 
-data Value obj = Data String |
-                 Ref Name |
-                 Obj obj |
-                 List [Value obj] |
-                 Res (Resolver obj)
+data Context obj = Context
+    { refTable :: RefTable obj
+    , objects  :: Map Name obj
+    , name     :: Name
+    }
+
+data RefValue obj = RefObj obj |
+                    RefRes (Resolver obj)
+type RefTable obj = Map Name (RefValue obj)
 
 data ResolveGet value = GNotResolved | GResolved value
 data ResolveBeforeSet value = BSNotResolved | BSCancel | BSValue value
@@ -14,12 +20,12 @@ data ResolveAfterSet = ASNotResolved | ASResolved
 data Void
 
 data Resolver obj = Resolver
-    { beforeHas   :: obj ->                      ResolveGet Bool
-    , afterHas    :: obj -> Bool              -> ResolveGet Bool
-    , beforeGet   :: obj ->                      ResolveGet (Value obj)
-    , afterGet    :: obj -> Maybe (Value obj) -> ResolveGet (Value obj)
-    , beforeSet   :: obj -> Value obj         -> ResolveBeforeSet (Value obj)
-    , afterSet    :: obj -> Value obj         -> ResolveAfterSet
-    , beforeClear :: obj ->                      ResolveBeforeSet Void
-    , afterClear  :: obj ->                      ResolveAfterSet
+    { beforeHas   :: Context obj ->                      ResolveGet Bool
+    , afterHas    :: Context obj -> Bool              -> ResolveGet Bool
+    , beforeGet   :: Context obj ->                      ResolveGet (Value obj)
+    , afterGet    :: Context obj -> Maybe (Value obj) -> ResolveGet (Value obj)
+    , beforeSet   :: Context obj -> Value obj         -> ResolveBeforeSet (Value obj)
+    , afterSet    :: Context obj -> Value obj         -> ResolveAfterSet
+    , beforeClear :: Context obj ->                      ResolveBeforeSet Void
+    , afterClear  :: Context obj ->                      ResolveAfterSet
     }

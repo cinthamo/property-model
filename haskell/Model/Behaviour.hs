@@ -3,6 +3,7 @@ module Model.Behaviour where
 import Model.PropertiesObject
 import Model.Resolver
 import Model.EmptyResolver
+import Debug.Trace
 
 resolver :: PropertiesObject obj => Behaviour obj -> Resolver obj
 resolver BEmpty = emptyResolver

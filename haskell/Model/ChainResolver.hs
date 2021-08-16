@@ -1,39 +1,7 @@
-module Model.AspectBehaviour where
+module Model.ChainResolver where
 
 import Model.PropertiesObject
 import Model.Resolver
-import Model.EmptyResolver
-import Model.Behaviour
-import Model.Context
-import Model.Const
-
-emptyWAsp :: PropertiesObject obj => obj
-emptyWAsp = empty (BResolver aspectResolver)
-
-aspectResolver :: PropertiesObject obj => Resolver obj
-aspectResolver = Resolver {
-    beforeHas   = \context -> beforeHas   (chainResolver (getResolverList (context))) context,
-    afterHas    = \context -> afterHas    (chainResolver (getResolverList (context))) context,
-    beforeGet   = \context -> beforeGet   (chainResolver (getResolverList (context))) context,
-    afterGet    = \context -> afterGet    (chainResolver (getResolverList (context))) context,
-    beforeSet   = \context -> beforeSet   (chainResolver (getResolverList (context))) context,
-    afterSet    = \context -> afterSet    (chainResolver (getResolverList (context))) context,
-    beforeClear = \context -> beforeClear (chainResolver (getResolverList (context))) context,
-    afterClear  = \context -> afterClear  (chainResolver (getResolverList (context))) context
-}
-
-getAspects :: PropertiesObject obj => obj -> [obj]
-getAspects context =
-    let def = getContextObj context cDEFINITION
-    in case (get emptyObj def cMETA_ASPECTS) of
-        Just (List l) -> map (\a -> getObject context a) l
-        _ -> []
-
-getResolverList :: PropertiesObject obj => obj -> [Resolver obj]
-getResolverList context = map (\aspect ->
-    case (get emptyObj aspect cASPECT_RESOLVER) of
-        Just v -> getResolver context v
-        _ -> emptyResolver) (getAspects context)
 
 chainResolver :: PropertiesObject obj => [Resolver obj] -> Resolver obj
 chainResolver resolvers = Resolver {
