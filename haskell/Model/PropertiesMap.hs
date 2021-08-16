@@ -89,4 +89,4 @@ instance PropertiesObject PropertiesMap where
     empty behaviour         = PM behaviour Map.empty
 
 instance Show PropertiesMap where
-    show (PM behaviour map) = show map
+    show (PM behaviour map) = show . Map.toList $ map

@@ -33,11 +33,8 @@ getContextWithInstance oldContext i = Context {
 --- Getters ---
 
 -- get object from context
-getContextObj :: PropertiesObject obj => Context obj -> Name -> obj
-getContextObj context name =
-    case (M.lookup name (objects context)) of
-        Just x -> x
-        _ -> emptyObj
+getContextObj :: PropertiesObject obj => Context obj -> Name -> Maybe obj
+getContextObj context name = M.lookup name (objects context)
 
 -- get object resolving references
 getObject :: PropertiesObject obj => RefTable obj -> Value obj -> obj
@@ -50,7 +47,7 @@ getObject refTable value =
                 _ -> emptyObj
         _ -> emptyObj
 
--- get resolver from context value resolving references
+-- get resolver resolving reference
 getResolver :: PropertiesObject obj => RefTable obj -> Value obj -> Resolver obj
 getResolver refTable value =
     case (value) of
@@ -59,6 +56,13 @@ getResolver refTable value =
                 Just (RefRes y) -> y
                 _ -> emptyResolver
         _ -> emptyResolver
+
+-- get value from definition using context
+getDefinitionValue :: PropertiesObject obj => Context obj -> Name -> Maybe (Value obj)
+getDefinitionValue context name =
+    case (getContextObj context cDEFINITION) of
+        Just definition -> get (refTable context) definition name
+        _ -> Nothing
 
 --- Definition ---
 

@@ -1,9 +1,9 @@
 {
     "@definitions": {
         "one": {
-            "@aspects": {
+            "@aspects": [{
                 "resolver": "^Resolvers.Default"
-            },
+            }],
             "default": 1
         }
     }

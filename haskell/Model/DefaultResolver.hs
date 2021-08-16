@@ -11,23 +11,17 @@ defaultResolver = Resolver {
     afterHas    = \context hasIt ->
         if hasIt then
             GNotResolved
-        else
-            let definition = getContextObj context cDEFINITION
-                _default = get (refTable context) definition cDEFAULT
-            in case _default of
-                Just v -> GResolved True
-                _ -> GNotResolved,
+        else case (getDefinitionValue context cDEFAULT) of
+            Just v -> GResolved True
+            _ -> GNotResolved,
 
     beforeGet   = \context       -> GNotResolved,
     afterGet    = \context value ->
         case value of
             Just v -> GNotResolved
-            _ ->
-                let definition = getContextObj context cDEFINITION
-                    _default = get (refTable context) definition cDEFAULT
-                in case _default of
-                    Just v -> GResolved v
-                    _ -> GNotResolved,
+            _ -> case (getDefinitionValue context cDEFAULT) of
+                Just v -> GResolved v
+                _ -> GNotResolved,
 
     beforeSet   = \context value -> BSNotResolved,
     afterSet    = \context value -> ASNotResolved,

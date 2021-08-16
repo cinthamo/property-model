@@ -26,8 +26,7 @@ aspectResolver = Resolver {
 
 getAspects :: PropertiesObject obj => Context obj -> [obj]
 getAspects context =
-    let def = getContextObj context cDEFINITION
-    in case (get (refTable context) def cMETA_ASPECTS) of
+    case (getDefinitionValue context cMETA_ASPECTS) of
         Just (List l) -> map (\a -> getObject (refTable context) a) l
         _ -> []
 
