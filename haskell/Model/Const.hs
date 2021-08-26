@@ -20,5 +20,8 @@ cMETA_DEFINITIONS = "@definitions"
 cMETA_ASPECTS :: Name
 cMETA_ASPECTS = "@aspects"
 
+cTYPE :: Name
+cTYPE = "@type"
+
 cASPECT_RESOLVER :: Name
 cASPECT_RESOLVER = "resolver"

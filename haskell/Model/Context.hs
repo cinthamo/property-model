@@ -64,6 +64,13 @@ getDefinitionValue context name =
         Just definition -> get (refTable context) definition name
         _ -> Nothing
 
+-- get instance from context
+getInstance :: PropertiesObject obj => Context obj -> obj
+getInstance context =
+    case (getContextObj context cINSTANCE) of
+        Just i -> i
+        _ -> error "it should have the instance"
+
 --- Definition ---
 
 getDefinition :: PropertiesObject obj => obj -> Name -> Maybe obj
@@ -74,3 +81,10 @@ getDefinition obj name =
                 Just (Obj x) -> Just x
                 _ -> Nothing
         _ -> Nothing
+
+--- Type ---
+
+getType :: PropertiesObject obj => obj -> String
+getType obj = case (get M.empty obj cTYPE) of
+    Just (Data t) -> t
+    _ -> "" 

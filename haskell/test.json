@@ -5,6 +5,29 @@
                 "resolver": "^Resolvers.Default"
             }],
             "default": 1
+        },
+        "two": {
+            "@aspects": [{
+                "resolver": "^Resolvers.Default"
+            }],
+            "default": {
+                "@type": "case",
+                "rules": [{
+                    "if": {
+                        "@type": "equal",
+                        "first": {
+                            "@type": "propvalue",
+                            "name": "one"
+                        },
+                        "second": {
+                            "@type": "const",
+                            "value": 1
+                        }
+                    },
+                    "value": 2
+                }],
+                "else": 3
+            }
         }
     }
 }
