@@ -7,13 +7,18 @@ import Model.Context
 import Model.Value
 import Data.Map as M
 
-defaultResolver :: PropertiesObject obj => Resolver obj
+defaultResolver :: (Show obj, PropertiesObject obj) => Resolver obj
 defaultResolver = Resolver {
     beforeHas   = \context       -> GNotResolved,
     afterHas    = \context hasIt ->
         if hasIt then
             GNotResolved
         else case (getDefinitionValue context cDEFAULT) of
+            Just (Object obj) -> case (getType obj) of
+                "case" -> case (evalCase context obj) of
+                    Just _ -> GResolved True
+                    _ -> GNotResolved
+                _ -> GResolved True
             Just v -> GResolved True
             _ -> GNotResolved,
 
@@ -22,11 +27,11 @@ defaultResolver = Resolver {
         case value of
             Just v -> GNotResolved
             _ -> case (getDefinitionValue context cDEFAULT) of
-                Just (Obj obj) -> case (getType obj) of
+                Just (Object obj) -> case (getType obj) of
                     "case" -> case (evalCase context obj) of
                         Just w -> GResolved w
-                        _ -> GResolved (Data "")
-                    _ -> GResolved (Obj obj)
+                        _ -> GNotResolved
+                    _ -> GResolved (Object obj)
                 Just v -> GResolved v
                 _ -> GNotResolved,
 
@@ -36,41 +41,33 @@ defaultResolver = Resolver {
     afterClear  = \context       -> ASNotResolved
 }
 
-evalCase :: PropertiesObject obj => Context obj -> obj -> Maybe (Value obj)
+evalCase :: (Show obj, PropertiesObject obj) => Context obj -> obj -> Maybe (Value obj)
 evalCase context caseObj =
     case (get M.empty caseObj "rules") of
         Just (List l) -> case (Prelude.foldr checkIf Nothing l) of
             Just v -> Just v
             Nothing -> doElse
-        _ -> doElse
     where
         doElse = case (get M.empty caseObj "else") of
-            Just w -> Just w
+            Just w -> Just (evalExpr context w)
             _ -> Nothing
-        checkIf (Obj ifObj) res = case (res) of
+        checkIf (Object ifObj) res = case (res) of
             Just v -> Just v
             Nothing -> case (get M.empty ifObj "if") of
-                Just (Obj w) -> case (evalExpr context w) of
-                    True -> get M.empty ifObj "value"
-                    False -> Nothing
-                Nothing -> Nothing
+                Just w -> case (evalExpr context w) of
+                    Bool True -> get M.empty ifObj "value"
+                    _ -> Nothing
 
-evalExpr :: PropertiesObject obj => Context obj -> obj -> Bool
-evalExpr context exprObj = case (getType exprObj) of
-    "equal" -> case (get M.empty exprObj "first") of
-        Just (Obj first) -> case (get M.empty exprObj "second") of
-            Just (Obj second) -> (evalValue context first) == (evalValue context second)
-            _ -> False
-        _ -> False
-    _ -> error "unkown expression type"
-
-evalValue :: PropertiesObject obj => Context obj -> obj -> String
-evalValue context valueObj = case (getType valueObj) of
-    "propvalue" -> case (get M.empty valueObj "name") of
-        Just (Data name) -> case (get (refTable context) (getInstance context) name) of
-            Just (Data v) -> v
-            _ -> error $ "no value for property " ++ name
-    "const" -> case (get M.empty valueObj "value") of
-        Just (Data v) -> v
-        _ -> error "invalid value"
-    _ -> error "unknown value expression"
+evalExpr :: PropertiesObject obj => Context obj -> Value obj -> Value obj
+evalExpr context exprObj = case (exprObj) of
+    String s -> String s
+    Number n -> Number n
+    Bool b -> Bool b
+    Reference name -> case (get (refTable context) (getInstance context) name) of
+        Just v -> v
+    Object fObj -> case (get M.empty fObj "f") of
+        Just (Reference f) -> case (get M.empty fObj "p") of
+            Just (List p) ->
+                let func = getFunction (refTable context) f
+                    parms = Prelude.map (evalExpr context) p
+                in func parms

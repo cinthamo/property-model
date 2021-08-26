@@ -23,5 +23,8 @@ cMETA_ASPECTS = "@aspects"
 cTYPE :: Name
 cTYPE = "@type"
 
+cTYPE_CASE :: Name
+cTYPE_CASE = "case"
+
 cASPECT_RESOLVER :: Name
 cASPECT_RESOLVER = "resolver"

@@ -14,16 +14,16 @@ import Data.Map as M
 fromString :: PropertiesObject obj => String -> obj
 fromString s =
     case (JSON.decode (BLU.fromString s) :: Maybe JSON.Value) of
-        Just (Object m) -> fromMap m
+        Just (JSON.Object m) -> fromMap m
         _ -> PO.empty BEmpty
 
 fromJson :: PropertiesObject obj => JSON.Value -> V.Value obj
-fromJson (Object m) = Obj (fromMap m)
+fromJson (JSON.Object m) = V.Object (fromMap m)
 fromJson (Array a) = List (Prelude.map (\v -> fromJson v) (V.toList a))
-fromJson (String t) = fromText t
-fromJson (Number n) = Data (show n)
-fromJson (Bool b) = Data (show b)
-fromJson Null = Data ""
+fromJson (JSON.String t) = fromText t
+fromJson (JSON.Number n) = V.Number n
+fromJson (JSON.Bool b) = V.Bool b
+fromJson Null = V.String ""
 
 fromText :: T.Text -> V.Value obj
 fromText t =
@@ -31,11 +31,11 @@ fromText t =
     in if head s == '^' then
         let s1 = tail s
         in if head s1 == '^' then
-            Data s1
+            V.String s1
         else
-            Ref s1
+            V.Reference s1
     else
-        Data s
+        V.String s
 
 fromMap :: PropertiesObject obj => HashMap T.Text JSON.Value -> obj
 fromMap m = HM.foldrWithKey f emptyWAsp m

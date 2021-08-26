@@ -10,8 +10,11 @@ data Context obj = Context
     , name     :: Name
     }
 
+type Function obj = [Value obj] -> Value obj
+
 data RefValue obj = RefObj obj |
-                    RefRes (Resolver obj)
+                    RefRes (Resolver obj) |
+                    RefFunc (Function obj)
 type RefTable obj = Map Name (RefValue obj)
 
 data ResolveGet value = GNotResolved | GResolved value

@@ -1,9 +1,12 @@
 module Model.Value where
 
 import Model.Const
+import Data.Scientific
 
-data Value obj = Data String |
-                 Ref Name |
-                 Obj obj |
+data Value obj = String String |
+                 Number Scientific |
+                 Bool Bool |
+                 Reference Name |
+                 Object obj |
                  List [Value obj]
     deriving Show

@@ -40,8 +40,8 @@ getContextObj context name = M.lookup name (objects context)
 getObject :: PropertiesObject obj => RefTable obj -> Value obj -> obj
 getObject refTable value =
     case (value) of
-        Obj x -> x
-        Ref refName ->
+        Object x -> x
+        Reference refName ->
             case (M.lookup refName refTable) of
                 Just (RefObj y) -> y
                 _ -> emptyObj
@@ -51,11 +51,18 @@ getObject refTable value =
 getResolver :: PropertiesObject obj => RefTable obj -> Value obj -> Resolver obj
 getResolver refTable value =
     case (value) of
-        Ref refName ->
+        Reference refName ->
             case (M.lookup refName refTable) of
                 Just (RefRes y) -> y
                 _ -> emptyResolver
         _ -> emptyResolver
+
+-- get function from reference
+getFunction :: RefTable obj -> Name -> Function obj
+getFunction refTable name =
+    case (M.lookup name refTable) of
+        Just (RefFunc f) -> f
+        _ -> error $ "unknown function " ++ name
 
 -- get value from definition using context
 getDefinitionValue :: PropertiesObject obj => Context obj -> Name -> Maybe (Value obj)
@@ -76,15 +83,14 @@ getInstance context =
 getDefinition :: PropertiesObject obj => obj -> Name -> Maybe obj
 getDefinition obj name =
     case (get M.empty obj cMETA_DEFINITIONS) of
-        Just (Obj definitions) ->
+        Just (Object definitions) ->
             case (get M.empty definitions name) of
-                Just (Obj x) -> Just x
+                Just (Object x) -> Just x
                 _ -> Nothing
         _ -> Nothing
 
 --- Type ---
 
-getType :: PropertiesObject obj => obj -> String
+getType :: PropertiesObject obj => obj -> Name
 getType obj = case (get M.empty obj cTYPE) of
-    Just (Data t) -> t
-    _ -> "" 
+    Just (Reference t) -> t
