@@ -4,14 +4,15 @@ import Data.Map (Map)
 import qualified Data.Map as Map
 import Model.Const
 import Model.PropertiesObject
-import Model.Resolver
 import Model.Behaviour
 import Model.Context
 import Model.Value
+import Model.Resolvers.Resolver
 import Debug.Trace
 
 data PropertiesMap = PM (Behaviour PropertiesMap) (Map Name (Value PropertiesMap))
 
+type PropertyAll = PropertiesMap -> [Name]
 type PropertyHas = PropertiesMap -> Name -> Bool
 type PropertyGet = PropertiesMap -> Name -> Maybe (Value PropertiesMap)
 type PropertySet = PropertiesMap -> Name -> Value PropertiesMap -> PropertiesMap
@@ -19,11 +20,14 @@ type PropertyClear = PropertiesMap -> Name -> PropertiesMap
 
 --- Properties as Bag ---
 
+allAsBag :: PropertyAll
+allAsBag (PM _ map) = Map.keys map
+
 hasAsBag :: PropertyHas
-hasAsBag (PM b map) name = Map.member name map
+hasAsBag (PM _ map) name = Map.member name map
 
 getAsBag:: PropertyGet
-getAsBag (PM b map) name = Map.lookup name map
+getAsBag (PM _ map) name = Map.lookup name map
 
 setAsBag :: PropertySet
 setAsBag (PM b map) name value = PM b (Map.insert name value map)
@@ -32,6 +36,12 @@ clearAsBag :: PropertyClear
 clearAsBag (PM b map) name = PM b (Map.delete name map)
 
 --- Properties with Resolvers ---
+
+allWithResolver :: PropertyAll -> Context PropertiesMap -> PropertyAll
+allWithResolver allHas context = \obj@(PM behaviour map) ->
+    let r = resolver behaviour
+        list = allHas obj
+    in (getAll r) context list
 
 hasWithResolver :: PropertyHas -> Context PropertiesMap -> PropertyHas
 hasWithResolver valueHas context = \obj@(PM behaviour map) name ->
@@ -82,6 +92,7 @@ clearWithResolver valueClear context = \obj@(PM behaviour map) name ->
 --- PropertiesMap Instance ---
 
 instance PropertiesObject PropertiesMap where
+    all   refTable obj      = allWithResolver   allAsBag   (getContext refTable obj "") obj 
     has   refTable obj name = hasWithResolver   hasAsBag   (getContext refTable obj name) obj name
     get   refTable obj name = getWithResolver   getAsBag   (getContext refTable obj name) obj name
     set   refTable obj name = setWithResolver   setAsBag   (getContext refTable obj name) obj name

@@ -1,14 +1,15 @@
-module Model.DefaultResolver where
+module Model.Resolvers.DefaultResolver where
 
 import Model.PropertiesObject
-import Model.Resolver
 import Model.Const
 import Model.Context
 import Model.Value
+import Model.Resolvers.Resolver
 import Data.Map as M
 
 defaultResolver :: (Show obj, PropertiesObject obj) => Resolver obj
 defaultResolver = Resolver {
+    getAll      = \context names -> names,
     beforeHas   = \context       -> GNotResolved,
     afterHas    = \context hasIt ->
         if hasIt then

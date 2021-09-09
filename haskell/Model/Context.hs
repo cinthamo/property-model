@@ -1,11 +1,11 @@
 module Model.Context where
 
-import Model.PropertiesObject
-import Model.Resolver
+import Model.PropertiesObject as PO
 import Model.Const
 import Model.Behaviour
-import Model.EmptyResolver
 import Model.Value
+import Model.Resolvers.Resolver
+import Model.Resolvers.EmptyResolver
 import Data.Map as M
 import Debug.Trace
 
@@ -77,6 +77,14 @@ getInstance context =
     case (getContextObj context cINSTANCE) of
         Just i -> i
         _ -> error "it should have the instance"
+
+-- get all definition property names
+getDefinitionNames :: PropertiesObject obj => Context obj -> [Name]
+getDefinitionNames context =
+    let obj = getInstance context
+    in case (get M.empty obj cMETA_DEFINITIONS) of
+        Just (Object definitions) -> PO.all M.empty definitions
+        _ -> []
 
 --- Definition ---
 

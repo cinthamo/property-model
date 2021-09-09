@@ -1,4 +1,4 @@
-module Model.Resolver where
+module Model.Resolvers.Resolver where
 
 import Model.Const
 import Model.Value
@@ -23,7 +23,8 @@ data ResolveAfterSet = ASNotResolved | ASResolved
 data Void
 
 data Resolver obj = Resolver
-    { beforeHas   :: Context obj ->                      ResolveGet Bool
+    { getAll      :: Context obj -> [Name]            -> [Name]
+    , beforeHas   :: Context obj ->                      ResolveGet Bool
     , afterHas    :: Context obj -> Bool              -> ResolveGet Bool
     , beforeGet   :: Context obj ->                      ResolveGet (Value obj)
     , afterGet    :: Context obj -> Maybe (Value obj) -> ResolveGet (Value obj)

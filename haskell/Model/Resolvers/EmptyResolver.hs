@@ -1,10 +1,11 @@
-module Model.EmptyResolver where
+module Model.Resolvers.EmptyResolver where
 
 import Model.PropertiesObject
-import Model.Resolver
+import Model.Resolvers.Resolver
 
 emptyResolver :: PropertiesObject obj => Resolver obj
 emptyResolver = Resolver {
+    getAll      = \context names -> names,
     beforeHas   = \context       -> GNotResolved,
     afterHas    = \context hasIt -> GNotResolved,
     beforeGet   = \context       -> GNotResolved,

@@ -3,9 +3,9 @@ module Model.Serializer where
 import Model.PropertiesObject as PO
 import Model.Behaviour
 import Model.Value as V
-import Model.AspectResolver
-import qualified Data.ByteString.Lazy.UTF8 as BLU
+import Model.Resolvers.AspectResolver
 import Data.Aeson as JSON
+import qualified Data.ByteString.Lazy.UTF8 as BLU
 import qualified Data.Text as T
 import qualified Data.Vector as V
 import Data.HashMap.Strict as HM

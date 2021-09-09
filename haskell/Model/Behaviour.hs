@@ -1,8 +1,8 @@
 module Model.Behaviour where
 
 import Model.PropertiesObject
-import Model.Resolver
-import Model.EmptyResolver
+import Model.Resolvers.Resolver
+import Model.Resolvers.EmptyResolver
 import Debug.Trace
 
 resolver :: PropertiesObject obj => Behaviour obj -> Resolver obj
