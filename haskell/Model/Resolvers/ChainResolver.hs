@@ -8,9 +8,6 @@ import Data.List
 
 chainResolver :: PropertiesObject obj => [Resolver obj] -> Resolver obj
 chainResolver resolvers = Resolver {
-    getAll      = \context names ->
-        chainResolveAll resolvers context names,
-
     beforeHas   = \context       ->
         chainResolveOne (\r -> (beforeHas r) context) resolvers isGResolved GNotResolved,
 
@@ -55,9 +52,3 @@ chainResolveOne f resolvers isResolved notResolved =
     in case (l) of
         [] -> notResolved
         x:_ -> x
-
-chainResolveAll :: PropertiesObject obj => [Resolver obj] -> Context obj -> [Name] -> [Name]
-chainResolveAll resolvers context list = nub (assignedList ++ definedList)
-    where
-        assignedList = filter (\n -> head n /= '@') list
-        definedList = getDefinitionNames context

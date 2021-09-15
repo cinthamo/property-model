@@ -1,13 +1,15 @@
 module Model.Resolvers.Resolver where
 
 import Model.Const
+import Model.Definition
 import Model.Value
 import Data.Map
 
 data Context obj = Context
-    { refTable :: RefTable obj
-    , objects  :: Map Name obj
-    , name     :: Name
+    { refTable   :: RefTable obj
+    , objects    :: Map Name obj
+    , definition :: Maybe Definition
+    , name       :: Name
     }
 
 type Function obj = [Value obj] -> Value obj

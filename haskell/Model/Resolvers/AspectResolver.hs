@@ -3,13 +3,14 @@ module Model.Resolvers.AspectResolver where
 import Model.PropertiesObject
 import Model.Context
 import Model.Const
+import Model.Definition
 import Model.Value
 import Model.Resolvers.Resolver
-import Model.Resolvers.EmptyResolver
 import Model.Resolvers.ChainResolver
+import Model.Resolvers.DefaultResolver
 import Debug.Trace
 
-emptyWAsp :: PropertiesObject obj => obj
+emptyWAsp :: PropertiesObject obj => [Definition] -> obj
 emptyWAsp = empty (BResolver aspectResolver)
 
 aspectResolver :: PropertiesObject obj => Resolver obj
@@ -25,17 +26,5 @@ aspectResolver = Resolver {
     afterClear  = \context -> afterClear  (chainResolver (getResolverList context)) context
 }
 
-getAspects :: PropertiesObject obj => Context obj -> [obj]
-getAspects context =
-    case (getDefinitionValue context cMETA_ASPECTS) of
-        Just (List l) -> map (\a -> getObject (refTable context) a) l
-        _ -> []
-
 getResolverList :: PropertiesObject obj => Context obj -> [Resolver obj]
-getResolverList context =
-    map
-        (\aspect ->
-            case (get (refTable context) aspect cASPECT_RESOLVER) of
-                Just v -> getResolver (refTable context) v
-                _ -> emptyResolver)
-        (getAspects context)
+getResolverList _ = [ defaultResolver ]

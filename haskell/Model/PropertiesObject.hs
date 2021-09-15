@@ -2,6 +2,7 @@ module Model.PropertiesObject where
 
 import Model.Const
 import Model.Value
+import Model.Definition
 import Model.Resolvers.Resolver
 import Data.Map
 
@@ -13,4 +14,4 @@ class PropertiesObject obj where
     get :: RefTable obj -> obj -> Name -> Maybe (Value obj)
     set :: RefTable obj -> obj -> Name -> Value obj -> obj
     clear :: RefTable obj -> obj -> Name -> obj
-    empty :: Behaviour obj -> obj
+    empty :: Behaviour obj -> [Definition] -> obj

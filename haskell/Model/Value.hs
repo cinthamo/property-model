@@ -1,10 +1,9 @@
 module Model.Value where
 
 import Model.Const
-import Data.Scientific
 
 data Value obj = String String |
-                 Number Scientific |
+                 Number Int |
                  Bool Bool |
                  Reference Name |
                  Object obj |

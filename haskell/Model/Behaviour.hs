@@ -10,4 +10,4 @@ resolver BEmpty = emptyResolver
 resolver (BResolver r) = r
 
 emptyObj :: PropertiesObject obj => obj
-emptyObj = empty BEmpty
+emptyObj = empty BEmpty []

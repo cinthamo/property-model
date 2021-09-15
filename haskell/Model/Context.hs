@@ -3,31 +3,32 @@ module Model.Context where
 import Model.PropertiesObject as PO
 import Model.Const
 import Model.Behaviour
+import Model.Definition as D
 import Model.Value
-import Model.Resolvers.Resolver
+import Model.Resolvers.Resolver as R
 import Model.Resolvers.EmptyResolver
 import Data.Map as M
+import Data.List
 import Debug.Trace
 
-getContext :: PropertiesObject obj => RefTable obj -> obj -> Name -> Context obj
-getContext refTable i name = Context {
+getContext :: PropertiesObject obj => RefTable obj -> obj -> [Definition] -> Name -> Context obj
+getContext refTable i definitions name = Context {
         refTable = refTable,
         objects = objects,
-        name = name
+        definition = definition,
+        R.name = name
     }
     where
-        objects =
-            if (name == cMETA_DEFINITIONS) then
-                fromList [(cINSTANCE, i)]
-            else case (getDefinition i name) of
-                Nothing -> fromList [(cINSTANCE, i)]
-                Just d -> fromList [(cINSTANCE, i), (cDEFINITION, d)]
+        objects = fromList [(cINSTANCE, i)]
+        definition = find isDef definitions
+        isDef (Definition n _ _) = n == name
 
 getContextWithInstance :: PropertiesObject obj => Context obj -> obj -> Context obj
 getContextWithInstance oldContext i = Context {
         refTable = refTable oldContext,
-        objects = insert cINSTANCE i (objects oldContext),
-        name = name oldContext
+        objects = M.insert cINSTANCE i (objects oldContext),
+        definition = definition oldContext,
+        R.name = R.name oldContext
     }
 
 --- Getters ---
@@ -65,11 +66,11 @@ getFunction refTable name =
         _ -> error $ "unknown function " ++ name
 
 -- get value from definition using context
-getDefinitionValue :: PropertiesObject obj => Context obj -> Name -> Maybe (Value obj)
-getDefinitionValue context name =
-    case (getContextObj context cDEFINITION) of
-        Just definition -> get (refTable context) definition name
-        _ -> Nothing
+getDefaultExpr :: PropertiesObject obj => Context obj -> Maybe Expr
+getDefaultExpr context =
+    case (definition context) of
+        Just (Definition _ _ d) -> Just d
+        Nothing -> Nothing
 
 -- get instance from context
 getInstance :: PropertiesObject obj => Context obj -> obj
@@ -86,19 +87,10 @@ getDefinitionNames context =
         Just (Object definitions) -> PO.all M.empty definitions
         _ -> []
 
---- Definition ---
-
-getDefinition :: PropertiesObject obj => obj -> Name -> Maybe obj
-getDefinition obj name =
-    case (get M.empty obj cMETA_DEFINITIONS) of
-        Just (Object definitions) ->
-            case (get M.empty definitions name) of
-                Just (Object x) -> Just x
-                _ -> Nothing
-        _ -> Nothing
-
 --- Type ---
 
-getType :: PropertiesObject obj => obj -> Name
-getType obj = case (get M.empty obj cTYPE) of
-    Just (Reference t) -> t
+getType :: PropertiesObject obj => Context obj -> Name
+getType context =
+    case (definition context) of
+        Just (Definition _ t _) -> t
+        Nothing -> ""

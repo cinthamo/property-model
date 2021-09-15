@@ -1,20 +1,20 @@
 module Main where
 
-import Model.Serializer
+import Test
 import Model.Value
 import Model.PropertiesMap
 import Model.PropertiesObject
 import Model.BasicTable
+import Model.Resolvers.AspectResolver
 import Func.Static
 
 main :: IO ()
 main = do
-    contents <- readFile "test.json" :: IO String
-    print . show . process1 $ contents
-    print . show . process2 $ contents
-    print . show . process3 $ contents
+    print . show $ process1
+    print . show $ process2
+    print . show $ process3
     where
-        value c = fromString c :: PropertiesMap
-        process1 c = get basicRef (value c) "one"
-        process2 c = get basicRef (value c) "two"
-        process3 c = static basicRef (value c)
+        obj = emptyWAsp definitions
+        process1 = get basicRef obj "one"
+        process2 = get basicRef obj "two"
+        process3 = static basicRef obj
