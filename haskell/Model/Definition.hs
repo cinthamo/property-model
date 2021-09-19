@@ -2,16 +2,26 @@ module Model.Definition where
 
 import Model.Const
 
-data Definition = Definition {
-    name :: Name,
-    _type :: Name,
-    _default :: Expr
-}
+data ObjectDefinition =
+    ObjectDefinition {
+      properties :: [Definition],
+      related :: [Name]
+    }
+
+data Definition =
+    Definition {
+        name :: Name,
+        _default :: Expr
+    } |
+    External {
+        name :: Name
+    }
 
 data Expr = Num Int |
             Str String |
             Bool Bool |
             Ref Name |
+            RefX Name Name |
             Case [If] Expr |
             Func Name [Expr]
 
