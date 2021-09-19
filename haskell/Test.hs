@@ -2,10 +2,11 @@ module Test where
 
 import Model.Definition
 
-definitions :: [Definition]
-definitions = [
-        Definition "one" "number" (Num 3),
-        Definition "two" "number"
+definitions :: ObjectDefinition
+definitions = ObjectDefinition {
+    properties = [
+        Definition "one" (Num 3),
+        Definition "two"
             (Case
                 [
                     If
@@ -19,4 +20,6 @@ definitions = [
                     ]
                 )
             )
-    ]
+    ],
+    related = []
+}

@@ -1,5 +1,6 @@
 module Model.Behaviour where
 
+import Model.Definition
 import Model.PropertiesObject
 import Model.Resolvers.Resolver
 import Model.Resolvers.EmptyResolver
@@ -9,5 +10,11 @@ resolver :: PropertiesObject obj => Behaviour obj -> Resolver obj
 resolver BEmpty = emptyResolver
 resolver (BResolver r) = r
 
+emptyDefinition :: ObjectDefinition
+emptyDefinition = ObjectDefinition {
+    properties = [],
+    related = []
+}
+
 emptyObj :: PropertiesObject obj => obj
-emptyObj = empty BEmpty []
+emptyObj = empty BEmpty emptyDefinition

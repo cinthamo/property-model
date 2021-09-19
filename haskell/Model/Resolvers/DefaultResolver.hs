@@ -10,7 +10,6 @@ import Data.Map as M
 
 defaultResolver :: PropertiesObject obj => Resolver obj
 defaultResolver = Resolver {
-    getAll      = \context names -> names,
     beforeHas   = \context       -> GNotResolved,
     afterHas    = \context hasIt ->
         if hasIt then

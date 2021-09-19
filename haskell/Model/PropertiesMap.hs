@@ -7,12 +7,12 @@ import Model.Const
 import Model.PropertiesObject
 import Model.Behaviour
 import Model.Context
-import Model.Definition
+import Model.Definition as D
 import Model.Value
 import Model.Resolvers.Resolver
 import Debug.Trace
 
-data PropertiesMap = PM (Behaviour PropertiesMap) [Definition] (Map Name (Value PropertiesMap))
+data PropertiesMap = PM (Behaviour PropertiesMap) ObjectDefinition (Map Name (Value PropertiesMap))
 
 type PropertyAll = PropertiesMap -> [Name]
 type PropertyHas = PropertiesMap -> Name -> Bool
@@ -42,7 +42,7 @@ clearAsBag (PM b d map) name = PM b d (Map.delete name map)
 allWithResolver :: PropertyAll -> Context PropertiesMap -> PropertyAll
 allWithResolver allHas context = \obj@(PM behaviour definitions map) ->
     let list = allHas obj
-        defined = Data.List.map Model.Definition.name definitions
+        defined = Data.List.map D.name (properties definitions)
         all = nub (list ++ defined)
     in filter (has (refTable context) obj) all
 

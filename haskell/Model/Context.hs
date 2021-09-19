@@ -11,7 +11,7 @@ import Data.Map as M
 import Data.List
 import Debug.Trace
 
-getContext :: PropertiesObject obj => RefTable obj -> obj -> [Definition] -> Name -> Context obj
+getContext :: PropertiesObject obj => RefTable obj -> obj -> ObjectDefinition -> Name -> Context obj
 getContext refTable i definitions name = Context {
         refTable = refTable,
         objects = objects,
@@ -20,8 +20,8 @@ getContext refTable i definitions name = Context {
     }
     where
         objects = fromList [(cINSTANCE, i)]
-        definition = find isDef definitions
-        isDef (Definition n _ _) = n == name
+        definition = find isDef (properties definitions)
+        isDef d = (D.name d) == name
 
 getContextWithInstance :: PropertiesObject obj => Context obj -> obj -> Context obj
 getContextWithInstance oldContext i = Context {
@@ -69,7 +69,7 @@ getFunction refTable name =
 getDefaultExpr :: PropertiesObject obj => Context obj -> Maybe Expr
 getDefaultExpr context =
     case (definition context) of
-        Just (Definition _ _ d) -> Just d
+        Just def -> Just (_default def)
         Nothing -> Nothing
 
 -- get instance from context
@@ -86,11 +86,3 @@ getDefinitionNames context =
     in case (get M.empty obj cMETA_DEFINITIONS) of
         Just (Object definitions) -> PO.all M.empty definitions
         _ -> []
-
---- Type ---
-
-getType :: PropertiesObject obj => Context obj -> Name
-getType context =
-    case (definition context) of
-        Just (Definition _ t _) -> t
-        Nothing -> ""

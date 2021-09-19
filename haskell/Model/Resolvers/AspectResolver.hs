@@ -10,12 +10,11 @@ import Model.Resolvers.ChainResolver
 import Model.Resolvers.DefaultResolver
 import Debug.Trace
 
-emptyWAsp :: PropertiesObject obj => [Definition] -> obj
+emptyWAsp :: PropertiesObject obj => ObjectDefinition -> obj
 emptyWAsp = empty (BResolver aspectResolver)
 
 aspectResolver :: PropertiesObject obj => Resolver obj
 aspectResolver = Resolver {
-    getAll      = \context -> getAll      (chainResolver (getResolverList context)) context,
     beforeHas   = \context -> beforeHas   (chainResolver (getResolverList context)) context,
     afterHas    = \context -> afterHas    (chainResolver (getResolverList context)) context,
     beforeGet   = \context -> beforeGet   (chainResolver (getResolverList context)) context,
