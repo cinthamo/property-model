@@ -1,22 +1,23 @@
 module Test where
 
 import Model.Definition
+import Model.Value
 
 definitions :: ObjectDefinition
 definitions = ObjectDefinition {
     properties = [
-        Definition "one" (Num 3),
+        Definition "one" (num 3),
         Definition "two"
             (Case
                 [
                     If
-                        (Func "equal" [Ref "one", Num 1])                    
-                        (Num 2)
+                        (Func "equal" [Ref "this" "one", num 1])                    
+                        (num 2)
                 ]
                 (Func
                     "add" [
-                        Func "add" [Ref "one", Num (-1)],
-                        Num 4
+                        Func "add" [Ref "this" "one", (num (-1))],
+                        (num 4)
                     ]
                 )
             )

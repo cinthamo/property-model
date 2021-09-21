@@ -1,6 +1,8 @@
 module Model.Definition where
 
 import Model.Const
+import Model.Value
+import Data.Map
 
 data ObjectDefinition =
     ObjectDefinition {
@@ -17,12 +19,14 @@ data Definition =
         name :: Name
     }
 
-data Expr = Num Int |
-            Str String |
-            Bool Bool |
-            Ref Name |
-            RefX Name Name |
+newtype ExprValue = V (Value (Map Name (Value ExprValue)))
+
+data Expr = Value ExprValue |
+            Ref Name Name |
             Case [If] Expr |
-            Func Name [Expr]
+            Func Name [Expr] -- funciones puras, f :: [Value] -> Value
 
 data If = If Expr Expr
+
+num :: Int -> Expr
+num n = Value $ V $ Number n

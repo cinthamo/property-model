@@ -34,10 +34,8 @@ defaultResolver = Resolver {
 
 evalExpr :: PropertiesObject obj => Context obj -> Expr -> Value obj
 evalExpr context expr = case (expr) of
-    Str s -> String s
-    Num n -> Number n
-    D.Bool b -> V.Bool b
-    Ref name -> 
+    Value v -> convertValue v
+    Ref _ name ->
             case (get (refTable context) (getInstance context) name) of
                 Just v -> v
     Case l e -> case (Prelude.foldr checkIf Nothing l) of
@@ -55,6 +53,8 @@ evalExpr context expr = case (expr) of
         let func = getFunction (refTable context) name
             parms = Prelude.map (evalExpr context) p
         in func parms
-                
 
-    
+convertValue :: PropertiesObject obj => ExprValue -> Value obj
+convertValue (V (String s)) = String s
+convertValue (V (Number n)) = Number n
+convertValue (V (Bool b)) = Bool b
