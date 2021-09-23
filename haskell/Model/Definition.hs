@@ -24,9 +24,19 @@ newtype ExprValue = V (Value (Map Name (Value ExprValue)))
 data Expr = Value ExprValue |
             Ref Name Name |
             Case [If] Expr |
-            Func Name [Expr] -- funciones puras, f :: [Value] -> Value
+            Func Name [Expr] -- pure functions, f :: [Value] -> Value
 
 data If = If Expr Expr
 
+-- helpers
 num :: Int -> Expr
 num n = Value $ V $ Number n
+
+str :: String -> Expr
+str s = Value $ V $ String s
+
+false :: Expr
+false = Value $ V $ Bool False
+
+true :: Expr
+true = Value $ V $ Bool True
