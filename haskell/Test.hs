@@ -90,3 +90,16 @@ definitions3 = ObjectDefinition {
             value = ""
         }
 -}
+
+-- case 4. object as function parameter
+definitions4 :: ObjectDefinition
+definitions4 = ObjectDefinition {
+    properties = [
+        Definition "Image" emptyValue,
+        Definition "Image Name"
+            (Func "GetName" [Ref "this" "Image", Ref "model" "?"])
+    ],
+    related = ["model"]
+}
+
+-- value = imageRef.GetName(model)

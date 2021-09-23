@@ -40,3 +40,6 @@ false = Value $ V $ Bool False
 
 true :: Expr
 true = Value $ V $ Bool True
+
+emptyValue :: Expr
+emptyValue = Value $ V $ String ""
