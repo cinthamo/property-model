@@ -44,12 +44,19 @@ getFunction refTable name =
         Just (RefFunc f) -> f
         _ -> error $ "unknown function " ++ name
 
--- get value from definition using context
+-- get default expression from definition using context
 getDefaultExpr :: PropertiesObject obj => Context obj -> Maybe Expr
 getDefaultExpr context =
     case (definition context) of
         Just def -> Just (_default def)
         Nothing -> Nothing
+
+-- get apply expression from definition using context
+getApplyExpr :: PropertiesObject obj => Context obj -> Maybe Expr
+getApplyExpr context =
+    case (definition context) of
+        Just def -> Just (apply def)
+        Nothing -> Nothing        
 
 -- get instance from context
 getInstance :: PropertiesObject obj => Context obj -> obj

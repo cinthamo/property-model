@@ -6,7 +6,7 @@ import Model.Value
 definitions :: ObjectDefinition
 definitions = ObjectDefinition {
     properties = [
-        Definition "one" (num 3),
+        Definition "one" (num 3) true,
         Definition "two"
             (Case
                 [
@@ -19,6 +19,8 @@ definitions = ObjectDefinition {
                     ]
                 ))
             )
+            true,
+        Definition "three" false false
     ],
     related = []
 }
@@ -35,6 +37,7 @@ definitions1 = ObjectDefinition {
                 ]
                 (Just true)
             )
+            true
     ],
     related = []
 }
@@ -43,7 +46,7 @@ definitions1 = ObjectDefinition {
 definitions2 :: ObjectDefinition
 definitions2 = ObjectDefinition {
     properties = [
-        Definition "Auto Number" (Ref "parent" "Auto Number")
+        Definition "Auto Number" (Ref "parent" "Auto Number") true
     ],
     related = ["parent"]
 }
@@ -52,7 +55,7 @@ definitions2 = ObjectDefinition {
 definitions3 :: ObjectDefinition
 definitions3 = ObjectDefinition {
     properties = [
-        Definition "Is Collection" false,
+        Definition "Is Collection" false true,
         Definition "Exposed Name"
             (Case
                 [
@@ -61,6 +64,7 @@ definitions3 = ObjectDefinition {
                 ]
                 (Just $ Ref "this" "Name")
             )
+            true
     ],
     related = []
 }
@@ -93,9 +97,10 @@ parm(in: &DataType, out: &Value);
 definitions4 :: ObjectDefinition
 definitions4 = ObjectDefinition {
     properties = [
-        Definition "Image" emptyValue,
+        Definition "Image" emptyValue true,
         Definition "Image Name"
             (Call "GetName" [Ref "this" "Image", ObjRef "model"])
+            true
     ],
     related = ["model"]
 }

@@ -13,7 +13,8 @@ data ObjectDefinition =
 data Definition =
     Definition {
         name :: Name,
-        _default :: Expr
+        _default :: Expr,
+        apply :: Expr
     } |
     External {
         name :: Name
