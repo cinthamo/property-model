@@ -10,16 +10,14 @@ definitions = ObjectDefinition {
         Definition "two"
             (Case
                 [
-                    If
-                        (Func "equal" [Ref "this" "one", num 1])                    
-                        (num 2)
+                    (Call "equal" [Ref "this" "one", num 1], num 2)
                 ]
-                (Func
+                (Just (Call
                     "add" [
-                        Func "add" [Ref "this" "one", (num (-1))],
+                        Call "add" [Ref "this" "one", (num (-1))],
                         (num 4)
                     ]
-                )
+                ))
             )
     ],
     related = []
@@ -33,11 +31,9 @@ definitions1 = ObjectDefinition {
         Definition "Generate Object"
             (Case
                 [
-                    If
-                        (Func "isTrue" [Ref "this" "Is Interface"])
-                        false
+                    (Call "isTrue" [Ref "this" "Is Interface"], false)
                 ]
-                true
+                (Just true)
             )
     ],
     related = []
@@ -60,18 +56,20 @@ definitions3 = ObjectDefinition {
         Definition "Exposed Name"
             (Case
                 [
-                    If
-                        (Ref "this" "Is Collection")
-                        (str "")
+                    (Ref "this" "Is Collection",
+                    Call "GetExposedName" [Ref "this" "Data Type"])
                 ]
-                (Ref "this" "Name")
+                (Just $ Ref "this" "Name")
             )
     ],
     related = []
 }
 
 {-
-        string dataType = properties.GetPropertyValue<string>(GxC.Properties.ATT.DataTypeString)
+Procedure GetExposedName
+parm(in: &DataType, out: &Value);
+
+// Write this as a GX procedure
 		string modulePath, typeName;
 	*	DataTypeHelper.GetNameFromText(dataType, out modulePath, out typeName);
 
@@ -97,9 +95,7 @@ definitions4 = ObjectDefinition {
     properties = [
         Definition "Image" emptyValue,
         Definition "Image Name"
-            (Func "GetName" [Ref "this" "Image", Ref "model" "?"])
+            (Call "GetName" [Ref "this" "Image", ObjRef "model"])
     ],
     related = ["model"]
 }
-
--- value = imageRef.GetName(model)

@@ -40,16 +40,18 @@ evalExpr context expr = case (expr) of
                 Just v -> v
     Case l e -> case (Prelude.foldr checkIf Nothing l) of
             Just v -> v
-            Nothing -> evalExpr context e
+            Nothing -> case e of
+                Just o -> evalExpr context o
+                Nothing -> Null
         where
-            checkIf (If condition value) res =
+            checkIf (condition, value) res =
                 case (res) of
                     Just x -> Just x
                     Nothing ->
                         case (evalExpr context condition) of
                             V.Bool True -> Just (evalExpr context value)
                             _ -> Nothing
-    Func name p ->
+    Call name p ->
         let func = getFunction (refTable context) name
             parms = Prelude.map (evalExpr context) p
         in func parms

@@ -37,27 +37,6 @@ getContextWithInstance oldContext i = Context {
 getContextObj :: PropertiesObject obj => Context obj -> Name -> Maybe obj
 getContextObj context name = M.lookup name (objects context)
 
--- get object resolving references
-getObject :: PropertiesObject obj => RefTable obj -> Value obj -> obj
-getObject refTable value =
-    case (value) of
-        Object x -> x
-        Reference refName ->
-            case (M.lookup refName refTable) of
-                Just (RefObj y) -> y
-                _ -> emptyObj
-        _ -> emptyObj
-
--- get resolver resolving reference
-getResolver :: PropertiesObject obj => RefTable obj -> Value obj -> Resolver obj
-getResolver refTable value =
-    case (value) of
-        Reference refName ->
-            case (M.lookup refName refTable) of
-                Just (RefRes y) -> y
-                _ -> emptyResolver
-        _ -> emptyResolver
-
 -- get function from reference
 getFunction :: RefTable obj -> Name -> Function obj
 getFunction refTable name =

@@ -22,13 +22,15 @@ data Definition =
 newtype ExprValue = V (Value (Map Name (Value ExprValue)))
 
 data Expr = Value ExprValue |
-            Ref Name Name |
-            Case [If] Expr |
-            Func Name [Expr] -- pure functions, f :: [Value] -> Value
+            Ref Name Name | -- object.property
+            ObjRef Name | -- object
+            Case [(Expr,Expr)] (Maybe Expr) | -- conditions otherwise
+            Call Name [Expr] -- f :: [Value] -> Value,
+                -- methodName object++parameters, External Object Method Call
+                -- procedureName parameters, GX Procedure Call
+                -- functionName parameters, language supported functions
 
-data If = If Expr Expr
-
--- helpers
+-- smart constructors
 num :: Int -> Expr
 num n = Value $ V $ Number n
 
