@@ -6,7 +6,7 @@ import Model.Value
 definitions :: ObjectDefinition
 definitions = ObjectDefinition {
     properties = [
-        Definition "one" (num 3) true,
+        Definition "one" (num 3) true true true, -- readonly
         Definition "two"
             (Case
                 [
@@ -19,8 +19,8 @@ definitions = ObjectDefinition {
                     ]
                 ))
             )
-            true,
-        Definition "three" false false
+            true false true,
+        Definition "three" false false false true -- not apply
     ],
     related = []
 }
@@ -37,7 +37,7 @@ definitions1 = ObjectDefinition {
                 ]
                 (Just true)
             )
-            true
+            true false true
     ],
     related = []
 }
@@ -46,7 +46,7 @@ definitions1 = ObjectDefinition {
 definitions2 :: ObjectDefinition
 definitions2 = ObjectDefinition {
     properties = [
-        Definition "Auto Number" (Ref "parent" "Auto Number") true
+        Definition "Auto Number" (Ref "parent" "Auto Number") true false true
     ],
     related = ["parent"]
 }
@@ -55,7 +55,7 @@ definitions2 = ObjectDefinition {
 definitions3 :: ObjectDefinition
 definitions3 = ObjectDefinition {
     properties = [
-        Definition "Is Collection" false true,
+        Definition "Is Collection" false true false true,
         Definition "Exposed Name"
             (Case
                 [
@@ -64,7 +64,7 @@ definitions3 = ObjectDefinition {
                 ]
                 (Just $ Ref "this" "Name")
             )
-            true
+            true false true
     ],
     related = []
 }
@@ -97,10 +97,10 @@ parm(in: &DataType, out: &Value);
 definitions4 :: ObjectDefinition
 definitions4 = ObjectDefinition {
     properties = [
-        Definition "Image" emptyValue true,
+        Definition "Image" emptyValue true false true,
         Definition "Image Name"
             (Call "GetName" [Ref "this" "Image", ObjRef "model"])
-            true
+            true false true
     ],
     related = ["model"]
 }

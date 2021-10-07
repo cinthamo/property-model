@@ -17,4 +17,4 @@ main = do
         obj = emptyWAsp definitions
         process1 = get basicRef obj "one"
         process2 = get basicRef obj "two"
-        process3 = static basicRef obj
+        process3 = static basicRef (set basicRef obj "one" (Number 1))

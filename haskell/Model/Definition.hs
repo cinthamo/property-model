@@ -14,7 +14,9 @@ data Definition =
     Definition {
         name :: Name,
         _default :: Expr,
-        apply :: Expr
+        apply :: Expr,
+        readonly :: Expr,
+        valid :: Expr
     } |
     External {
         name :: Name

@@ -56,7 +56,14 @@ getApplyExpr :: PropertiesObject obj => Context obj -> Maybe Expr
 getApplyExpr context =
     case (definition context) of
         Just def -> Just (apply def)
-        Nothing -> Nothing        
+        Nothing -> Nothing
+
+-- get apply expression from definition using context
+getReadonlyExpr :: PropertiesObject obj => Context obj -> Maybe Expr
+getReadonlyExpr context =
+    case (definition context) of
+        Just def -> Just (readonly def)
+        Nothing -> Nothing
 
 -- get instance from context
 getInstance :: PropertiesObject obj => Context obj -> obj

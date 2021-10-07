@@ -9,6 +9,7 @@ import Model.Resolvers.Resolver
 import Model.Resolvers.ChainResolver
 import Model.Resolvers.DefaultResolver
 import Model.Resolvers.ApplyResolver
+import Model.Resolvers.ReadonlyResolver
 import Debug.Trace
 
 emptyWAsp :: PropertiesObject obj => ObjectDefinition -> obj
@@ -27,4 +28,4 @@ aspectResolver = Resolver {
 }
 
 getResolverList :: PropertiesObject obj => Context obj -> [Resolver obj]
-getResolverList _ = [ defaultResolver, applyResolver ]
+getResolverList _ = [ defaultResolver, applyResolver, readonlyResolver ]
