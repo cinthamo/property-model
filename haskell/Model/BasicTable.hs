@@ -7,6 +7,7 @@ import Model.Resolvers.Resolver
 
 basicRef :: RefTable PropertiesMap
 basicRef = M.fromList [
-        ("equal", RefFunc equal),
-        ("add", RefFunc add)
+        ("==", RefFunc equal),
+        ("+", RefFunc add),
+        (">", RefFunc greater)
     ]

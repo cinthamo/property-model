@@ -10,3 +10,6 @@ equal [(Bool x), (Bool y)] = Bool (x == y)
 
 add :: Function obj
 add [(Number x), (Number y)] = Number (x + y)
+
+greater :: Function obj
+greater [(Number x), (Number y)] = Bool (x > y)

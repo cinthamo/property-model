@@ -9,6 +9,7 @@ data Context obj = Context
     { refTable   :: RefTable obj
     , objects    :: Map Name obj
     , definition :: Maybe Definition
+    , value      :: Maybe (Value obj)
     , name       :: Name
     }
 
