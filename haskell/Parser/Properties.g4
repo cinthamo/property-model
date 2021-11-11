@@ -1,13 +1,5 @@
 grammar Properties;
 
-BLOCK_COMMENT: '/*' .*? '*/' -> skip;
-EOL_COMMENT: '//' ~[\r\n]* -> skip;
-WS: [ \n\t\r]+ -> skip;
-
-NAME: [a-zA-Z][a-zA-Z0-9_]*;
-NUMBER: [0-9]+;
-BOOL: 'true' | 'false';
-STRING: '"' ( ('\\' .) | ~["\\])* '"' -> String;
 NULL: 'null';
 VALUE: 'value';
 OP: [>=<+-]+ | 'or' | 'and' | 'not';

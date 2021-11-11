@@ -30,7 +30,6 @@ default-extensions:
   - QuasiQuotes
   - TemplateHaskell
   - ScopedTypeVariables
-  - DeriveLift
   - OverloadedStrings
   - FlexibleContexts
   - TypeFamilies
