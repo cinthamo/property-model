@@ -1,10 +1,17 @@
 module Lib (f) where
 
 import Language.ANTLR4
-import Gramma
-import GParser
+import Parser.PGrammar
+import Parser.PParser
+import Parser.Convert
+import Text.Pretty.Simple (pPrint)
 
 f :: IO ()
-f = case glrParse isWS "//hola\n a(2)" of
-        ResultAccept ast -> print $ ast2expr ast
-        ErrorNoAction e _ _ -> error $ show e
+f = do
+        contents <- readFile "test.gxp"
+        let x = case glrParse isWS contents of
+                ResultAccept ast -> ast2definitions ast
+                ResultSet x -> error $ "Multiple matches " ++ show x
+                ErrorNoAction e _ _ -> error $ show e
+        pPrint x
+        pPrint $ convert x

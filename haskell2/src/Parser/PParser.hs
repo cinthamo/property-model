@@ -1,6 +1,6 @@
-module GParser where
+module Parser.PParser where
 
 import Language.ANTLR4
-import Gramma
+import Parser.PGrammar
 
 $(g4_parsers testAST testGrammar)

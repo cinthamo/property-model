@@ -1,0 +1,23 @@
+definition one { // readonly test
+    type = "Number";
+    default = 3;
+    readonly;
+}
+
+definition two { // default test
+    type = "Number";
+    default = 2 if one == 1;
+    default = (one + -1) + 4;
+}
+
+definition three { // apply test
+    type = "Boolean";
+    default = false;
+    apply = false;
+}
+
+definition four { // valid test
+    type = "Number";
+    default = 5;
+    valid if value > 2;
+}
