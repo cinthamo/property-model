@@ -1,23 +1,73 @@
-definition one { // readonly test
-    type = "Number";
-    default = 3;
-    readonly;
+list Test {
+    definition one { // readonly test
+        type = number;
+        default = 3;
+        readonly;
+    }
+
+    definition two { // default test
+        type = number;
+        default = 2 if one == 1
+                | 3 if one == 2
+                | (one + -1) + 4;
+    }
+
+    definition three { // apply test
+        type = boolean;
+        default = false;
+        apply if one == 2;
+    }
+
+    definition four { // valid test
+        type = number;
+        default = 5;
+        valid if value > 2;
+    }
 }
 
-definition two { // default test
-    type = "Number";
-    default = 2 if one == 1;
-    default = (one + -1) + 4;
+/*
+// case 1. external properties
+// external isInterface
+definition generateObject {
+    type = boolean
+    default = not isInterface
 }
 
-definition three { // apply test
-    type = "Boolean";
-    default = false;
-    apply = false;
+// case 2. another object
+// related parent
+definition autoNumber {
+    type = boolean
+    default = parent.autoNumber
 }
 
-definition four { // valid test
-    type = "Number";
-    default = 5;
-    valid if value > 2;
+// case 3. calculation
+// Procedure GetExposedName escrito en GX
+// parm(in: &DataType, out: &Value);
+definition dataType {
+    ...
 }
+definition name {
+    ...
+}
+definition isCollection {
+    type = boolean
+    default = false
+}
+definition exposedName {
+    type = string
+    default = GetExposedName(dataType) if isCollection
+    deafult = name
+}
+
+// case 4. object as function parameter
+// related model
+// procedure GetName
+definition image {
+    type = imageReference
+    default = emptyValue
+}
+definition imageName {
+    type = string
+    default = GetName(image, model)
+}
+*/

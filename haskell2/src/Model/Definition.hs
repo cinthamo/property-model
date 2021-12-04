@@ -4,8 +4,9 @@ import Data.Map
 import Model.Const
 import Model.Value
 
-data ObjectDefinition = ObjectDefinition
-  { properties :: [Definition],
+data DefinitionList = DefinitionList
+  { lname :: Name,
+    properties :: [Definition],
     related :: [Name]
   }
   deriving (Eq, Ord, Show)
@@ -20,7 +21,8 @@ data Definition
         valid :: Expr
       }
   | External
-      { name :: Name
+      { name :: Name,
+        _type :: Name
       }
   deriving (Eq, Ord, Show)
 

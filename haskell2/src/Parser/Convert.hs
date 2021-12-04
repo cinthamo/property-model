@@ -5,8 +5,9 @@ import Model.Definition as D
 import Model.Value as V
 import Data.List
 
-convert :: [PDefinition] -> ObjectDefinition
-convert l = ObjectDefinition {
+convert :: PDefinitionList -> DefinitionList
+convert (PDefinitionList n l) = DefinitionList {
+    lname = n,
     properties = map convertDefinition l,
     related = []
 }
@@ -21,33 +22,28 @@ convertDefinition (PDefinition n l) = Definition {
     valid = convertRule l "valid" true true false
 }
 
-convertType :: [Rule] -> String
+convertType :: [PRule] -> String
 convertType l = case find f l of
-        Just (Rule _ (Just (G.String t)) Nothing) -> tail $ init t
+        Just (ValueRule _ [] (ThisField t)) -> t
         _ -> error "type not found"
     where
-        f (Rule "type" _ _) = True
+        f (ValueRule "type" _ _) = True
         f _ = False
 
-convertRule :: [Rule] -> String -> Expr -> Expr -> Expr -> Expr
+convertRule :: [PRule] -> String -> Expr -> Expr -> Expr -> Expr
 convertRule l n defaultAbsent defaultUsed defaultOtherwise =
     case filter f l of
         [] -> defaultAbsent
-        [Rule _ Nothing Nothing] -> defaultUsed
-        [Rule _ (Just e) Nothing] -> convertExpr e
-        l -> g l
+        [x] -> g x
+        _ -> error $ "multiple " ++ n ++ " not allowed"
     where
-        f (Rule m _ _) = m == n
-        g [] = defaultOtherwise
-        g (Rule _ r Nothing:_) = h r
-        g (Rule _ r (Just x):l) =
-            let
-                y = (convertExpr x, h r)
-            in case g l of
-                Case m e -> Case (y:m) e
-                e -> Case [y] (Just e)
-        h Nothing = defaultUsed
-        h (Just e) = convertExpr e
+        f (ValueRule m _ _) = m == n
+        f (SimpleRule m _) = m == n
+        g (SimpleRule _ Nothing) = defaultUsed
+        g (SimpleRule _ (Just x)) = Case [(convertExpr x, defaultUsed)] (Just defaultOtherwise)
+        g (ValueRule _ [] v) = convertExpr v
+        g (ValueRule _ l v) = Case (map h l) (Just $ convertExpr v)
+        h (IfRule v x) = (convertExpr x, convertExpr v)
 
 convertExpr :: PExpr -> Expr
 convertExpr (G.Number n) = num n

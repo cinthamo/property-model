@@ -13,7 +13,7 @@ import Model.Resolvers.ReadonlyResolver
 import Model.Resolvers.ValidResolver
 import Debug.Trace
 
-emptyWAsp :: PropertiesObject obj => ObjectDefinition -> obj
+emptyWAsp :: PropertiesObject obj => DefinitionList -> obj
 emptyWAsp = empty (BResolver aspectResolver)
 
 aspectResolver :: PropertiesObject obj => Resolver obj

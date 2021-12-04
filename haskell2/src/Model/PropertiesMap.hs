@@ -12,7 +12,7 @@ import Model.Value
 import Model.Resolvers.Resolver
 import Debug.Trace
 
-data PropertiesMap = PM (Behaviour PropertiesMap) ObjectDefinition (Map Name (Value PropertiesMap))
+data PropertiesMap = PM (Behaviour PropertiesMap) DefinitionList (Map Name (Value PropertiesMap))
 
 type PropertyAll = PropertiesMap -> [Name]
 type PropertyHas = PropertiesMap -> Name -> Bool

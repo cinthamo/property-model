@@ -11,7 +11,7 @@ import Model.Resolvers.EmptyResolver
 import Model.Resolvers.Resolver as R
 import Model.Value
 
-getContext :: PropertiesObject obj => RefTable obj -> obj -> ObjectDefinition -> Name -> Context obj
+getContext :: PropertiesObject obj => RefTable obj -> obj -> DefinitionList -> Name -> Context obj
 getContext refTable i definitions name =
   Context
     { refTable = refTable,

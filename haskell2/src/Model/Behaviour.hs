@@ -10,8 +10,9 @@ resolver :: PropertiesObject obj => Behaviour obj -> Resolver obj
 resolver BEmpty = emptyResolver
 resolver (BResolver r) = r
 
-emptyDefinition :: ObjectDefinition
-emptyDefinition = ObjectDefinition {
+emptyDefinition :: DefinitionList
+emptyDefinition = DefinitionList {
+    lname = "",
     properties = [],
     related = []
 }

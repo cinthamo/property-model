@@ -2,10 +2,18 @@ module Parser.PGrammar where
 
 import Language.ANTLR4
 
-data PDefinition = PDefinition String [Rule]
+data PDefinitionList = PDefinitionList String [PDefinition]
   deriving (Eq, Ord, Show)
 
-data Rule = Rule String (Maybe PExpr) (Maybe PExpr)
+data PDefinition = PDefinition String [PRule]
+  deriving (Eq, Ord, Show)
+
+data PRule =
+    ValueRule String [IfRule] PExpr |
+    SimpleRule String (Maybe PExpr)
+  deriving (Eq, Ord, Show)
+
+data IfRule = IfRule PExpr PExpr
   deriving (Eq, Ord, Show)
 
 data PExpr = Number Int |
@@ -21,14 +29,18 @@ data PExpr = Number Int |
 
 [g4|
   grammar Test;
-  
-  definitions: property*;
+
+  definitions: list*;
+
+  list:
+    'list' NAME '{' property* '}' -> PDefinitionList;
 
   property:
     'definition' NAME '{' rule* '}' -> PDefinition;
 
   rule:
-    NAME exprEqual? exprIf? ';' -> Rule;
+    NAME '=' exprIfMulti* expr ';' -> ValueRule
+  | NAME exprIf? ';' -> SimpleRule;
 
   expr:
 	  NUMBER -> Number
@@ -43,8 +55,8 @@ data PExpr = Number Int |
   | '(' expr ')';
 
   exprComma: ',' expr;
-  exprEqual: '=' expr;
   exprIf: 'if' expr;
+  exprIfMulti: expr 'if' expr '|' -> IfRule;
 
   BOOL: 'true' | 'false' -> String;
   NULL: 'null' -> String;
