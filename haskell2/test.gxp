@@ -25,14 +25,18 @@ list Test {
     }
 }
 
-/*
 // case 1. external properties
-// external isInterface
-definition generateObject {
-    type = boolean
-    default = not isInterface
+list ExternalProperties {
+    external isInterface {
+        type = boolean;
+    }
+    definition generateObject {
+        type = boolean;
+        default = not isInterface;
+    }
 }
 
+/*
 // case 2. another object
 // related parent
 definition autoNumber {

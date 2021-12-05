@@ -21,6 +21,10 @@ convertDefinition (PDefinition n l) = Definition {
     readonly = convertRule l "readonly" false true false,
     valid = convertRule l "valid" true true false
 }
+convertDefinition (PExternal n l) = D.External {
+    name = n,
+    _type = convertType l
+}
 
 convertType :: [PRule] -> String
 convertType l = case find f l of
@@ -55,4 +59,5 @@ convertExpr (G.Value _) = RefValue
 convertExpr (Field o p) = Ref o p
 convertExpr (ThisField p) = Ref "this" p
 convertExpr (G.Call n e1 el) = D.Call n $ map convertExpr (e1:el)
+convertExpr (G.Not e) = D.Call "not" [convertExpr e]
 convertExpr (OpCall e1 n e2) = D.Call n [convertExpr e1, convertExpr e2]

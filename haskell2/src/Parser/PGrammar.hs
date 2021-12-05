@@ -5,7 +5,9 @@ import Language.ANTLR4
 data PDefinitionList = PDefinitionList String [PDefinition]
   deriving (Eq, Ord, Show)
 
-data PDefinition = PDefinition String [PRule]
+data PDefinition =
+    PDefinition String [PRule] |
+    PExternal String [PRule]
   deriving (Eq, Ord, Show)
 
 data PRule =
@@ -24,6 +26,7 @@ data PExpr = Number Int |
     Field String String |
     ThisField String |
     Call String PExpr [PExpr] |
+    Not PExpr |
     OpCall PExpr String PExpr
   deriving (Eq, Ord, Show)
 
@@ -36,7 +39,8 @@ data PExpr = Number Int |
     'list' NAME '{' property* '}' -> PDefinitionList;
 
   property:
-    'definition' NAME '{' rule* '}' -> PDefinition;
+    'definition' NAME '{' rule* '}' -> PDefinition
+  | 'external' NAME '{' rule* '}' -> PExternal;
 
   rule:
     NAME '=' exprIfMulti* expr ';' -> ValueRule
@@ -52,6 +56,7 @@ data PExpr = Number Int |
 	| NAME -> ThisField
   | NAME '(' expr exprComma* ')' -> Call
   | expr OP expr -> OpCall
+  | 'not' expr -> Not
   | '(' expr ')';
 
   exprComma: ',' expr;
@@ -61,7 +66,7 @@ data PExpr = Number Int |
   BOOL: 'true' | 'false' -> String;
   NULL: 'null' -> String;
   VALUE: 'value' -> String;
-  OP: [->=<+]+ | 'or' | 'and' | 'not' -> String;
+  OP: [->=<+]+ | 'or' | 'and' -> String;
   NAME: [a-zA-Z][a-zA-Z0-9_]* -> String;
   NUMBER: '-'?[0-9]+ -> Int;
   STRING: '"' (~[\r\n])* '"' -> String;
