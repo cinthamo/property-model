@@ -7,7 +7,8 @@ data PDefinitionList = PDefinitionList String [PDefinition]
 
 data PDefinition =
     PDefinition String [PRule] |
-    PExternal String [PRule]
+    PExternal String [PRule] |
+    PRelated String [String]
   deriving (Eq, Ord, Show)
 
 data PRule =
@@ -40,11 +41,14 @@ data PExpr = Number Int |
 
   property:
     'definition' NAME '{' rule* '}' -> PDefinition
-  | 'external' NAME '{' rule* '}' -> PExternal;
+  | 'external' NAME '{' rule* '}' -> PExternal
+  | 'related' NAME nameComma* ';' -> PRelated;
 
   rule:
     NAME '=' exprIfMulti* expr ';' -> ValueRule
   | NAME exprIf? ';' -> SimpleRule;
+
+  nameComma : ',' NAME;
 
   expr:
 	  NUMBER -> Number

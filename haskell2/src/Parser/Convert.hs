@@ -8,9 +8,16 @@ import Data.List
 convert :: PDefinitionList -> DefinitionList
 convert (PDefinitionList n l) = DefinitionList {
     lname = n,
-    properties = map convertDefinition l,
-    related = []
+    properties = map convertDefinition (filter (not . isRelated) l),
+    related = concatMap convertRelated (filter isRelated l)
 }
+
+isRelated :: PDefinition -> Bool
+isRelated (PRelated _ _) = True
+isRelated _ = False
+
+convertRelated :: PDefinition -> [String]
+convertRelated (PRelated s l) = s:l
 
 convertDefinition :: PDefinition -> Definition
 convertDefinition (PDefinition n l) = Definition {

@@ -36,12 +36,13 @@ list ExternalProperties {
     }
 }
 
-/*
 // case 2. another object
-// related parent
-definition autoNumber {
-    type = boolean
-    default = parent.autoNumber
+list AnotherObject {
+    related parent;
+    definition autoNumber {
+        type = boolean;
+        default = parent.autoNumber;
+    }
 }
 
 // case 3. calculation
