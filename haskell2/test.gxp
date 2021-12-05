@@ -48,31 +48,34 @@ list AnotherObject {
 // case 3. calculation
 // Procedure GetExposedName escrito en GX
 // parm(in: &DataType, out: &Value);
-definition dataType {
-    ...
-}
-definition name {
-    ...
-}
-definition isCollection {
-    type = boolean
-    default = false
-}
-definition exposedName {
-    type = string
-    default = GetExposedName(dataType) if isCollection
-    deafult = name
+list Calculation {
+    definition dataType {
+        type = string;
+    }
+    definition name {
+        type = string;
+    }
+    definition isCollection {
+        type = boolean;
+        default = false;
+    }
+    definition exposedName {
+        type = string;
+        default = GetExposedName(dataType) if isCollection
+                | name;
+    }
 }
 
 // case 4. object as function parameter
-// related model
 // procedure GetName
-definition image {
-    type = imageReference
-    default = emptyValue
+list ObjectAsFunctionParam {
+    related model;
+    definition image {
+        type = imageReference;
+        default = emptyValue;
+    }
+    definition imageName {
+        type = string;
+        default = GetName(image, model);
+    }
 }
-definition imageName {
-    type = string
-    default = GetName(image, model)
-}
-*/
