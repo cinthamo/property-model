@@ -33,13 +33,23 @@ convertDefinition (PExternal n l) = D.External {
     _type = convertType l
 }
 
-convertType :: [PRule] -> String
+convertType :: [PRule] -> ValueType
 convertType l = case find f l of
-        Just (ValueRule _ [] (ThisField t)) -> t
+        Just (ValueRule _ [] (ThisField t)) -> g t
         _ -> error "type not found"
     where
         f (ValueRule "type" _ _) = True
         f _ = False
+        g t = case (lookup t types) of
+                Just x -> x
+                Nothing -> TCustom t
+
+types :: [(String, ValueType)]
+types = [
+        ("string", TString),
+        ("number", TNumber),
+        ("boolean", TBool)
+    ]
 
 convertRule :: [PRule] -> String -> Expr -> Expr -> Expr -> Expr
 convertRule l n defaultAbsent defaultUsed defaultOtherwise =

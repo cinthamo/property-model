@@ -14,7 +14,7 @@ data DefinitionList = DefinitionList
 data Definition
   = Definition
       { name :: Name,
-        _type :: Name,
+        _type :: ValueType,
         _default :: Expr,
         apply :: Expr,
         readonly :: Expr,
@@ -22,7 +22,7 @@ data Definition
       }
   | External
       { name :: Name,
-        _type :: Name
+        _type :: ValueType
       }
   deriving (Eq, Ord, Show)
 

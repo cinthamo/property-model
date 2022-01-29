@@ -18,7 +18,7 @@ type Function obj = [Value obj] -> Value obj
 data RefValue obj
   = RefObj obj
   | RefRes (Resolver obj)
-  | RefFunc (Function obj) [Name]
+  | RefFunc (Function obj) [ValueType]
 
 type RefTable obj = Map Name (RefValue obj)
 

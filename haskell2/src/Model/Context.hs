@@ -59,14 +59,14 @@ getFunction refTable name =
     _ -> error $ "unknown function " ++ name
 
 -- get function from reference
-getFunctionTypes :: RefTable obj -> Name -> [Name]
+getFunctionTypes :: RefTable obj -> Name -> [ValueType]
 getFunctionTypes refTable name =
   case M.lookup name refTable of
     Just (RefFunc _ t) -> t
     _ -> error $ "unknown function " ++ name
 
 -- get type from definition using context
-getType :: PropertiesObject obj => Context obj -> Maybe Name
+getType :: PropertiesObject obj => Context obj -> Maybe ValueType
 getType context =
   case definition context of
     Just def -> Just (_type def)

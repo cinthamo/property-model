@@ -9,3 +9,10 @@ data Value obj = String String |
                  Object obj |
                  List [Value obj]
     deriving (Eq, Ord, Show)
+
+data ValueType = TString |
+                 TNumber |
+                 TBool |
+                 TUnknown |
+                 TCustom String
+    deriving (Eq, Ord, Show)
