@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ControlDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Name>PruebaTesis</Name>
+	<Description>Prueba Tesis</Description>
+	<Version>1.0.0</Version>
+	<Platforms>
+		<Platform>SmartDevices</Platform>
+	</Platforms>
+	<IncludeInControlInfo>false</IncludeInControlInfo>
+    <PropertiesDefinition>PropertiesDefinition.xml</PropertiesDefinition>
+	<ObjClass>OBJ</ObjClass>
+	<ResolverFactory>Cristian.TestUC.ResolverFactory</ResolverFactory>
+</ControlDefinition>

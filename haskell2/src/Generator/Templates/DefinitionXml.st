@@ -5,7 +5,7 @@
       <Name>General</Name>
       <Type>Main</Type>
       <Childs>
-$d : {p|$DefinitionXmlOneProp(p)$}$
+$d.properties : {p|$DefinitionXml_OneProp(p)$}$
       </Childs>
     </Group>
   </Object>

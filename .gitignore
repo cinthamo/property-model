@@ -8,3 +8,4 @@ haskell2/stack.yaml.lock
 haskell2/haskell2.cabal
 haskell2/.stack-work/**/*.*
 haskell2/dist-newstyle/cache/config
+haskell2/out/**/*.*

@@ -17,8 +17,7 @@ p = do
 f :: IO ()
 f = do
         x <- readT
-        xml <- gen x
-        putStrLn xml
+        gen x
 
 readT :: IO DefinitionList
 readT = do

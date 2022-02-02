@@ -4,8 +4,14 @@ import Model.Definition
 import Model.Value
 import Generator.Data as D
 
-convert :: DefinitionList -> [GDefinition]
-convert definitions = map convertOne $ filter isDefinition $ properties definitions
+convert :: DefinitionList -> GDefinitionList
+convert (DefinitionList _ props _) = GDefinitionList {
+        D.properties = convertProperties props,
+        D.defaultResolvers = convertDefaultResolvers props
+    }
+
+convertProperties :: [Definition] -> [GDefinition]
+convertProperties props = map convertOne $ filter isDefinition props
     where
         isDefinition (Definition _ _ _ _ _ _) = True
         isDefinition _ = False
@@ -52,3 +58,15 @@ convertReadonlyResolver e = Nothing
 
 convertValidResolver :: Expr -> Maybe String
 convertValidResolver e = Nothing
+
+convertDefaultResolvers :: [Definition] -> [GDefaultResolver]
+convertDefaultResolvers props = map convertDefaultResolversOne $ filter needResolver props
+    where
+        needResolver (Definition _ _ _default _ _ _) = convertDefault _default == Nothing
+        needResolver _ = False
+
+convertDefaultResolversOne :: Definition -> GDefaultResolver
+convertDefaultResolversOne (Definition name _ _ _ _ _) = GDefaultResolver {
+        D.propName = name,
+        D.className = name ++ "DefaultResolver"
+    }
