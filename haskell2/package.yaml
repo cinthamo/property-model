@@ -1,10 +1,10 @@
 name:                haskell2
 version:             0.1.0.0
-github:              "githubuser/haskell2"
+github:              "githubuser/cinthamo"
 license:             MIT
 author:              "Cristian Inthamoussu"
 maintainer:          "cinthamo@gmail.com"
-copyright:           "2021 Cristian Inthamoussu"
+copyright:           "2022 Cristian Inthamoussu"
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -23,6 +23,17 @@ dependencies:
 
 library:
   source-dirs: src
+
+executables:
+  f:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - haskell2
 
 default-extensions:
   - DeriveLift

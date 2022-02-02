@@ -5,6 +5,8 @@ import Parser.PGrammar
 import Parser.PParser
 import Parser.Convert
 import Text.Pretty.Simple (pPrint)
+import Data.List
+import Data.Maybe
 
 {- test -}
 import Func.Static
@@ -19,15 +21,17 @@ import Model.Value as V
 f :: IO ()
 f = do
         contents <- readFile "test.gxp"
-        let x = case glrParse isWS contents of
+        let parsed = case glrParse isWS contents of
                 ResultAccept ast -> ast2definitions ast
                 ResultSet x -> error $ "Multiple matches " ++ show x
                 ErrorNoAction e _ _ -> error $ show e
+        let ast = map convert parsed
+        let x = fromJust $ find (\x -> lname x == "Test") ast
         pPrint x
-        pPrint $ map convert x
-        test $ map convert x
+        test x
 
-test :: [DefinitionList] -> IO ()
+
+test :: DefinitionList -> IO ()
 test definitions = do
   print $ "typecheck " ++ show check
   print process1
@@ -36,8 +40,8 @@ test definitions = do
   print process4
   print process5
   where
-    obj = emptyWAsp $ head definitions
-    check = typeCheck basicRef $ head definitions -- typeChecker test
+    obj = emptyWAsp $ definitions
+    check = typeCheck basicRef $ definitions -- typeChecker test
     process1 = get basicRef obj "one" -- simple get
     process2 = get basicRef obj "two" -- default test
     process3 = static basicRef (set basicRef obj "one" (V.Number 1)) -- static, apply & readonly test
