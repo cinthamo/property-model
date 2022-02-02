@@ -1,6 +1,6 @@
 name:                haskell2
 version:             0.1.0.0
-github:              "githubuser/cinthamo"
+github:              "cinthamo/property-model"
 license:             MIT
 author:              "Cristian Inthamoussu"
 maintainer:          "cinthamo@gmail.com"
@@ -13,13 +13,14 @@ copyright:           "2022 Cristian Inthamoussu"
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/haskell2#readme>
+description:         Please see the README on GitHub at <https://github.com/cinthamo/property-model#readme>
 
 dependencies:
 - base >= 4.7 && < 5
 - antlr-haskell >= 0.1
 - containers >= 0.6.5.1
 - pretty-simple >= 4.0.0.0
+- HStringTemplate >= 0.8.8
 
 library:
   source-dirs: src
