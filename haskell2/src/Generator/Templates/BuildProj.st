@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\\Debug\\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,17 +25,17 @@
   <PropertyGroup Condition=" '\$(Configuration)|\$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\\Release\\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Artech.Common.Properties">
-      <HintPath>..\..\Artech.Common.Properties.dll</HintPath>
+      <HintPath>..\\..\\Artech.Common.Properties.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Genexus.Common">
-      <HintPath>..\..\Artech.Genexus.Common.dll</HintPath>
+      <HintPath>..\\..\\Artech.Genexus.Common.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,8 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\\AssemblyInfo.cs" />
     <Compile Include="ResolverFactory.cs" />
   </ItemGroup>
-  <Import Project="\$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="\$(MSBuildToolsPath)\\Microsoft.CSharp.targets" />
 </Project>

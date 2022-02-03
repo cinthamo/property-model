@@ -2,12 +2,12 @@
 	{
 		public bool GetDefaultValue(IPropertyBag properties, out object value)
 		{
-			value = 1;
+$p.code : {s|$Resolvers_Statement(s)$}$
 			return true;
 		}
 
 		public string[] GetDependencies()
 		{
-			return null;
+			return new string[] { $p.used:{n|"PruebaTesis_$n$"};separator=","$ };
 		}
 	}
