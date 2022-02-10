@@ -1,9 +1,9 @@
-	public class $p.className$ : IDefaultResolver
+    public class $p.className$ : IReadOnlyResolver
 	{
-		public bool GetDefaultValue(IPropertyBag properties, out object value)
-		{
+        public bool IsReadOnly(IPropertyBag properties)
+        {
 $p.code : {s|$Resolvers_Statement(s)$}$
-		}
+        }
 
 		public string[] GetDependencies()
 		{

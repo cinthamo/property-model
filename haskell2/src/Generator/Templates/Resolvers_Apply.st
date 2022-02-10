@@ -1,9 +1,9 @@
-	public class $p.className$ : IDefaultResolver
+	public class $p.className$ : IApplyResolver
 	{
-		public bool GetDefaultValue(IPropertyBag properties, out object value)
-		{
+        public bool IsApplicable(IPropertyBag properties)
+        {
 $p.code : {s|$Resolvers_Statement(s)$}$
-		}
+        }
 
 		public string[] GetDependencies()
 		{

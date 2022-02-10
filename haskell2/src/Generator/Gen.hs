@@ -1,6 +1,7 @@
 module Generator.Gen (gen) where
 
 import Control.Monad
+import Shelly
 import Text.StringTemplate
 import Text.StringTemplate.GenericStandard
 import Model.Definition
@@ -14,11 +15,6 @@ gen1 templates templateName definitions = render $ setAttribute "d" definitions 
 
 files :: [(String, String)]
 files = [
-    ("BuildBat", "Build.bat"),
-    ("BuildSln", "Cristian.TestUC.sln"),
-    ("BuildProj", "Cristian.TestUC.csproj"),
-    ("BuildInfo", "Properties/AssemblyInfo.cs"),
-    ("Control", "TestUC.control"),
     ("DefinitionXml", "PropertiesDefinition.xml"),
     ("Resolvers", "ResolverFactory.cs")
   ]
@@ -28,3 +24,4 @@ gen x = do
         templates <- directoryGroup "src/Generator/Templates" :: IO (STGroup String)
         let definitions = convert x
         forM_ files $ \(inFile,outFile) -> writeFile ("out/TestUC/" ++ outFile) $ gen1 templates inFile definitions
+        shelly $ cp_r "src/Generator/Static/." "out/TestUC"

@@ -6,7 +6,10 @@ import Data.Typeable
 data GDefinitionList
   = GDefinitionList
       { properties :: [GDefinition],
-        defaultResolvers :: [GDefaultResolver]
+        defaultResolvers :: [GResolver],
+        applyResolvers :: [GResolver],
+        readonlyResolvers :: [GResolver],
+        validResolvers :: [GResolver]
       }
   deriving (Show, Data, Typeable)
 
@@ -16,16 +19,12 @@ data GDefinition
         name :: String,
         aType :: String,
         customType :: Maybe String,
-        aDefault :: Maybe String,
-        defaultResolver :: Maybe String,
-        applyResolver :: Maybe String,
-        readonlyResolver :: Maybe String,
-        validResolver :: Maybe String
+        aDefault :: Maybe String
       }
   deriving (Show, Data, Typeable)
 
-data GDefaultResolver
-  = GDefaultResolver
+data GResolver
+  = GResolver
       {
         propName :: String,
         className :: String,
@@ -38,13 +37,15 @@ data GStatement
   = GStatement
       {
         assign :: Maybe GAssign,
-        aIf :: Maybe GIf
+        aIf :: Maybe GIf,
+        aReturn :: Maybe GExpr
       }
   deriving (Show, Data, Typeable)
 
 data GAssign
   = GAssign
       {
+        declare :: Bool,
         varName :: String,
         expr :: GExpr
       }
@@ -64,7 +65,8 @@ data GExpr
     constant :: Maybe String,
     getProp :: Maybe GGetProp,
     call :: Maybe GCall,
-    operator :: Maybe GOperator
+    operator :: Maybe GOperator,
+    cast :: Maybe GCast
   }
   deriving (Show, Data, Typeable)
 
@@ -87,5 +89,12 @@ data GOperator
     symbol :: String,
     left :: GExpr,
     right :: GExpr
+  }
+  deriving (Show, Data, Typeable)
+
+data GCast
+  = GCast {
+    cType :: String,
+    cExpr :: GExpr
   }
   deriving (Show, Data, Typeable)

@@ -6,6 +6,7 @@ namespace Cristian.TestUC
 	{
 		public IApplyResolver GetApplyResolver(string propName)
 		{
+$d.applyResolvers : {p|$Resolvers_Call(p)$}$
 			return null;
 		}
 
@@ -57,6 +58,7 @@ $d.defaultResolvers : {p|$Resolvers_Call(p)$}$
 
 		public IReadOnlyResolver GetReadOnlyResolver(string propName)
 		{
+$d.readonlyResolvers : {p|$Resolvers_Call(p)$}$
 			return null;
 		}
 
@@ -67,6 +69,7 @@ $d.defaultResolvers : {p|$Resolvers_Call(p)$}$
 
 		public IValidResolver GetValidResolver(string propName)
 		{
+$d.validResolvers : {p|$Resolvers_Call(p)$}$
 			return null;
 		}
 
@@ -82,4 +85,7 @@ $d.defaultResolvers : {p|$Resolvers_Call(p)$}$
 	}
 
 $d.defaultResolvers : {p|$Resolvers_Default(p)$}$
+$d.applyResolvers : {p|$Resolvers_Apply(p)$}$
+$d.readonlyResolvers : {p|$Resolvers_Readonly(p)$}$
+$d.validResolvers : {p|$Resolvers_Valid(p)$}$
 }
