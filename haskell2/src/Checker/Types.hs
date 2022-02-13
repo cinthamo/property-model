@@ -1,4 +1,4 @@
-module Model.Types where
+module Checker.Types where
 
 import Data.List
 import Model.Const
