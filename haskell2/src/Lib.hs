@@ -17,6 +17,7 @@ p = do
 f :: IO ()
 f = do
         x <- readT
+        check x
         gen x
 
 readT :: IO DefinitionList
