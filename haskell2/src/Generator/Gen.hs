@@ -22,6 +22,5 @@ files = [
 gen :: DefinitionList -> IO ()
 gen x = do
         templates <- directoryGroup "src/Generator/Templates" :: IO (STGroup String)
-        let definitions = convert x
-        forM_ files $ \(inFile,outFile) -> writeFile ("out/TestUC/" ++ outFile) $ gen1 templates inFile definitions
+ok        forM_ files $ \(inFile,outFile) -> writeFile ("out/TestUC/" ++ outFile) $ gen1 templates inFile definitions
         shelly $ cp_r "src/Generator/Static/." "out/TestUC"
