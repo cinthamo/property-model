@@ -42,7 +42,7 @@ convertType l = case find f l of
         f _ = False
         g t = case (lookup t types) of
                 Just x -> x
-                Nothing -> TCustom t
+                Nothing -> TExternal t
 
 types :: [(String, ValueType)]
 types = [

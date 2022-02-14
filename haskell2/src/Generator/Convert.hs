@@ -34,10 +34,10 @@ convertTypeGxp TString = "Text"
 convertTypeGxp TNumber = "Integer"
 convertTypeGxp TBool = "Boolean"
 convertTypeGxp TUnknown = error "Can't generate a property with unknown type"
-convertTypeGxp (TCustom s) = "Custom"
+convertTypeGxp (TExternal s) = "Custom"
 
 convertCustomType :: ValueType -> Maybe String
-convertCustomType (TCustom s) = Just s
+convertCustomType (TExternal s) = Just s
 convertCustomType _ = Nothing
 
 convertDefault :: Expr -> Maybe String
