@@ -7,6 +7,7 @@ import Generator.Gen
 import Test.Manual
 import Model.Definition
 import Parser.File
+import Checker.Check
 
 p :: IO ()
 p = do
@@ -17,6 +18,7 @@ p = do
 f :: IO ()
 f = do
         x <- readT
+        check x
         gen x
 
 readT :: IO DefinitionList
