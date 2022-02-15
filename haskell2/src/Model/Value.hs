@@ -13,6 +13,5 @@ data Value obj = String String |
 data ValueType = TString |
                  TNumber |
                  TBool |
-                 TUnknown | -- TODO: should not be needed
                  TExternal String
     deriving (Eq, Ord, Show)

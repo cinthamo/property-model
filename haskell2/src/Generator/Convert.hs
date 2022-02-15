@@ -33,7 +33,6 @@ convertTypeGxp :: ValueType -> String
 convertTypeGxp TString = "Text"
 convertTypeGxp TNumber = "Integer"
 convertTypeGxp TBool = "Boolean"
-convertTypeGxp TUnknown = error "Can't generate a property with unknown type"
 convertTypeGxp (TExternal s) = "Custom"
 
 convertCustomType :: ValueType -> Maybe String
