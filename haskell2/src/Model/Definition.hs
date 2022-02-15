@@ -5,8 +5,8 @@ import Model.Value
 
 data DefinitionList = DefinitionList
   { lname :: Name,
-    properties :: [Definition],
-    related :: [Name]
+    externalType :: Maybe Name, -- external type of this list
+    properties :: [Definition]
   }
   deriving (Eq, Ord, Show)
 
@@ -18,10 +18,6 @@ data Definition
         apply :: Expr,
         readonly :: Expr,
         valid :: Expr
-      }
-  | External
-      { name :: Name,
-        _type :: ValueType
       }
   deriving (Eq, Ord, Show)
 

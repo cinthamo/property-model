@@ -6,18 +6,11 @@ import Model.Value as V
 import Data.List
 
 convert :: PDefinitionList -> DefinitionList
-convert (PDefinitionList n l) = DefinitionList {
+convert (PDefinitionList n t l) = DefinitionList {
     lname = n,
-    properties = map convertDefinition (filter (not . isRelated) l),
-    related = concatMap convertRelated (filter isRelated l)
+    externalType = t,
+    properties = map convertDefinition l
 }
-
-isRelated :: PDefinition -> Bool
-isRelated (PRelated _ _) = True
-isRelated _ = False
-
-convertRelated :: PDefinition -> [String]
-convertRelated (PRelated s l) = s:l
 
 convertDefinition :: PDefinition -> Definition
 convertDefinition (PDefinition n l) = Definition {
@@ -27,10 +20,6 @@ convertDefinition (PDefinition n l) = Definition {
     apply = convertRule l "apply" true true false,
     readonly = convertRule l "readonly" false true false,
     valid = convertRule l "valid" true true false
-}
-convertDefinition (PExternal n l) = D.External {
-    name = n,
-    _type = convertType l
 }
 
 convertType :: [PRule] -> ValueType

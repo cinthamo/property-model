@@ -13,8 +13,8 @@ resolver (BResolver r) = r
 emptyDefinition :: DefinitionList
 emptyDefinition = DefinitionList {
     lname = "",
-    properties = [],
-    related = []
+    externalType = Nothing,
+    properties = []
 }
 
 emptyObj :: PropertiesObject obj => obj

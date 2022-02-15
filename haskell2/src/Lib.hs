@@ -9,20 +9,20 @@ import Model.Definition
 import Parser.File
 import Checker.Check
 
-p :: IO ()
-p = do
-        x <- readT
+p :: String -> IO ()
+p name = do
+        x <- readT name
         pPrint x
         --test x
 
-f :: IO ()
-f = do
-        x <- readT
+f :: String -> IO ()
+f name = do
+        x <- readT name
         check x
         gen x
 
-readT :: IO DefinitionList
-readT = do
+readT :: String -> IO DefinitionList
+readT name = do
         ast <- parseFile "test.gxp"
-        let x = fromJust $ find (\x -> lname x == "Test") ast
+        let x = fromJust $ find (\x -> lname x == name) ast
         return x

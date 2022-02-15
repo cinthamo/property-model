@@ -6,7 +6,7 @@ import Model.Value
 import Generator.Data as D
 
 convert :: DefinitionList -> GDefinitionList
-convert (DefinitionList _ props _) = GDefinitionList {
+convert (DefinitionList _ _ props) = GDefinitionList {
         D.properties = convertProperties props,
         D.defaultResolvers = convertDefaultResolvers props,
         D.applyResolvers = convertApplyResolvers props,

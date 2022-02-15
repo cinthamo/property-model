@@ -7,5 +7,6 @@ main :: IO ()
 main = do
     args <- getArgs
     case args of
-        ["1"] -> p -- pretty print example
-        _ -> f -- main function
+        ["p"] -> p "Test" -- pretty print example
+        [s] -> f s -- main function
+        [] -> f "Test" -- default

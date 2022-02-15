@@ -26,19 +26,19 @@ list Test {
 }
 
 // case 1. external properties
-list ExternalProperties {
-    external isInterface {
-        type = boolean;
-    }
+list ExternalProperties : WithIsInterface {
     definition generateObject {
         type = boolean;
         default = not isInterface;
     }
 }
+//external WithIsInterface {
+//    isInterface: boolean
+//}
+
 
 // case 2. another object
-list AnotherObject {
-    related parent;
+list AnotherObject : WithParent {
     definition autoNumber {
         type = boolean;
         default = parent.autoNumber;
@@ -68,8 +68,7 @@ list Calculation {
 
 // case 4. object as function parameter
 // procedure GetName
-list ObjectAsFunctionParam {
-    related model;
+list ObjectAsFunctionParam : WithModel {
     definition image {
         type = imageReference;
         default = emptyValue;

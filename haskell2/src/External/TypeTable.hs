@@ -1,11 +1,22 @@
 module External.TypeTable where
 
-import Checker.TypeTable
 import Model.Value
+import Checker.TypeContext
 
-typeTable :: TypeTable
-typeTable = TypeTable {
-        functions = [("==", [TNumber, TNumber, TBool]),
-                     ("+", [TNumber, TNumber, TNumber]),
-                     (">", [TNumber, TNumber, TBool])]
-    }
+functions :: TFunctions
+functions = [
+        ("==", [TNumber, TNumber, TBool]),
+        ("+", [TNumber, TNumber, TNumber]),
+        (">", [TNumber, TNumber, TBool]),
+        ("not", [TBool, TBool])
+    ]
+
+externals :: TExternals
+externals = [
+        (TExternal "WithIsInterface", TypeObject
+            [
+                ("isInterface", TBool)
+            ] [
+
+            ])
+    ]

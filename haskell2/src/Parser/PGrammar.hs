@@ -2,13 +2,11 @@ module Parser.PGrammar where
 
 import Language.ANTLR4
 
-data PDefinitionList = PDefinitionList String [PDefinition]
+data PDefinitionList = PDefinitionList String (Maybe String) [PDefinition]
   deriving (Eq, Ord, Show)
 
 data PDefinition =
-    PDefinition String [PRule] |
-    PExternal String [PRule] |
-    PRelated String [String]
+    PDefinition String [PRule]
   deriving (Eq, Ord, Show)
 
 data PRule =
@@ -38,12 +36,12 @@ data PExpr = Number Int |
   definitions: list*;
 
   list:
-    'list' NAME '{' property* '}' -> PDefinitionList;
+    'list' NAME typeIf? '{' property* '}' -> PDefinitionList;
+
+  typeIf: ':' NAME;
 
   property:
-    'definition' NAME '{' rule* '}' -> PDefinition
-  | 'external' NAME '{' rule* '}' -> PExternal
-  | 'related' NAME nameComma* ';' -> PRelated;
+    'definition' NAME '{' rule* '}' -> PDefinition;
 
   rule:
     NAME '=' exprIfMulti* expr ';' -> ValueRule
