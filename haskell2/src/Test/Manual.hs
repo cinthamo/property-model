@@ -1,6 +1,5 @@
 module Test.Manual (test) where
 
-import Func.Static
 import Checker.Types
 import Model.Definition
 import Model.Value as V
@@ -9,6 +8,7 @@ import External.TypeTable
 import Runner.PropertiesMap
 import Runner.PropertiesObject
 import Runner.Resolvers.AspectResolver
+import Test.Static
 
 test :: DefinitionList -> IO ()
 test definitions = do

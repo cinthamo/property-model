@@ -1,4 +1,4 @@
-module Func.Static where
+module Test.Static where
 
 import Runner.PropertiesObject as PO
 import Runner.Behaviour
