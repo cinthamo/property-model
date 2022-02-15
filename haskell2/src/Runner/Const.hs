@@ -1,6 +1,6 @@
-module Model.Const where
+module Runner.Const where
 
-type Name = String
+import Model.Value
 
 cINSTANCE :: Name
 cINSTANCE = "instance"

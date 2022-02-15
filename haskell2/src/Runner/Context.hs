@@ -1,15 +1,15 @@
-module Model.Context where
+module Runner.Context where
 
 import Data.List
 import Data.Map as M
 import Debug.Trace
-import Model.Behaviour
-import Model.Const
 import Model.Definition as D
-import Model.PropertiesObject as PO
-import Model.Resolvers.EmptyResolver
-import Model.Resolvers.Resolver as R
 import Model.Value
+import Runner.Behaviour
+import Runner.Const
+import Runner.PropertiesObject as PO
+import Runner.Resolvers.EmptyResolver
+import Runner.Resolvers.Resolver as R
 
 getContext :: PropertiesObject obj => RefTable obj -> obj -> DefinitionList -> Name -> Context obj
 getContext refTable i definitions name =

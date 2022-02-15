@@ -1,10 +1,10 @@
-module Model.Resolvers.ChainResolver where
+module Runner.Resolvers.ChainResolver where
 
-import Model.PropertiesObject
-import Model.Const
-import Model.Context
-import Model.Resolvers.Resolver
 import Data.List
+import Runner.Const
+import Runner.Context
+import Runner.PropertiesObject
+import Runner.Resolvers.Resolver
 
 chainResolver :: PropertiesObject obj => [Resolver obj] -> Resolver obj
 chainResolver resolvers = Resolver {

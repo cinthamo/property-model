@@ -1,13 +1,13 @@
 module Test.Manual (test) where
 
 import Func.Static
-import External.BasicTable
-import Model.PropertiesMap
-import Model.PropertiesObject
-import Model.Resolvers.AspectResolver
-import Model.Types
+import Checker.Types
 import Model.Definition
 import Model.Value as V
+import External.BasicTable
+import Runner.PropertiesMap
+import Runner.PropertiesObject
+import Runner.Resolvers.AspectResolver
 
 test :: DefinitionList -> IO ()
 test definitions = do

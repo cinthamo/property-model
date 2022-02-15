@@ -1,13 +1,13 @@
-module Model.Resolvers.DefaultResolver where
+module Runner.Resolvers.DefaultResolver where
 
-import Model.PropertiesObject
-import Model.Const
-import Model.Context
+import Data.Map as M
 import Model.Definition as D
 import Model.Value as V
-import Model.Resolvers.Resolver
-import Model.Resolvers.Eval
-import Data.Map as M
+import Runner.Const
+import Runner.Context
+import Runner.PropertiesObject
+import Runner.Resolvers.Resolver
+import Runner.Resolvers.Eval
 
 defaultResolver :: PropertiesObject obj => Resolver obj
 defaultResolver = Resolver {

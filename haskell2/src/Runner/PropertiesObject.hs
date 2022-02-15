@@ -1,10 +1,10 @@
-module Model.PropertiesObject where
+module Runner.PropertiesObject where
 
-import Model.Const
-import Model.Value
-import Model.Definition
-import Model.Resolvers.Resolver
 import Data.Map
+import Model.Definition
+import Model.Value
+import Runner.Const
+import Runner.Resolvers.Resolver
 
 data Behaviour obj = BEmpty | BResolver (Resolver obj)
 

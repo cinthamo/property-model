@@ -1,7 +1,7 @@
 module External.Functions where
 
 import Model.Value
-import Model.Resolvers.Resolver
+import Runner.Resolvers.Resolver
 
 equal :: Function obj
 equal [String x, String y] = Bool (x == y)

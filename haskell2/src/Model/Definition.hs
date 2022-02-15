@@ -1,7 +1,6 @@
 module Model.Definition where
 
 import Data.Map
-import Model.Const
 import Model.Value
 
 data DefinitionList = DefinitionList

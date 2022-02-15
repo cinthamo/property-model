@@ -1,8 +1,8 @@
 module Func.Static where
 
-import Model.PropertiesObject as PO
-import Model.Behaviour
-import Model.Resolvers.Resolver
+import Runner.PropertiesObject as PO
+import Runner.Behaviour
+import Runner.Resolvers.Resolver
 
 static :: PropertiesObject obj => RefTable obj -> obj -> obj
 static refTable objIn = foldr f emptyObj (PO.all refTable objIn)

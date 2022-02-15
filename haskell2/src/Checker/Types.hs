@@ -1,12 +1,12 @@
 module Checker.Types where
 
 import Data.List
-import Model.Const
-import Model.Context (getFunctionTypes)
-import Model.Definition as D
-import Model.PropertiesObject
-import Model.Resolvers.Resolver
 import Model.Value
+import Model.Definition as D
+import Runner.Const
+import Runner.Context (getFunctionTypes)
+import Runner.PropertiesObject
+import Runner.Resolvers.Resolver
 
 typeCheck :: PropertiesObject obj => RefTable obj -> DefinitionList -> Bool
 typeCheck refTable definition = Prelude.all f (properties definition)

@@ -1,10 +1,10 @@
-module Model.Resolvers.ValidResolver where
+module Runner.Resolvers.ValidResolver where
 
-import Model.PropertiesObject
-import Model.Context
 import Model.Value
-import Model.Resolvers.Resolver
-import Model.Resolvers.Eval
+import Runner.Context
+import Runner.PropertiesObject
+import Runner.Resolvers.Resolver
+import Runner.Resolvers.Eval
 
 validResolver :: PropertiesObject obj => Resolver obj
 validResolver = Resolver {

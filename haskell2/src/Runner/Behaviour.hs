@@ -1,9 +1,9 @@
-module Model.Behaviour where
+module Runner.Behaviour where
 
 import Model.Definition
-import Model.PropertiesObject
-import Model.Resolvers.Resolver
-import Model.Resolvers.EmptyResolver
+import Runner.PropertiesObject
+import Runner.Resolvers.Resolver
+import Runner.Resolvers.EmptyResolver
 import Debug.Trace
 
 resolver :: PropertiesObject obj => Behaviour obj -> Resolver obj

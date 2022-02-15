@@ -1,10 +1,10 @@
-module Model.Resolvers.ReadonlyResolver where
+module Runner.Resolvers.ReadonlyResolver where
 
-import Model.PropertiesObject
-import Model.Context
 import Model.Value
-import Model.Resolvers.Resolver
-import Model.Resolvers.Eval
+import Runner.Context
+import Runner.PropertiesObject
+import Runner.Resolvers.Resolver
+import Runner.Resolvers.Eval
 
 readonlyResolver :: PropertiesObject obj => Resolver obj
 readonlyResolver = Resolver {

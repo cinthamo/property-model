@@ -2,9 +2,9 @@ module External.BasicTable where
 
 import Data.Map as M
 import External.Functions
-import Model.PropertiesMap
-import Model.Resolvers.Resolver
 import Model.Value
+import Runner.PropertiesMap
+import Runner.Resolvers.Resolver
 
 basicRef :: RefTable PropertiesMap
 basicRef =

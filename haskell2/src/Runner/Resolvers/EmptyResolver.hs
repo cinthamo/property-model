@@ -1,7 +1,7 @@
-module Model.Resolvers.EmptyResolver where
+module Runner.Resolvers.EmptyResolver where
 
-import Model.PropertiesObject
-import Model.Resolvers.Resolver
+import Runner.PropertiesObject
+import Runner.Resolvers.Resolver
 
 emptyResolver :: PropertiesObject obj => Resolver obj
 emptyResolver = Resolver {

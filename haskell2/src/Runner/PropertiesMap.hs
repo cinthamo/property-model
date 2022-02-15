@@ -1,16 +1,16 @@
-module Model.PropertiesMap where
+module Runner.PropertiesMap where
 
 import Data.Map (Map)
 import qualified Data.Map as Map
 import Data.List
-import Model.Const
-import Model.PropertiesObject
-import Model.Behaviour
-import Model.Context
+import Debug.Trace
 import Model.Definition as D
 import Model.Value
-import Model.Resolvers.Resolver
-import Debug.Trace
+import Runner.Const
+import Runner.PropertiesObject
+import Runner.Behaviour
+import Runner.Context
+import Runner.Resolvers.Resolver
 
 data PropertiesMap = PM (Behaviour PropertiesMap) DefinitionList (Map Name (Value PropertiesMap))
 

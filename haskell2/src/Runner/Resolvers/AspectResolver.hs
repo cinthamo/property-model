@@ -1,17 +1,17 @@
-module Model.Resolvers.AspectResolver where
+module Runner.Resolvers.AspectResolver where
 
-import Model.PropertiesObject
-import Model.Context
-import Model.Const
+import Debug.Trace
 import Model.Definition
 import Model.Value
-import Model.Resolvers.Resolver
-import Model.Resolvers.ChainResolver
-import Model.Resolvers.DefaultResolver
-import Model.Resolvers.ApplyResolver
-import Model.Resolvers.ReadonlyResolver
-import Model.Resolvers.ValidResolver
-import Debug.Trace
+import Runner.PropertiesObject
+import Runner.Context
+import Runner.Const
+import Runner.Resolvers.Resolver
+import Runner.Resolvers.ChainResolver
+import Runner.Resolvers.DefaultResolver
+import Runner.Resolvers.ApplyResolver
+import Runner.Resolvers.ReadonlyResolver
+import Runner.Resolvers.ValidResolver
 
 emptyWAsp :: PropertiesObject obj => DefinitionList -> obj
 emptyWAsp = empty (BResolver aspectResolver)

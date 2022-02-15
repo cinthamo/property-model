@@ -1,7 +1,6 @@
-module Model.Resolvers.Resolver where
+module Runner.Resolvers.Resolver where
 
 import Data.Map
-import Model.Const
 import Model.Definition
 import Model.Value
 

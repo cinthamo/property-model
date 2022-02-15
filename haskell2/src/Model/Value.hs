@@ -1,6 +1,6 @@
 module Model.Value where
 
-import Model.Const
+type Name = String
 
 data Value obj = String String |
                  Number Int |

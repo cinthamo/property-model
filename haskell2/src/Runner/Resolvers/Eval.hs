@@ -1,10 +1,10 @@
-module Model.Resolvers.Eval where
+module Runner.Resolvers.Eval where
 
-import Model.Context
 import Model.Definition as D
-import Model.PropertiesObject
-import Model.Resolvers.Resolver
 import Model.Value as V
+import Runner.Context
+import Runner.PropertiesObject
+import Runner.Resolvers.Resolver
 
 evalExpr :: PropertiesObject obj => Context obj -> Expr -> Value obj
 evalExpr context expr = case expr of
