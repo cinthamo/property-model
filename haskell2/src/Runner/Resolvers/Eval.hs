@@ -9,15 +9,15 @@ import Runner.Resolvers.Resolver
 evalExpr :: PropertiesObject obj => Context obj -> Expr -> Value obj
 evalExpr context expr = case expr of
   Value v -> convertValue v
-  Ref _ name ->
+  PropRef _ name ->
     case get (refTable context) (getInstance context) name of
       Just v -> v
       Nothing -> error "Reference not found"
-  RefValue ->
+  ValueRef ->
     case value context of
       Just v -> v
       Nothing -> error "Reference not found"
-  ObjRef name ->
+  NameRef name ->
     case getContextObj context name of
       Just o -> Object o
       Nothing -> error "Reference not found"

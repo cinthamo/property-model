@@ -30,9 +30,9 @@ newtype ExprValue = V (Value (Map Name (Value ExprValue)))
 
 data Expr
   = Value ExprValue
-  | Ref Name Name -- object.property
-  | RefValue -- setting value
-  | ObjRef Name -- object
+  | ValueRef -- setting value
+  | NameRef Name -- object
+  | PropRef Expr Name -- object.property
   | Case [(Expr, Expr)] (Maybe Expr) -- conditions otherwise
   | Call Name [Expr] -- f :: [Value] -> Value,
   -- methodName object++parameters, External Object Method Call

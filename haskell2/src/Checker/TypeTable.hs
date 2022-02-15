@@ -12,7 +12,7 @@ data TypeTable
 getForObj :: TypeTable -> Name -> ValueType
 getForObj tt n = TNumber
 
-getForProp :: TypeTable -> Name -> Name -> ValueType
+getForProp :: TypeTable -> ValueType -> Name -> ValueType
 getForProp tt obj prop = TNumber
 
 getFuncParam :: TypeTable -> Name -> [ValueType]

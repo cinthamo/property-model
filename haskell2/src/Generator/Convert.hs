@@ -92,7 +92,7 @@ convertCode end (Case ((condition,result):more) otherwise) = [
 convertCode end e = [end (convertExpr e)]
 
 usedProperties :: Expr -> [String]
-usedProperties (Ref _ prop) = [prop]
+usedProperties (PropRef expr prop) = (usedProperties expr) ++ [prop]
 usedProperties (Case conditions otherwise) = (concat $ map (usedProperties . fst) conditions) ++ (concat $ map (usedProperties . snd) conditions) ++ f otherwise
     where
         f Nothing = []
@@ -102,8 +102,8 @@ usedProperties _ = []
 
 convertExpr :: Expr -> GExpr
 convertExpr (Value (V v)) = exprConstant $ convertValue v
-convertExpr (Ref "this" prop) = exprGetProp $ GGetProp (convertTypeDotNet TNumber) prop
-convertExpr RefValue = exprConstant "typedValue"
+convertExpr (NameRef prop) = exprGetProp $ GGetProp (convertTypeDotNet TNumber) prop
+convertExpr ValueRef = exprConstant "typedValue"
 convertExpr (Call name lexpr) =
     case (elem name operators) of
         False -> exprCall $ GCall name (map convertExpr lexpr)

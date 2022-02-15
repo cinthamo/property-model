@@ -24,11 +24,12 @@ data PExpr = Number Int |
     String String |
     Null String |
     Value String |
-    Field String String |
-    ThisField String |
-    Call String PExpr [PExpr] |
-    Not PExpr |
-    OpCall PExpr String PExpr
+    Name String |
+    Field PExpr String |
+    MethCall PExpr String PExpr [PExpr] |
+    FuncCall String PExpr [PExpr] |
+    OpCall PExpr String PExpr |
+    Not PExpr
   deriving (Eq, Ord, Show)
 
 [g4|
@@ -56,9 +57,10 @@ data PExpr = Number Int |
 	| STRING -> String
 	| NULL -> Null
   | VALUE -> Value
-	| NAME '.' NAME -> Field
-	| NAME -> ThisField
-  | NAME '(' expr exprComma* ')' -> Call
+	| NAME -> Name
+	| expr '.' NAME -> Field
+  | NAME '(' expr exprComma* ')' -> FuncCall
+  | expr '.' NAME '(' expr exprComma* ')' -> MethCall
   | expr OP expr -> OpCall
   | 'not' expr -> Not
   | '(' expr ')';

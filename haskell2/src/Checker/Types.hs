@@ -26,10 +26,10 @@ getType _ _ (Value (V (String _))) _ _ = TString
 getType _ _ (Value (V (Number _))) _ _ = TNumber
 getType _ _ (Value (V (Bool _))) _ _ = TBool
 getType _ _ (Value (V _)) _ _ = TString
-getType pd _ (Ref "this" prop) _ _ = maybe TString _type (find f pd) where f d = D.name d == prop
-getType _ tt (Ref obj prop) _ _ = getForProp tt obj prop
-getType _ _ RefValue t _ = t
-getType _ tt (ObjRef name) _ _ = getForObj tt name
+getType pd _ (PropRef (NameRef "this") prop) _ _ = maybe TString _type (find f pd) where f d = D.name d == prop
+getType pd tt (PropRef expr prop) t n = getForProp tt (getType pd tt expr t n) prop
+getType _ _ ValueRef t _ = t
+getType _ tt (NameRef name) _ _ = getForObj tt name
 getType pd r (Case conditions _otherwise) t n =
   if Prelude.all f conditions && g _otherwise then t else error "?"
   where

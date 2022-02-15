@@ -35,7 +35,7 @@ convertDefinition (PExternal n l) = D.External {
 
 convertType :: [PRule] -> ValueType
 convertType l = case find f l of
-        Just (ValueRule _ [] (ThisField t)) -> g t
+        Just (ValueRule _ [] (Name t)) -> g t
         _ -> error "type not found"
     where
         f (ValueRule "type" _ _) = True
@@ -72,9 +72,10 @@ convertExpr (G.Bool "false") = false
 convertExpr (G.Bool "true") = true
 convertExpr (G.String s) = str $ tail $ init s
 convertExpr (G.Null _) = D.null
-convertExpr (G.Value _) = RefValue
-convertExpr (Field o p) = Ref o p
-convertExpr (ThisField p) = Ref "this" p
-convertExpr (G.Call n e1 el) = D.Call n $ map convertExpr (e1:el)
+convertExpr (G.Value _) = ValueRef
+convertExpr (G.Field e p) = PropRef (convertExpr e) p
+convertExpr (G.Name n) = NameRef n
+convertExpr (G.FuncCall n e1 el) = D.Call n $ map convertExpr (e1:el)
+convertExpr (G.MethCall et n e1 el) = D.Call n $ map convertExpr (et:(e1:el))
+convertExpr (G.OpCall e1 n e2) = D.Call n [convertExpr e1, convertExpr e2]
 convertExpr (G.Not e) = D.Call "not" [convertExpr e]
-convertExpr (OpCall e1 n e2) = D.Call n [convertExpr e1, convertExpr e2]
