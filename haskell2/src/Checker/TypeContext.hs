@@ -56,5 +56,5 @@ newTypeContext definitionList functions externals enums =
                 tfunctions = tfunctions eto
             }
         convertNameEnum (name,_) = (name, TEnum name)
-        convertListEnum (name,values) = (TEnum name, TypeObject (map (\v -> (v, TEnumValue name)) values) [])
+        convertListEnum (name,values) = (TEnum name, TypeObject (map (\v -> (v, TExternal name)) values) [])
         convertDefinition definitionList = (TInternal $ lname definitionList, dto)

@@ -1,4 +1,4 @@
-module Lib (p,f) where
+module Lib where
 
 import Text.Pretty.Simple (pPrint)
 import Data.List
@@ -10,17 +10,27 @@ import Model.Definition
 import Parser.File
 import Checker.Check
 
-p :: String -> IO ()
-p name = do
+printOne :: String -> IO ()
+printOne name = do
         x <- readT name
         pPrint x
         --test x
 
-f :: String -> IO ()
-f name = do
+checkAll :: IO ()
+checkAll = do
+        ast <- readL
+        pPrint $ map (\d -> (lname d, check d)) ast
+
+genOne :: String -> IO ()
+genOne name = do
         x <- readT name
-        check x
+        print $ check x
         gen x
+
+readL :: IO [DefinitionList]
+readL = do
+        ast <- parseFile "test.gxp"
+        return ast
 
 readT :: String -> IO DefinitionList
 readT name = do

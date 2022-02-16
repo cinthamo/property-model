@@ -38,7 +38,12 @@ getType tc (Call name parameters) _ n =
       list = zip parameters types
       ok1 =
         (length types == length parameters + 1) || error [i|"Incorrect parameter lenght in #{n}, calling #{name} with #{length parameters} parameters, declared type #{length types} parameters"|]
-      ok2 = Prelude.all f list
+      ok2 = Prelude.all f $ processGeneric list
         where
           f (e, t) = validExpr tc e t n
+          processGeneric [] = []
+          processGeneric ((e, TGeneric m):l) = let t = getType tc e (TGeneric 0) n in (e, t):(processGeneric (map (replaceGeneric m t) l))
+          processGeneric ((e, t): l) = (e, t):(processGeneric l)
+          replaceGeneric x t (e, TGeneric z) = if (x == z) then (e, t) else (e, TGeneric z)                                            
+          replaceGeneric _ _ (e, t) = (e, t)
    in if ok1 && ok2 then last types else error "?"

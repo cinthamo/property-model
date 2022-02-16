@@ -6,7 +6,7 @@ import Checker.TypeContext as TC
 
 functions :: TFunctions
 functions = [
-        ("==", [TNumber, TNumber, TBool]),
+        ("==", [TGeneric 1, TGeneric 1, TBool]),
         ("+", [TNumber, TNumber, TNumber]),
         (">", [TNumber, TNumber, TBool]),
         ("not", [TBool, TBool]),
@@ -37,7 +37,9 @@ externals = [
     ]
 
 enums :: TEnums
-enums = []
+enums = [
+        ("Country", ["Uruguay"])
+    ]
 
 newTypeContext :: DefinitionList -> TypeContext
 newTypeContext definitions = TC.newTypeContext definitions functions externals enums

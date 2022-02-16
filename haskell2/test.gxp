@@ -80,3 +80,15 @@ list ObjectAsFunctionParam : WithModel {
         default = GetName(image, model);
     }
 }
+
+// case 5. enum
+list Enum {
+    definition location {
+        type = Country;
+        default = Country.Uruguay;
+    }
+    definition latin {
+        type = boolean;
+        default = (location) == (Country.Uruguay);
+    }
+}

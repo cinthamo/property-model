@@ -15,6 +15,6 @@ data ValueType = TString |
                  TBool |
                  TInternal String |
                  TExternal String |
-                 TEnum String |
-                 TEnumValue String
+                 TGeneric Int |
+                 TEnum String
     deriving (Eq, Ord, Show)

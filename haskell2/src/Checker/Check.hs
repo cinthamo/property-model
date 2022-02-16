@@ -4,6 +4,6 @@ import Model.Definition
 import External.TypeTable
 import Checker.Types
 
-check :: DefinitionList -> IO ()
+check :: DefinitionList -> Bool
 check definitions =
-    print $ typeCheck (newTypeContext definitions) definitions
+    typeCheck (newTypeContext definitions) definitions
