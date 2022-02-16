@@ -3,6 +3,7 @@ module Lib (p,f) where
 import Text.Pretty.Simple (pPrint)
 import Data.List
 import Data.Maybe
+import Data.String.Interpolate ( i )
 import Generator.Gen
 import Test.Manual
 import Model.Definition
@@ -24,5 +25,7 @@ f name = do
 readT :: String -> IO DefinitionList
 readT name = do
         ast <- parseFile "test.gxp"
-        let x = fromJust $ find (\x -> lname x == name) ast
+        let x = case (find (\x -> lname x == name) ast) of
+                        Just y -> y
+                        _ -> error [i|"Definitions for #{name} not found"|]
         return x

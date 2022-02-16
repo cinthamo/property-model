@@ -13,5 +13,8 @@ data Value obj = String String |
 data ValueType = TString |
                  TNumber |
                  TBool |
-                 TExternal String
+                 TInternal String |
+                 TExternal String |
+                 TEnum String |
+                 TEnumValue String
     deriving (Eq, Ord, Show)

@@ -1,7 +1,9 @@
 $if(e.constant)$
     $e.constant$
-$elseif(e.getProp)$
-    properties.GetPropertyValue<$e.getProp.pType$>("PruebaTesis_$e.getProp.pName$")
+$elseif(e.getPropInt)$
+    properties.GetPropertyValue<$e.getPropInt.pType$>("PruebaTesis_$e.getPropInt.pName$")
+$elseif(e.getPropExt)$
+    $e.getPropExt.target:{e|$Resolvers_Expr(e)$}$.$e.getPropExt.qName$
 $elseif(e.call)$
     $e.call.fname$($e.call.param:{e|$Resolvers_Expr(e)$};separator=","$)
 $elseif(e.operator)$

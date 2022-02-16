@@ -15,10 +15,7 @@ convert (DefinitionList _ _ props) = GDefinitionList {
     }
 
 convertProperties :: [Definition] -> [GDefinition]
-convertProperties props = map convertOne $ filter isDefinition props
-    where
-        isDefinition (Definition _ _ _ _ _ _) = True
-        isDefinition _ = False
+convertProperties props = map convertOne props
 
 convertOne :: Definition -> GDefinition
 convertOne (Definition name _type _default apply readonly valid) = GDefinition {
@@ -50,28 +47,24 @@ convertDefaultResolvers :: [Definition] -> [GResolver]
 convertDefaultResolvers props = map convertDefaultResolverOne $ filter needResolver props
     where
         needResolver (Definition _ _ _default _ _ _) = convertDefault _default == Nothing
-        needResolver _ = False
         convertDefaultResolverOne (Definition name _ _default _ _ _) = convertResolverOne name _default "Default" [] [stReturn (convertExpr true)] (stAssign False "value")
 
 convertApplyResolvers :: [Definition] -> [GResolver]
 convertApplyResolvers props = map convertApplyResolverOne $ filter needResolver props
     where
         needResolver (Definition _ _ _ apply _ _) = apply /= true
-        needResolver _ = False
         convertApplyResolverOne (Definition name _ _ apply _ _) = convertResolverOne name apply "Apply" [] [] stReturn
 
 convertReadonlyResolvers :: [Definition] -> [GResolver]
 convertReadonlyResolvers props = map convertReadonlyResolverOne $ filter needResolver props
     where
         needResolver (Definition _ _ _ _ readonly _) = readonly /= false
-        needResolver _ = False
         convertReadonlyResolverOne (Definition name _ _ _ readonly _) = convertResolverOne name readonly "Readonly" [] [] stReturn
 
 convertValidResolvers :: [Definition] -> [GResolver]
 convertValidResolvers props = map convertValidResolverOne $ filter needResolver props
     where
         needResolver (Definition _ _ _ _ _ valid) = valid /= true
-        needResolver _ = False
         convertValidResolverOne (Definition name _type _ _ _ valid) = convertResolverOne name valid "Valid" [stAssign True "typedValue" (exprCast (convertTypeDotNet _type) (exprConstant "value"))] [] stReturn
 
 convertResolverOne :: String -> Expr -> String -> [GStatement] -> [GStatement] -> (GExpr -> GStatement) -> GResolver
@@ -102,12 +95,13 @@ usedProperties _ = []
 
 convertExpr :: Expr -> GExpr
 convertExpr (Value (V v)) = exprConstant $ convertValue v
-convertExpr (NameRef prop) = exprGetProp $ GGetProp (convertTypeDotNet TNumber) prop
+convertExpr (NameRef prop) = exprGetProp (convertTypeDotNet TNumber) prop
 convertExpr ValueRef = exprConstant "typedValue"
+convertExpr (PropRef expr name) = exprPropRef (convertExpr expr) name
 convertExpr (Call name lexpr) =
     case (elem name operators) of
-        False -> exprCall $ GCall name (map convertExpr lexpr)
-        True -> exprOperator $ GOperator name (convertExpr $ head lexpr) (convertExpr $ head $ tail lexpr)
+        False -> exprCall name (map convertExpr lexpr)
+        True -> exprOperator name (convertExpr $ head lexpr) (convertExpr $ head $ tail lexpr)
 convertExpr e = error $ "Not yet supported expression " ++ (show e)
 
 convertValue :: Value obj -> String
@@ -161,43 +155,58 @@ stReturn expr = GStatement {
 exprConstant :: String -> GExpr
 exprConstant s = GExpr {
         constant = Just s,
-        getProp = Nothing,
+        getPropInt = Nothing,
+        getPropExt = Nothing,
         call = Nothing,
         operator = Nothing,
         cast = Nothing
     }
 
-exprGetProp :: GGetProp -> GExpr
-exprGetProp gp = GExpr {
+exprGetProp :: String -> String -> GExpr
+exprGetProp pType pName = GExpr {
         constant = Nothing,
-        getProp = Just gp,
+        getPropInt = Just $ GGetPropInt pType pName,
+        getPropExt = Nothing,
         call = Nothing,
         operator = Nothing,
         cast = Nothing
     }
 
-exprCall :: GCall -> GExpr
-exprCall c = GExpr {
+exprPropRef :: GExpr -> Name -> GExpr
+exprPropRef target qName = GExpr {
         constant = Nothing,
-        getProp = Nothing,
-        call = Just c,
+        getPropInt = Nothing,
+        getPropExt = Just $ GGetPropExt target qName,
+        call = Nothing,
         operator = Nothing,
         cast = Nothing
     }
 
-exprOperator :: GOperator -> GExpr
-exprOperator op = GExpr {
+exprCall :: String -> [GExpr] -> GExpr
+exprCall fname param = GExpr {
         constant = Nothing,
-        getProp = Nothing,
+        getPropInt = Nothing,
+        getPropExt = Nothing,
+        call = Just $ GCall fname param,
+        operator = Nothing,
+        cast = Nothing
+    }
+
+exprOperator :: String -> GExpr -> GExpr -> GExpr
+exprOperator symbol left right = GExpr {
+        constant = Nothing,
+        getPropInt = Nothing,
+        getPropExt = Nothing,
         call = Nothing,
-        operator = Just op,
+        operator = Just $ GOperator symbol left right,
         cast = Nothing
     }
 
 exprCast :: String -> GExpr -> GExpr
 exprCast t e = GExpr {
         constant = Nothing,
-        getProp = Nothing,
+        getPropInt = Nothing,
+        getPropExt = Nothing,
         call = Nothing,
         operator = Nothing,
         cast = Just $ GCast t e

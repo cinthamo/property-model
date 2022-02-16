@@ -15,6 +15,7 @@ data TypeContext =
 type TNames = [(Name,ValueType)]
 type TFunctions = [(Name,[ValueType])]
 type TExternals = [(ValueType,TypeObject)]
+type TEnums = [(Name,[Name])]
 
 data TypeObject =
     TypeObject {
@@ -38,15 +39,22 @@ contextFor context vt = let l = list context
         Just x -> TypeContext x l
         Nothing -> error [i|"Type #{vt} not found in context"|]
 
-newTypeContext :: DefinitionList -> TFunctions -> TExternals -> TypeContext
-newTypeContext definitionList functions externals = 
-    let e = maybe emptyTO (\n -> fromMaybe emptyTO $ lookup (TExternal n) externals) (externalType definitionList)
-    in TypeContext {
+newTypeContext :: DefinitionList -> TFunctions -> TExternals -> TEnums -> TypeContext
+newTypeContext definitionList functions externals enums = 
+    TypeContext {
         current = TypeObject {
-            tnames = (map (\d -> (name d, _type d)) $ properties definitionList) ++ tnames e,
-            tfunctions = functions ++ tfunctions e
+            tnames = tnames dto ++ map convertNameEnum enums,
+            tfunctions = tfunctions dto ++ functions
         },
-        list = externals
+        list = externals ++ map convertListEnum enums ++ [convertDefinition definitionList]
     }
     where
         emptyTO = TypeObject [] []
+        eto = maybe emptyTO (\n -> fromMaybe emptyTO $ lookup (TExternal n) externals) (externalType definitionList)
+        dto = TypeObject {
+                tnames = (map (\d -> (name d, _type d)) $ properties definitionList) ++ tnames eto,
+                tfunctions = tfunctions eto
+            }
+        convertNameEnum (name,_) = (name, TEnum name)
+        convertListEnum (name,values) = (TEnum name, TypeObject (map (\v -> (v, TEnumValue name)) values) [])
+        convertDefinition definitionList = (TInternal $ lname definitionList, dto)

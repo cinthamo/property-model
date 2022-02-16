@@ -63,17 +63,25 @@ data GIf
 data GExpr
   = GExpr {
     constant :: Maybe String,
-    getProp :: Maybe GGetProp,
+    getPropInt :: Maybe GGetPropInt,
+    getPropExt :: Maybe GGetPropExt,
     call :: Maybe GCall,
     operator :: Maybe GOperator,
     cast :: Maybe GCast
   }
   deriving (Show, Data, Typeable)
 
-data GGetProp
-  = GGetProp {
+data GGetPropInt
+  = GGetPropInt {
     pType :: String,
     pName :: String
+  }
+  deriving (Show, Data, Typeable)
+
+data GGetPropExt
+  = GGetPropExt {
+    target :: GExpr,
+    qName :: String
   }
   deriving (Show, Data, Typeable)
 

@@ -1,7 +1,8 @@
 module External.TypeTable where
 
 import Model.Value
-import Checker.TypeContext
+import Model.Definition
+import Checker.TypeContext as TC
 
 functions :: TFunctions
 functions = [
@@ -18,5 +19,17 @@ externals = [
                 ("isInterface", TBool)
             ] [
 
+            ]),
+        (TExternal "WithParent", TypeObject
+            [
+                ("parent", TInternal "AnotherObject")
+            ] [
+
             ])
     ]
+
+enums :: TEnums
+enums = []
+
+newTypeContext :: DefinitionList -> TypeContext
+newTypeContext definitions = TC.newTypeContext definitions functions externals enums

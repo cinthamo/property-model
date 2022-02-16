@@ -1,7 +1,6 @@
 module Test.Manual (test) where
 
 import Checker.Types
-import Checker.TypeContext
 import Model.Definition
 import Model.Value as V
 import External.BasicTable
@@ -21,7 +20,7 @@ test definitions = do
   print process5
   where
     obj = emptyWAsp $ definitions
-    check = typeCheck (newTypeContext definitions functions externals) definitions -- typeChecker test
+    check = typeCheck (newTypeContext definitions) definitions -- typeChecker test
     process1 = get basicRef obj "one" -- simple get
     process2 = get basicRef obj "two" -- default test
     process3 = static basicRef (set basicRef obj "one" (V.Number 1)) -- static, apply & readonly test
