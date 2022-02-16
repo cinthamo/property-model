@@ -9,7 +9,9 @@ functions = [
         ("==", [TNumber, TNumber, TBool]),
         ("+", [TNumber, TNumber, TNumber]),
         (">", [TNumber, TNumber, TBool]),
-        ("not", [TBool, TBool])
+        ("not", [TBool, TBool]),
+        ("GetExposedName", [TString, TString]),
+        ("GetName", [TString, TExternal "KBModel", TString])
     ]
 
 externals :: TExternals
@@ -23,6 +25,12 @@ externals = [
         (TExternal "WithParent", TypeObject
             [
                 ("parent", TInternal "AnotherObject")
+            ] [
+
+            ]),
+        (TExternal "WithModel", TypeObject
+            [
+                ("model", TExternal "KBModel")
             ] [
 
             ])

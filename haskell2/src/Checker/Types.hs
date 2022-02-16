@@ -23,7 +23,7 @@ getType :: TypeContext -> Expr -> ValueType -> Name -> ValueType
 getType _ (Value (V (String _))) _ _ = TString
 getType _ (Value (V (Number _))) _ _ = TNumber
 getType _ (Value (V (Bool _))) _ _ = TBool
-getType _ (Value (V t)) _ _ = error [i|"Unknown type #{t}"|]
+getType _ (Value (V t)) vt _ = error [i|"Unknown type #{t} expected #{vt}"|]
 getType _ ValueRef vt _ = vt
 getType tc (PropRef expr prop) vt n = typeOfName (contextFor tc $ getType tc expr vt n) prop
 getType tc (NameRef name) _ _ = typeOfName tc name
