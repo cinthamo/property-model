@@ -29,12 +29,12 @@ genOne name = do
 
 readL :: IO [DefinitionList]
 readL = do
-        ast <- parseFile "test.gxp"
+        ast <- parseFile "test.p"
         return ast
 
 readT :: String -> IO DefinitionList
 readT name = do
-        ast <- parseFile "test.gxp"
+        ast <- parseFile "test.p"
         let x = case (find (\x -> lname x == name) ast) of
                         Just y -> y
                         _ -> error [i|"Definitions for #{name} not found"|]

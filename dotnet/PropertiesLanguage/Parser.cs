@@ -5,7 +5,7 @@ namespace PropertiesLanguage
 {
     public class Parser
     {
-        public Model Parse(string example)
+        public static Model Parse(string example)
         {
             var charStream = new AntlrInputStream(example);
             var lexer = new PropsLexer(charStream);
