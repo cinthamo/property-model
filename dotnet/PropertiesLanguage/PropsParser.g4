@@ -5,30 +5,32 @@ options { tokenVocab=PropsLexer; }
 definitions: list*;
 
 list:
-  LIST NAME (COLON NAME)? CORCHA property* CORCHC;
+  LIST name=NAME (COLON type=NAME)? CORCHA property* CORCHC;
 
 property:
-  DEFINITION NAME CORCHA aRule* CORCHC;
+  DEFINITION name=NAME CORCHA rules=aRule* CORCHC;
 
 aRule:
-  NAME EQUAL case* expr SEMICOLON
-| NAME (IF expr)? SEMICOLON;
+  name=NAME EQUAL case* otherwise=expr SEMICOLON   # ruleEqual
+| name=NAME (IF condition=expr)? SEMICOLON                    # ruleBool
+;
 
 case: expr IF expr PIPE;
 
 expr:
-  NUMBER
-| BOOL
-| STRING
-| NULL
-| VALUE
-| NAME
-| expr DOT NAME
-| func
-| expr DOT func
-| expr OP expr
-| NOT expr
-| PARA expr PARC;
+  value=NUMBER                # exprNumber
+| value=BOOL                  # exprBool
+| value=STRING                # exprString
+| NULL                        # exprNull
+| VALUE                       # exprValue
+| name=NAME                   # exprName
+| target=expr DOT prop=NAME   # exprProp
+| func                        # exprFunction
+| target=expr DOT func        # exprMethod
+| left=expr OP right=expr     # exprOperator
+| NOT expr                    # exprNot
+| PARA expr PARC              # exprParenthesis
+;
 
-func: NAME PARA (expr (COMMA expr)*)? PARC;
+func: name=NAME PARA (expr (COMMA expr)*)? PARC;
   

@@ -24,8 +24,8 @@ namespace PropertiesLanguage
         {
             return new DefinitionList
             {
-                Name = context.NAME(0).GetText(),
-                ExternalType = context.NAME(1)?.GetText(),
+                Name = context.name.Text,
+                ExternalType = context.type?.Text,
                 Properties = context.property().Select(p => p.Accept(DefinitionVisitor.Instance)).ToList()
             };
         }
@@ -35,85 +35,123 @@ namespace PropertiesLanguage
     {
         public static readonly DefinitionVisitor Instance = new();
 
-        private string GetType(IEnumerable<PropsParser.ARuleContext> typeRules)
+        private class TypeVisitor : PropsParserBaseVisitor<string>
         {
-            if (!typeRules.Any())
-                throw new Exception("Must have a type");
+            public static readonly TypeVisitor Instance = new();
 
-            if (typeRules.Count() > 1)
-                throw new Exception("Must have only one type");
+            public override string VisitRuleEqual([NotNull] PropsParser.RuleEqualContext context)
+            {
+                if (context.name.Text != "type")
+                    return String.Empty;
 
-            var typeRule = typeRules.First();
-            if (typeRule.RuleIndex != 0)
-                throw new Exception("Type must have a value");
+                if (context.@case().Any())
+                    throw new Exception("Type can not have conditions");
 
-            if (typeRule.@case().Length > 0)
-                throw new Exception("Type can not have conditions");
-
-            IExpression typeExpr = typeRule.expr().Accept(ExpressionVisitor.Instance);
-            if (typeExpr is NameReferenceExpression nameExpr)
-                return nameExpr.Name;
-            else
-                throw new Exception("Type must be a name");
+                if (context.otherwise is PropsParser.ExprNameContext nameExpr)
+                    return nameExpr.name.Text;
+                else
+                    throw new Exception("Type must be a name");
+            }
         }
 
-        private IExpression getAspect(IEnumerable<PropsParser.ARuleContext> rules, IExpression defaultAbsent, IExpression defaultUsed, IExpression defaultOtherwise)
+        private static string GetType([NotNull] PropsParser.PropertyContext context)
         {
-            if (!rules.Any())
-                return defaultAbsent;
+            var exprList = context.aRule()
+                .Select(r => r.Accept(TypeVisitor.Instance))
+                .Where(e => !string.IsNullOrEmpty(e))
+                .ToList();
 
-            if (rules.Count() > 1)
+            if (!exprList.Any())
+                throw new Exception("Must have a type");
+
+            if (exprList.Count() > 1)
+                throw new Exception("Must have only one type");
+
+            return exprList.First();
+        }
+
+        private class AspectVisitor : PropsParserBaseVisitor<IExpression?>
+        {
+            public static readonly AspectVisitor Default = new AspectVisitor("default", NullExpression.Null, NullExpression.Null, NullExpression.Null);
+            public static readonly AspectVisitor Apply = new AspectVisitor("apply", BooleanExpression.True, BooleanExpression.True, BooleanExpression.False);
+            public static readonly AspectVisitor Readonly = new AspectVisitor("readonly", BooleanExpression.False, BooleanExpression.True, BooleanExpression.False);
+            public static readonly AspectVisitor Valid = new AspectVisitor("valid", BooleanExpression.True, BooleanExpression.True, BooleanExpression.False);
+
+            private AspectVisitor(string name, IExpression defaultAbsent, IExpression defaultUsed, IExpression defaultOtherwise)
+            {
+                Name = name;
+                Absent = defaultAbsent;
+                Used = defaultUsed;
+                Otherwise = defaultOtherwise;
+            }
+
+            private readonly string Name;
+            public readonly IExpression Absent;
+            private readonly IExpression Used;
+            private readonly IExpression Otherwise;
+
+            public override IExpression? VisitRuleEqual([NotNull] PropsParser.RuleEqualContext context)
+            {
+                if (context.name.Text != Name)
+                    return null;
+
+                return new CaseExpression
+                {
+                    Conditions = context.@case()
+                        .Select(c => c.Accept(ConditionValueVisitor.Instance))
+                        .ToList(),
+                    Otherwise = context.otherwise.Accept(ExpressionVisitor.Instance)
+                };
+            }
+
+            public override IExpression? VisitRuleBool([NotNull] PropsParser.RuleBoolContext context)
+            {
+                if (context.name.Text != Name)
+                    return null;
+
+                if (context.condition == null)
+                    return Used;
+
+                return new CaseExpression
+                {
+                    Conditions = new List<ConditionValue> {
+                            new ConditionValue
+                            {
+                                Condition = context.condition.Accept(ExpressionVisitor.Instance),
+                                Value = Used
+                            }
+                        },
+                    Otherwise = Otherwise
+                };
+            }
+        }
+
+        private IExpression getAspect([NotNull] PropsParser.PropertyContext context, AspectVisitor visitor)
+        {
+            var exprList = context.aRule()
+                .Select(r => r.Accept(visitor))
+                .Where(e => e != null)
+                .ToList();
+
+            if (!exprList.Any())
+                return visitor.Absent;
+
+            if (exprList.Count() > 1)
                 throw new Exception("Can only be one");
 
-            var rule = rules.First();
-
-            switch (rule.RuleIndex)
-            {
-                case 0:
-                    {
-                        return new CaseExpression
-                        {
-                            Conditions = rule.@case().Select(c => c.Accept(ConditionValueVisitor.Instance)).ToList(),
-                            Otherwise = rule.expr().Accept(ExpressionVisitor.Instance)
-                        };
-                    }
-                case 1:
-                    {
-                        var condition = rule.expr().Accept(ExpressionVisitor.Instance);
-                        return new CaseExpression
-                        {
-                            Conditions = new List<ConditionValue> {
-                                new ConditionValue
-                                {
-                                    Condition = condition,
-                                    Value = defaultUsed
-                                }
-                            },
-                            Otherwise = defaultOtherwise
-                        };
-                    }
-                default:
-                    {
-                        return defaultAbsent;
-                    }
-            }
+            return exprList.First();
         }
 
         public override Definition VisitProperty([NotNull] PropsParser.PropertyContext context)
         {
-            IEnumerable<PropsParser.ARuleContext> getRules(string name)
-            {
-                return context.aRule().Where(r => r.NAME().GetText() == name);
-            }
-
             return new Definition()
             {
                 Name = context.NAME().GetText(),
-                Type = GetType(getRules("type")),
-                Default = getAspect(getRules("default"), NullExpression.Null, NullExpression.Null, NullExpression.Null),
-                Apply = getAspect(getRules("apply"), BooleanExpression.True, BooleanExpression.True, BooleanExpression.False),
-                Readonly = getAspect(getRules("readonly"), BooleanExpression.False, BooleanExpression.True, BooleanExpression.False),
-                Valid = getAspect(getRules("valid"), BooleanExpression.True, BooleanExpression.True, BooleanExpression.False),
+                Type = GetType(context),
+                Default = getAspect(context, AspectVisitor.Default),
+                Apply = getAspect(context, AspectVisitor.Apply),
+                Readonly = getAspect(context, AspectVisitor.Readonly),
+                Valid = getAspect(context, AspectVisitor.Valid),
             };
         }
     }
@@ -136,24 +174,64 @@ namespace PropertiesLanguage
     {
         public static readonly ExpressionVisitor Instance = new();
 
-        public override IExpression VisitExpr([NotNull] PropsParser.ExprContext context)
+        public override IExpression VisitExprNumber([NotNull] PropsParser.ExprNumberContext context)
         {
-            switch (context.RuleIndex)
-            {
-                case 0: return new NumberExpression { Value = int.Parse(context.NUMBER().GetText()) };
-                case 1: return context.BOOL().GetText() == "true" ? BooleanExpression.True : BooleanExpression.False;
-                case 2: return new StringExpression { Value = context.STRING().GetText() };
-                case 3: return NullExpression.Null;
-                case 4: return ValueReferenceExpression.Value;
-                case 5: return new NameReferenceExpression { Name = context.NAME().GetText() };
-                case 6: return new PropertyReferenceExpression { Target = context.expr(0).Accept(this), Name = context.NAME().GetText() };
-                case 7: return new CallExpression { Name = context.func().NAME().GetText(), Parameters = context.func().expr().Select(p => p.Accept(this)).ToList() };
-                case 8: return new CallExpression { Name = context.func().NAME().GetText(), Parameters = context.func().expr().Select(p => p.Accept(this)).Prepend(context.expr(0).Accept(this)).ToList() };
-                case 9: return new CallExpression { Name = context.OP().GetText(), Parameters = context.expr().Select(p => p.Accept(this)).ToList() };
-                case 10: return new CallExpression { Name = context.NOT().GetText(), Parameters = context.expr().Select(p => p.Accept(this)).ToList() };
-                case 11: return context.expr(0).Accept(this);
-                default: return NullExpression.Null;
-            }
+            return new NumberExpression { Value = int.Parse(context.NUMBER().GetText()) };
+        }
+
+        public override IExpression VisitExprBool([NotNull] PropsParser.ExprBoolContext context)
+        {
+            return context.BOOL().GetText() == "true" ? BooleanExpression.True : BooleanExpression.False;
+        }
+
+        public override IExpression VisitExprString([NotNull] PropsParser.ExprStringContext context)
+        {
+            return new StringExpression { Value = context.STRING().GetText() };
+        }
+
+        public override IExpression VisitExprNull([NotNull] PropsParser.ExprNullContext context)
+        {
+            return NullExpression.Null;
+        }
+
+        public override IExpression VisitExprValue([NotNull] PropsParser.ExprValueContext context)
+        {
+            return ValueReferenceExpression.Value;
+        }
+
+        public override IExpression VisitExprName([NotNull] PropsParser.ExprNameContext context)
+        {
+            return new NameReferenceExpression { Name = context.NAME().GetText() };
+        }
+
+        public override IExpression VisitExprProp([NotNull] PropsParser.ExprPropContext context)
+        {
+            return new PropertyReferenceExpression { Target = context.expr().Accept(this), Name = context.NAME().GetText() };
+        }
+
+        public override IExpression VisitExprFunction([NotNull] PropsParser.ExprFunctionContext context)
+        {
+            return new CallExpression { Name = context.func().NAME().GetText(), Parameters = context.func().expr().Select(p => p.Accept(this)).ToList() };
+        }
+
+        public override IExpression VisitExprMethod([NotNull] PropsParser.ExprMethodContext context)
+        {
+            return new CallExpression { Name = context.func().name.Text, Parameters = context.func().expr().Select(p => p.Accept(this)).Prepend(context.target.Accept(this)).ToList() };
+        }
+
+        public override IExpression VisitExprOperator([NotNull] PropsParser.ExprOperatorContext context)
+        {
+            return new CallExpression { Name = context.OP().GetText(), Parameters = context.expr().Select(p => p.Accept(this)).ToList() };
+        }
+
+        public override IExpression VisitExprNot([NotNull] PropsParser.ExprNotContext context)
+        {
+            return new CallExpression { Name = context.NOT().GetText(), Parameters = new List<IExpression> { context.expr().Accept(this) } };
+        }
+
+        public override IExpression VisitExprParenthesis([NotNull] PropsParser.ExprParenthesisContext context)
+        {
+            return context.expr().Accept(this);
         }
     }
 }
