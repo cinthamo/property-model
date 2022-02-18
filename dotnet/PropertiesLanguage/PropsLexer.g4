@@ -8,11 +8,6 @@ LIST: 'list';
 DEFINITION: 'definition';
 IF: 'if';
 
-OP: [->=<+]+ | 'or' | 'and';
-NAME: [a-zA-Z][a-zA-Z0-9_]*;
-NUMBER: '-'?[0-9]+;
-STRING: '"' (~[\r\n])* '"';
-
 PARA: '(';
 PARC: ')';
 CORCHA: '{';
@@ -24,6 +19,11 @@ COMMA: ',';
 DOT: '.';
 PIPE: '|';
 
-BLOCK_COMMENT: '/*' .*? '*/'  -> channel(HIDDEN);
+OP: [->=<+]+ | 'or' | 'and';
+NAME: [a-zA-Z][a-zA-Z0-9_]*;
+NUMBER: '-'?[0-9]+;
+STRING: '"' (~[\r\n])* '"';
+
+BLOCK_COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
 EOL_COMMENT: '//' (~[\r\n])* -> channel(HIDDEN);
 WS: [ \n\t\r]+               -> channel(HIDDEN);

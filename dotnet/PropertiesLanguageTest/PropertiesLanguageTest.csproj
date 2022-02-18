@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -22,6 +21,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PropertiesLanguage\PropertiesLanguage.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="test.p">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

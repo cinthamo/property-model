@@ -10,8 +10,14 @@ namespace PropertiesLanguage
             var charStream = new AntlrInputStream(example);
             var lexer = new PropsLexer(charStream);
             var tokenStream = new CommonTokenStream(lexer);
-            var parser = new PropsParser(tokenStream);
+            var output = new StringWriter();
+            var error = new StringWriter();
+            var parser = new PropsParser(tokenStream, output, error);
             var tree = parser.definitions();
+            var s = output.ToString() + error.ToString();
+            if (!string.IsNullOrEmpty(s))
+                throw new Exception(s);
+
             var model = tree.Accept(ModelVisitor.Instance);            
             return model;
         }

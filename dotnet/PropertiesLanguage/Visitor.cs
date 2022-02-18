@@ -25,7 +25,7 @@ namespace PropertiesLanguage
             return new DefinitionList
             {
                 Name = context.NAME(0).GetText(),
-                ExternalType = context.NAME(1).GetText(),
+                ExternalType = context.NAME(1)?.GetText(),
                 Properties = context.property().Select(p => p.Accept(DefinitionVisitor.Instance)).ToList()
             };
         }

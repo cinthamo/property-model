@@ -2,7 +2,7 @@ using PropertiesLanguage;
 using System.IO;
 using Xunit;
 
-namespace Test
+namespace PropertiesLanguague.Test
 {
     public class ParserUnitTest
     {
