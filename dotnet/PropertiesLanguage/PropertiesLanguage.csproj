@@ -16,11 +16,11 @@
 		<_AntlrVisitorAndListener Include="@(AntlrGrammar)" Exclude="@(AntlrGrammar-&gt;WithMetadataValue('GrammarType','Lexer'))" />
 		<_AntlrLexerAndParser Include="@(AntlrGrammar)" Exclude="@(_AntlrSameFile)" />
 
-		<AntlrOutput Include="@(_AntlrSameFile -> 'Parser\%(RelativeDir)%(Filename).cs')" />
-		<AntlrOutput Include="@(_AntlrVisitorAndListener -> 'Parser\%(RelativeDir)%(Filename)BaseVisitor.cs')" />
-		<AntlrOutput Include="@(_AntlrVisitorAndListener -> 'Parser\%(RelativeDir)%(Filename)Visitor.cs')" />
-		<AntlrOutput Include="@(_AntlrLexerAndParser -> 'Parser\%(RelativeDir)%(Filename)Lexer.cs')" />
-		<AntlrOutput Include="@(_AntlrLexerAndParser -> 'Parser\%(RelativeDir)%(Filename)Parser.cs')" />
+		<AntlrOutput Include="@(_AntlrSameFile -&gt; 'Parser\%(RelativeDir)%(Filename).cs')" />
+		<AntlrOutput Include="@(_AntlrVisitorAndListener -&gt; 'Parser\%(RelativeDir)%(Filename)BaseVisitor.cs')" />
+		<AntlrOutput Include="@(_AntlrVisitorAndListener -&gt; 'Parser\%(RelativeDir)%(Filename)Visitor.cs')" />
+		<AntlrOutput Include="@(_AntlrLexerAndParser -&gt; 'Parser\%(RelativeDir)%(Filename)Lexer.cs')" />
+		<AntlrOutput Include="@(_AntlrLexerAndParser -&gt; 'Parser\%(RelativeDir)%(Filename)Parser.cs')" />
 	</ItemGroup>
 
   <ItemGroup>

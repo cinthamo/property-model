@@ -156,8 +156,8 @@ namespace PropertiesLanguage
 
         public override ConditionValue VisitCase([NotNull] PropsParser.CaseContext context)
         {
-            return new ConditionValue(context.expr(0).Accept(ExpressionVisitor.Instance),
-                context.expr(1).Accept(ExpressionVisitor.Instance));
+            return new ConditionValue(context.expr(1).Accept(ExpressionVisitor.Instance),
+                context.expr(0).Accept(ExpressionVisitor.Instance));
         }
     }
 
