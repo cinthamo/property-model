@@ -1,3 +1,5 @@
+using Antlr4.Runtime;
+
 namespace PropertiesLanguage
 {
     public struct Model
@@ -16,67 +18,133 @@ namespace PropertiesLanguage
     {
         public string Name;
         public string Type;
-        public IExpression? Default;
-        public IExpression? Apply;
-        public IExpression? Readonly;
-        public IExpression? Valid;
+        public IExpression Default;
+        public IExpression Apply;
+        public IExpression Readonly;
+        public IExpression Valid;
     }
 
     public interface IExpression { }
 
-    public struct StringExpression : IExpression
+    public class BaseExpression : IExpression
     {
-        public string Value;
+        public BaseExpression(ParserRuleContext? context)
+        {
+            if (context == null)
+                position = null;
+            else
+                position = $"{context.GetText()} (Line {context.Start.Line} Char {context.Start.Column}";
+        }
+
+        private readonly string? position;
+
+        public override string ToString()
+        {
+            return position ?? base.ToString() ?? "Expression";
+        }
     }
 
-    public struct NumberExpression : IExpression
+    public class StringExpression : BaseExpression
     {
-        public int Value;
+        public StringExpression(ParserRuleContext context, string value): base(context)
+        {
+            Value = value;
+        }
+
+        public string Value { get; private set; }
     }
 
-    public struct BooleanExpression : IExpression
+    public class NumberExpression : BaseExpression
     {
-        public bool Value;
+        public NumberExpression(ParserRuleContext context, int value) : base(context)
+        {
+            Value = value;
+        }
 
-        public static readonly BooleanExpression True = new() { Value = true };
-        public static readonly BooleanExpression False = new() { Value = false };
+        public int Value { get; private set; }
     }
 
-    public struct NullExpression : IExpression {
-        public static readonly NullExpression Null = new();
-    }
-
-    public struct ValueReferenceExpression : IExpression {
-        public static readonly ValueReferenceExpression Value = new();
-    }
-
-    public struct NameReferenceExpression : IExpression
+    public class BooleanExpression : BaseExpression
     {
-        public string Name;
+        public BooleanExpression(ParserRuleContext? context, bool value) : base(context)
+        {
+            Value = value;
+        }
+
+        public bool Value { get; private set; }
+
+        public static readonly IExpression True = new BooleanExpression(null, true);
+        public static readonly IExpression False = new BooleanExpression(null, false);
     }
 
-    public struct PropertyReferenceExpression : IExpression
+    public class NullExpression : BaseExpression
     {
-        public IExpression Target;
-        public string Name;
+        public NullExpression(ParserRuleContext? context) : base(context) { }
+
+        public static readonly IExpression Null = new NullExpression(null);
     }
 
-    public struct CaseExpression : IExpression
+    public class ValueReferenceExpression : BaseExpression
     {
-        public List<ConditionValue> Conditions;
-        public IExpression Otherwise;
+        public ValueReferenceExpression(ParserRuleContext context) : base(context) { }
     }
 
-    public struct ConditionValue
+    public class NameReferenceExpression : BaseExpression
     {
-        public IExpression Condition;
-        public IExpression Value;
+        public NameReferenceExpression(ParserRuleContext context, string name) : base(context)
+        {
+            Name = name;
+        }
+
+        public string Name { get; private set; }
     }
 
-    public struct CallExpression : IExpression
+    public class PropertyReferenceExpression : BaseExpression
     {
-        public string Name;
-        public List<IExpression> Parameters;
+        public PropertyReferenceExpression(ParserRuleContext context, IExpression target, string name) : base(context)
+        {
+            Target = target;
+            Name = name;
+        }
+
+        public IExpression Target { get; private set; }
+        public string Name { get; private set; }
+    }
+
+    public class CaseExpression : BaseExpression
+    {
+        public CaseExpression(ParserRuleContext context, List<ConditionValue> conditions, IExpression otherwise) : base(context)
+        {
+            Conditions = conditions;
+            Otherwise = otherwise;
+        }
+
+        public List<ConditionValue> Conditions { get; private set; }
+        public IExpression Otherwise { get; private set; }
+    }
+
+    public class ConditionValue
+    {
+        public ConditionValue(IExpression condition, IExpression value)
+        {
+            Condition = condition;
+            Value = value;
+        }
+
+        public IExpression Condition { get; private set; }
+        public IExpression Value { get; private set; }
+    }
+
+    public class CallExpression : BaseExpression
+    {
+        public CallExpression(ParserRuleContext context, string name, List<IExpression> parameters) : base(context)
+        {
+            Name = name;
+            Parameters = parameters;
+        }
+
+        public string Name { get; private set; }
+        public List<IExpression> Parameters { get; private set; }
         // methodName object++parameters, External Object Method Call
         // procedureName parameters, GX Procedure Call
         // functionName parameters, language supported functions

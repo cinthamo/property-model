@@ -95,13 +95,12 @@ namespace PropertiesLanguage
                 if (context.name.Text != Name)
                     return null;
 
-                return new CaseExpression
-                {
-                    Conditions = context.@case()
+                return new CaseExpression(context,
+                    context.@case()
                         .Select(c => c.Accept(ConditionValueVisitor.Instance))
                         .ToList(),
-                    Otherwise = context.otherwise.Accept(ExpressionVisitor.Instance)
-                };
+                    context.otherwise.Accept(ExpressionVisitor.Instance)
+                );
             }
 
             public override IExpression? VisitRuleBool([NotNull] PropsParser.RuleBoolContext context)
@@ -112,17 +111,12 @@ namespace PropertiesLanguage
                 if (context.condition == null)
                     return Used;
 
-                return new CaseExpression
-                {
-                    Conditions = new List<ConditionValue> {
-                            new ConditionValue
-                            {
-                                Condition = context.condition.Accept(ExpressionVisitor.Instance),
-                                Value = Used
-                            }
-                        },
-                    Otherwise = Otherwise
-                };
+                return new CaseExpression(context,
+                    new List<ConditionValue> {
+                            new ConditionValue(context.condition.Accept(ExpressionVisitor.Instance), Used)
+                    },
+                    Otherwise
+                );
             }
         }
 
@@ -162,11 +156,8 @@ namespace PropertiesLanguage
 
         public override ConditionValue VisitCase([NotNull] PropsParser.CaseContext context)
         {
-            return new ConditionValue
-            {
-                Condition = context.expr(0).Accept(ExpressionVisitor.Instance),
-                Value = context.expr(1).Accept(ExpressionVisitor.Instance)
-            }; 
+            return new ConditionValue(context.expr(0).Accept(ExpressionVisitor.Instance),
+                context.expr(1).Accept(ExpressionVisitor.Instance));
         }
     }
 
@@ -176,57 +167,58 @@ namespace PropertiesLanguage
 
         public override IExpression VisitExprNumber([NotNull] PropsParser.ExprNumberContext context)
         {
-            return new NumberExpression { Value = int.Parse(context.NUMBER().GetText()) };
+            return new NumberExpression(context, int.Parse(context.NUMBER().GetText()));
         }
 
         public override IExpression VisitExprBool([NotNull] PropsParser.ExprBoolContext context)
         {
-            return context.BOOL().GetText() == "true" ? BooleanExpression.True : BooleanExpression.False;
+            var value = context.BOOL().GetText() == "true";
+            return new BooleanExpression(context, value);
         }
 
         public override IExpression VisitExprString([NotNull] PropsParser.ExprStringContext context)
         {
-            return new StringExpression { Value = context.STRING().GetText() };
+            return new StringExpression(context, context.STRING().GetText());
         }
 
         public override IExpression VisitExprNull([NotNull] PropsParser.ExprNullContext context)
         {
-            return NullExpression.Null;
+            return new NullExpression(context);
         }
 
         public override IExpression VisitExprValue([NotNull] PropsParser.ExprValueContext context)
         {
-            return ValueReferenceExpression.Value;
+            return new ValueReferenceExpression(context);
         }
 
         public override IExpression VisitExprName([NotNull] PropsParser.ExprNameContext context)
         {
-            return new NameReferenceExpression { Name = context.NAME().GetText() };
+            return new NameReferenceExpression(context, context.NAME().GetText());
         }
 
         public override IExpression VisitExprProp([NotNull] PropsParser.ExprPropContext context)
         {
-            return new PropertyReferenceExpression { Target = context.expr().Accept(this), Name = context.NAME().GetText() };
+            return new PropertyReferenceExpression(context, context.expr().Accept(this), context.NAME().GetText());
         }
 
         public override IExpression VisitExprFunction([NotNull] PropsParser.ExprFunctionContext context)
         {
-            return new CallExpression { Name = context.func().NAME().GetText(), Parameters = context.func().expr().Select(p => p.Accept(this)).ToList() };
+            return new CallExpression(context, context.func().NAME().GetText(), context.func().expr().Select(p => p.Accept(this)).ToList());
         }
 
         public override IExpression VisitExprMethod([NotNull] PropsParser.ExprMethodContext context)
         {
-            return new CallExpression { Name = context.func().name.Text, Parameters = context.func().expr().Select(p => p.Accept(this)).Prepend(context.target.Accept(this)).ToList() };
+            return new CallExpression(context, context.func().name.Text, context.func().expr().Select(p => p.Accept(this)).Prepend(context.target.Accept(this)).ToList());
         }
 
         public override IExpression VisitExprOperator([NotNull] PropsParser.ExprOperatorContext context)
         {
-            return new CallExpression { Name = context.OP().GetText(), Parameters = context.expr().Select(p => p.Accept(this)).ToList() };
+            return new CallExpression(context, context.OP().GetText(), context.expr().Select(p => p.Accept(this)).ToList());
         }
 
         public override IExpression VisitExprNot([NotNull] PropsParser.ExprNotContext context)
         {
-            return new CallExpression { Name = context.NOT().GetText(), Parameters = new List<IExpression> { context.expr().Accept(this) } };
+            return new CallExpression(context, context.NOT().GetText(), new List<IExpression> { context.expr().Accept(this) });
         }
 
         public override IExpression VisitExprParenthesis([NotNull] PropsParser.ExprParenthesisContext context)
