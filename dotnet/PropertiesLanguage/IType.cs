@@ -38,17 +38,6 @@ namespace PropertiesLanguage
         {
             return Name.GetHashCode();
         }
-
-        public static bool operator ==(BaseType left, BaseType right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(BaseType left, BaseType right)
-        {
-            return !(left == right);
-        }
-
     }
 
     public class DotNetType : BaseType
@@ -66,6 +55,13 @@ namespace PropertiesLanguage
         public static readonly IType Bool = new DotNetType("boolean", typeof(bool));
     }
 
+    public class InternalType : BaseType
+    {
+        public InternalType(string name)
+            : base(name)
+        { }
+    }
+
     public class ExternalType : BaseType
     {
         public ExternalType(string name)
@@ -77,6 +73,13 @@ namespace PropertiesLanguage
     {
         public EnumType(string name)
             : base(name)
+        { }
+    }
+
+    public class GenericType : BaseType
+    {
+        public GenericType(int n)
+            : base(n.ToString())
         { }
     }
 }

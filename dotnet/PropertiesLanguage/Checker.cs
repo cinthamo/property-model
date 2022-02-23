@@ -9,11 +9,10 @@
 
         private readonly TextWriter Error;
 
-        public void CheckTypes(ITypeContext tc, Model model)
+        public void CheckTypes(ITypeContext tc, DefinitionList definitionList)
         {
-            foreach (var definitionList in model.Definitions)
-                foreach (var definition in definitionList.Properties)
-                    CheckTypes(tc, definition);
+            foreach (var definition in definitionList.Properties)
+                CheckTypes(tc, definition);
         }
 
         private void CheckTypes(ITypeContext tc, Definition definition)
@@ -36,12 +35,21 @@
             if (expr == null)
                 return;
 
-            var found = GetType(tc, expr, expectedType, propertyName);
-            if (!expectedType.Equals(found))
-                Error.WriteLine($"Type mismatch in {propertyName} found {found} expected {expectedType} in expression {expr}");
+            var found = GetTypeCheckNull(tc, expr, propertyName);
+            if (found != null && !expectedType.Equals(found))
+                Error.WriteLine($"Type mismatch in {propertyName} found {found} expected {expectedType} in expression {expr}.");
         }
 
-        private IType? GetType(ITypeContext tc, IExpression? expr, IType expectedType, string propertyName)
+        private IType? GetTypeCheckNull(ITypeContext tc, IExpression? expr, string propertyName)
+        {
+            var found = GetType(tc, expr, propertyName);
+            if (found == null)
+                Error.WriteLine($"Type unknown for expression {expr}.");
+            return found;
+        }
+
+
+        private IType? GetType(ITypeContext tc, IExpression? expr, string propertyName)
         {
             if (expr is StringExpression)
             {
@@ -57,12 +65,11 @@
             }
             else if (expr is NullExpression)
             {
-                Error.WriteLine($"Unknown type null expected {expectedType}");
                 return null;
             }
             else if (expr is ValueReferenceExpression)
             {
-                return expectedType;
+                return tc.GetTypeOfName(propertyName);
             }
             else if (expr is NameReferenceExpression nameExpr)
             {
@@ -70,39 +77,61 @@
             }
             else if (expr is PropertyReferenceExpression propExpr)
             {
-                var targetType = GetType(tc, propExpr.Target, expectedType, propertyName);
+                var targetType = GetTypeCheckNull(tc, propExpr.Target, propertyName);
                 if (targetType == null)
                     return null;
 
                 var newTC = tc.GetContextFor(targetType);
+                if (newTC == null)
+                    return null;
+
                 return newTC.GetTypeOfName(propExpr.Name);
             }
             else if (expr is CaseExpression caseExpr)
             {
+                var type = GetTypeCheckNull(tc, caseExpr.Otherwise, propertyName);
+                if (type == null)
+                    return null;
+
                 caseExpr.Conditions.ForEach(c => {
                     ValidExpr(tc, c.Condition, DotNetType.Bool, propertyName);
-                    ValidExpr(tc, c.Value, expectedType, propertyName);
+                    var found = GetTypeCheckNull(tc, c.Value, propertyName);
+                    if (found != null && !type.Equals(found))
+                        Error.WriteLine($"Type mismatch in {propertyName} found {found} expected {type} in expression {expr}");
                 });
-                ValidExpr(tc, caseExpr.Otherwise, expectedType, propertyName);
-                return expectedType;
+
+                return type;
             }
             else if (expr is CallExpression callExpr)
             {
                 var funcTypes = tc.GetTypesOfFuncParam(callExpr.Name);
                 if (funcTypes == null)
                 {
-                    Error.WriteLine($"Unknown function in {callExpr.Name}");
+                    Error.WriteLine($"Unknown function in {callExpr.Name} ({callExpr.Position})");
                     return null;
                 }
 
                 if (funcTypes.Count != callExpr.Parameters.Count + 1)
                     Error.WriteLine($"Incorrect parameter lenght in {propertyName}, calling {callExpr.Name} with {callExpr.Parameters.Count} parameters, declared type {funcTypes.Count} parameters");
 
-                var callTypes = callExpr.Parameters.Select(p => GetType(tc, p, expectedType, propertyName)).ToList();
+                var callTypes = callExpr.Parameters.Select(p => GetTypeCheckNull(tc, p, propertyName)).ToList();
                 for (int n = 0; n < callTypes.Count; n++)
                 {
-                    if (funcTypes[n] != callTypes[n])
-                        Error.WriteLine($"Parameter type mismatch in {propertyName}, calling {callExpr.Name}, parameter {n+1}, found {callTypes[n]} expected {funcTypes[n]}");
+                    if (callTypes[n] != null)
+                        continue;
+
+                    if (funcTypes[n] is GenericType gn)
+                    {
+                        string id = gn.Name;
+                        for (int m = n; m < funcTypes.Count; m++)
+                        {
+                            if (funcTypes[m] is GenericType gm && gm.Name == id)
+                                funcTypes[m] = callTypes[n];
+                        }
+                    }
+
+                    if (!funcTypes[n].Equals(callTypes[n]))
+                        Error.WriteLine($"Parameter type mismatch in {propertyName}, calling {callExpr.Name}, parameter {n+1}, found {callTypes[n]} expected {funcTypes[n]} ({callExpr.Parameters[n].Position}).");
                 }
 
                 return funcTypes.Last();

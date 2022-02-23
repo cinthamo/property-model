@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace PropertiesLanguage.Test
 {
-	public class TypeContext : ITypeContext
-	{
+    public class TypeContext : ITypeContext
+    {
         #region ITypeContext
 
         public ITypeContext? GetContextFor(IType targetType)
@@ -29,7 +29,7 @@ namespace PropertiesLanguage.Test
 
         #region Data
 
-        private struct TypeObj
+        protected struct TypeObj
         {
             public TypeObj() { }
 
@@ -50,31 +50,21 @@ namespace PropertiesLanguage.Test
             others = o;
         }
 
-        private static void Copy<K,T>(IDictionary<K,T> from, IDictionary<K,T> to)
+        private static void Copy<K, T>(IDictionary<K, T> from, IDictionary<K, T> to)
         {
-            foreach (KeyValuePair<K,T> p in from)
+            foreach (KeyValuePair<K, T> p in from)
                 to.Add(p.Key, p.Value);
         }
 
-        public TypeContext(DefinitionList definitions)
+        protected TypeContext(DefinitionList definitions, IPredefined predefined)
         {
             current = new TypeObj();
             others = new Dictionary<IType, TypeObj>();
 
-            Copy(BasicTypes, current.Names);
-            Copy(BasicFunctions, current.Functions);
+            Copy(predefined.BasicTypes, current.Names);
+            Copy(predefined.BasicFunctions, current.Functions);
 
-            foreach (var definition in definitions.Properties)
-                current.Names.Add(definition.Name, BasicTypes[definition.Type]);
-
-            if (definitions.ExternalType != null &&
-                BasicObjects.TryGetValue(new ExternalType(definitions.ExternalType), out var extObj))
-            {
-                Copy(extObj.Names, current.Names);
-                Copy(extObj.Functions, current.Functions);
-            }
-
-            foreach (KeyValuePair<string, List<string>> p in BasicEnums)
+            foreach (KeyValuePair<string, List<string>> p in predefined.BasicEnums)
             {
                 var type = new EnumType(p.Key);
                 current.Names.Add(p.Key, type);
@@ -86,61 +76,36 @@ namespace PropertiesLanguage.Test
                 others.Add(type, typeObj);
             }
 
-            Copy(BasicObjects, others);
+            Copy(predefined.BasicObjects, others);
+
+
+            var dto = new TypeObj();
+
+            foreach (var definition in definitions.Properties)
+                dto.Names.Add(definition.Name, current.Names[definition.Type]);
+
+            if (definitions.ExternalType != null &&
+                predefined.BasicObjects.TryGetValue(new ExternalType(definitions.ExternalType), out var extObj))
+            {
+                Copy(extObj.Names, dto.Names);
+                Copy(extObj.Functions, dto.Functions);
+            }
+
+
+            Copy(dto.Names, current.Names);
+            Copy(dto.Functions, current.Functions);
+
+            others.Add(new InternalType(definitions.Name), dto);
         }
 
         #endregion
 
-        #region Predefined
-
-        private static Dictionary<string, IType> BasicTypes
+        protected interface IPredefined
         {
-            get
-            {
-                return new Dictionary<string, IType>()
-                {
-                    { "number", DotNetType.Int},
-                    { "boolean", DotNetType.Bool},
-                    { "string", DotNetType.String },
-                };
-            }
+            Dictionary<string, IType> BasicTypes { get; }
+            Dictionary<string, List<IType>> BasicFunctions { get; }
+            Dictionary<IType, TypeObj> BasicObjects { get; }
+            Dictionary<string, List<string>> BasicEnums { get; }
         }
-
-        private static Dictionary<string, List<IType>> BasicFunctions
-        {
-            get
-            {
-                return new Dictionary<string, List<IType>>()
-                {
-                    { "==", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Bool } },
-                    { "+", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Int } },
-                    { ">", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Bool } },
-                };
-            }
-        }
-
-        private static Dictionary<IType, TypeObj> BasicObjects
-        {
-            get
-            {
-                return new Dictionary<IType, TypeObj>()
-                {
-
-                };
-            }
-        }
-
-        private static Dictionary<string, List<string>> BasicEnums
-        {
-            get
-            {
-                return new Dictionary<string, List<string>>()
-                {
-
-                };
-            }
-        }
-
-        #endregion
     }
 }

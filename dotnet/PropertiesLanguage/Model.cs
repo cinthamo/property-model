@@ -24,23 +24,33 @@ namespace PropertiesLanguage
         public IExpression Valid;
     }
 
-    public interface IExpression { }
+    public interface IExpression {
+        string Text { get; }
+        string Position { get; }
+    }
 
     public class BaseExpression : IExpression
     {
         public BaseExpression(ParserRuleContext? context)
         {
             if (context == null)
-                position = null;
+            {
+                Text = "Expression";
+                Position = "unknown position";
+            }
             else
-                position = $"{context.GetText()} (Line {context.Start.Line} Char {context.Start.Column}";
+            {
+                Text = context.GetText();
+                Position = $"Line {context.Start.Line} Char {context.Start.Column}";
+            }
         }
 
-        private readonly string? position;
+        public string Text { get; private set; }
+        public string Position { get; private set; }
 
         public override string ToString()
         {
-            return position ?? base.ToString() ?? "Expression";
+            return $"{Text} ({Position})";
         }
     }
 

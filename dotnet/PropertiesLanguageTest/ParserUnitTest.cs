@@ -15,7 +15,7 @@ namespace PropertiesLanguage.Test
             foreach (var definitions in model.Definitions)
             {
                 var error = new StringWriter();
-                new Checker(error).CheckTypes(new TypeContext(definitions), model);
+                new Checker(error).CheckTypes(new TestTypeContext(definitions), definitions);
                 Assert.Equal("", error.ToString());
             }
         }
