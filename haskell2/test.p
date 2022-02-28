@@ -32,10 +32,6 @@ list ExternalProperties : WithIsInterface {
         default = not isInterface;
     }
 }
-//external WithIsInterface {
-//    isInterface: boolean
-//}
-
 
 // case 2. another object
 list AnotherObject : WithParent {
@@ -90,5 +86,16 @@ list Enum {
     definition latin {
         type = boolean;
         default = (location) == (Country.Uruguay);
+    }
+}
+
+// case 6. user control completo Upload
+list Upload : WithContext {
+    definition AutoUpload {
+        type = boolean;
+    }
+    definition hideAdditionalButtons {
+        type = boolean;
+        apply = context == RuntimeContext.Runtime or AutoUpload;
     }
 }

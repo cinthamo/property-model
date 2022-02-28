@@ -34,11 +34,18 @@ externals = [
             ] [
 
             ])
+        (TExternal "WithContext", TypeObject
+            [
+                ("context", TEnum "RuntimeContext")
+            ] [
+
+            ])
     ]
 
 enums :: TEnums
 enums = [
         ("Country", ["Uruguay"])
+        ("RuntimeContext", ["Runtime", "Designtime"])
     ]
 
 newTypeContext :: DefinitionList -> TypeContext
