@@ -9,38 +9,43 @@ import Checker.TypeContext
 typeCheck :: TypeContext -> DefinitionList -> Bool
 typeCheck tc definition = Prelude.all f (properties definition)
   where
-    f d = validExpr tc (_default d) (_type d) (D.name d)
-       && validExpr tc (apply d)    TBool (D.name d)
-       && validExpr tc (readonly d) TBool (D.name d)
-       && validExpr tc (valid d)    TBool (D.name d)
+    f d = validExpr tc (_default d) (_type d) (D.name d) True
+       && validExpr tc (apply d)    TBool     (D.name d) False
+       && validExpr tc (readonly d) TBool     (D.name d) False
+       && validExpr tc (valid d)    TBool     (D.name d) False
 
-validExpr :: TypeContext -> Expr -> ValueType -> Name -> Bool
-validExpr tc expr vt n =
-  let found = getType tc expr vt n
-   in (found == vt) || error [i|"Type mismatch in #{n} found #{found} expected #{vt} in expression #{expr}"|]
+validExpr :: TypeContext -> Expr -> ValueType -> Name -> Bool -> Bool
+validExpr tc expr vt n optional =
+  (optional && isNull expr)
+  || (found == vt)
+  || error [i|"Type mismatch in #{n} found #{found} expected #{vt} in expression #{expr}"|]
+  where
+    found = getType tc expr vt n
+    isNull (Value (V Null)) = True
+    isNull _ = False
 
 getType :: TypeContext -> Expr -> ValueType -> Name -> ValueType
 getType _ (Value (V (String _))) _ _ = TString
 getType _ (Value (V (Number _))) _ _ = TNumber
 getType _ (Value (V (Bool _))) _ _ = TBool
-getType _ (Value (V t)) vt _ = error [i|"Unknown type #{t} expected #{vt}"|]
+getType _ (Value (V t)) vt n = error [i|"Unknown type #{t} expected #{vt} in property #{n}"|]
 getType _ ValueRef vt _ = vt
 getType tc (PropRef expr prop) vt n = typeOfName (contextFor tc $ getType tc expr vt n) prop
 getType tc (NameRef name) _ _ = typeOfName tc name
 getType tc (Case conditions _otherwise) vt n =
   if Prelude.all f conditions && g _otherwise then vt else error "?"
   where
-    f (c, v) = validExpr tc c TBool n && validExpr tc v vt n
-    g (Just v) = validExpr tc v vt n
+    f (c, v) = validExpr tc c TBool n False && validExpr tc v vt n False
+    g (Just v) = validExpr tc v vt n False
     g Nothing = True
 getType tc (Call name parameters) _ n =
   let types = typesOfFuncParam tc name
       list = zip parameters types
       ok1 =
-        (length types == length parameters + 1) || error [i|"Incorrect parameter lenght in #{n}, calling #{name} with #{length parameters} parameters, declared type #{length types} parameters"|]
+        (length types == length parameters + 1) || error [i|"Incorrect parameter length in #{n}, calling #{name} with #{length parameters} parameters, declared type #{length types - 1} parameters"|]
       ok2 = Prelude.all f $ processGeneric list
         where
-          f (e, t) = validExpr tc e t n
+          f (e, t) = validExpr tc e t n False
           processGeneric [] = []
           processGeneric ((e, TGeneric m):l) = let t = getType tc e (TGeneric 0) n in (e, t):(processGeneric (map (replaceGeneric m t) l))
           processGeneric ((e, t): l) = (e, t):(processGeneric l)

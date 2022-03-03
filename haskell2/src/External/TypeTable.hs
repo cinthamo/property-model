@@ -7,11 +7,18 @@ import Checker.TypeContext as TC
 functions :: TFunctions
 functions = [
         ("==", [TGeneric 1, TGeneric 1, TBool]),
+        ("<>", [TGeneric 1, TGeneric 1, TBool]),
         ("+", [TNumber, TNumber, TNumber]),
+        ("-", [TNumber, TNumber, TNumber]),
+        (">=", [TNumber, TNumber, TBool]),
+        ("<=", [TNumber, TNumber, TBool]),
         (">", [TNumber, TNumber, TBool]),
+        ("<", [TNumber, TNumber, TBool]),
+        ("and", [TBool, TBool, TBool]),
+        ("or", [TBool, TBool, TBool]),
         ("not", [TBool, TBool]),
         ("GetExposedName", [TString, TString]),
-        ("GetName", [TString, TExternal "KBModel", TString])
+        ("GetName", [TExternal "LocalizableImageReference", TExternal "KBModel", TString])
     ]
 
 externals :: TExternals
@@ -33,10 +40,10 @@ externals = [
                 ("model", TExternal "KBModel")
             ] [
 
-            ])
+            ]),
         (TExternal "WithContext", TypeObject
             [
-                ("context", TEnum "RuntimeContext")
+                ("context", TExternal "RuntimeContext")
             ] [
 
             ])
@@ -44,7 +51,7 @@ externals = [
 
 enums :: TEnums
 enums = [
-        ("Country", ["Uruguay"])
+        ("Country", ["Uruguay"]),
         ("RuntimeContext", ["Runtime", "Designtime"])
     ]
 

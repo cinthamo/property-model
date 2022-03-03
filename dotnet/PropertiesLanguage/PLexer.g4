@@ -1,4 +1,4 @@
-lexer grammar PropsLexer;
+lexer grammar PLexer;
 
 BOOL: 'true' | 'false';
 NOT: 'not';

@@ -1,6 +1,6 @@
-parser grammar PropsParser;
+parser grammar PGrammar;
 
-options { tokenVocab=PropsLexer; }
+options { tokenVocab=PLexer; }
 
 definitions: list*;
 

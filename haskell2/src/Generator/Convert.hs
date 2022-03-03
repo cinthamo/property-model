@@ -18,7 +18,7 @@ convertProperties :: [Definition] -> [GDefinition]
 convertProperties props = map convertOne props
 
 convertOne :: Definition -> GDefinition
-convertOne (Definition name _type _default apply readonly valid) = GDefinition {
+convertOne (Definition name _type doc _default apply readonly valid) = GDefinition {
         D.id = name,
         D.name = name,
         D.aType = convertTypeGxp _type,
@@ -46,26 +46,26 @@ convertDefault _ = Nothing
 convertDefaultResolvers :: [Definition] -> [GResolver]
 convertDefaultResolvers props = map convertDefaultResolverOne $ filter needResolver props
     where
-        needResolver (Definition _ _ _default _ _ _) = convertDefault _default == Nothing
-        convertDefaultResolverOne (Definition name _ _default _ _ _) = convertResolverOne name _default "Default" [] [stReturn (convertExpr true)] (stAssign False "value")
+        needResolver (Definition _ _ _ _default _ _ _) = convertDefault _default == Nothing
+        convertDefaultResolverOne (Definition name _ _ _default _ _ _) = convertResolverOne name _default "Default" [] [stReturn (convertExpr true)] (stAssign False "value")
 
 convertApplyResolvers :: [Definition] -> [GResolver]
 convertApplyResolvers props = map convertApplyResolverOne $ filter needResolver props
     where
-        needResolver (Definition _ _ _ apply _ _) = apply /= true
-        convertApplyResolverOne (Definition name _ _ apply _ _) = convertResolverOne name apply "Apply" [] [] stReturn
+        needResolver (Definition _ _ _ _ apply _ _) = apply /= true
+        convertApplyResolverOne (Definition name _ _ _ apply _ _) = convertResolverOne name apply "Apply" [] [] stReturn
 
 convertReadonlyResolvers :: [Definition] -> [GResolver]
 convertReadonlyResolvers props = map convertReadonlyResolverOne $ filter needResolver props
     where
-        needResolver (Definition _ _ _ _ readonly _) = readonly /= false
-        convertReadonlyResolverOne (Definition name _ _ _ readonly _) = convertResolverOne name readonly "Readonly" [] [] stReturn
+        needResolver (Definition _ _ _ _ _ readonly _) = readonly /= false
+        convertReadonlyResolverOne (Definition name _ _ _ _ readonly _) = convertResolverOne name readonly "Readonly" [] [] stReturn
 
 convertValidResolvers :: [Definition] -> [GResolver]
 convertValidResolvers props = map convertValidResolverOne $ filter needResolver props
     where
-        needResolver (Definition _ _ _ _ _ valid) = valid /= true
-        convertValidResolverOne (Definition name _type _ _ _ valid) = convertResolverOne name valid "Valid" [stAssign True "typedValue" (exprCast (convertTypeDotNet _type) (exprConstant "value"))] [] stReturn
+        needResolver (Definition _ _ _ _ _ _ valid) = valid /= true
+        convertValidResolverOne (Definition name _type _ _ _ _ valid) = convertResolverOne name valid "Valid" [stAssign True "typedValue" (exprCast (convertTypeDotNet _type) (exprConstant "value"))] [] stReturn
 
 convertResolverOne :: String -> Expr -> String -> [GStatement] -> [GStatement] -> (GExpr -> GStatement) -> GResolver
 convertResolverOne name code suffix before after end = GResolver {

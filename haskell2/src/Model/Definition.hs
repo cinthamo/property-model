@@ -14,6 +14,7 @@ data Definition
   = Definition
       { name :: Name,
         _type :: ValueType,
+        doc :: [String],
         _default :: Expr,
         apply :: Expr,
         readonly :: Expr,
