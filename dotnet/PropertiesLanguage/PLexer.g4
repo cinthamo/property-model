@@ -4,8 +4,7 @@ BOOL: 'true' | 'false';
 NOT: 'not';
 NULL: 'null';
 VALUE: 'value';
-LIST: 'list';
-DEFINITION: 'definition';
+TYPE: 'type';  
 IF: 'if';
 
 PARA: '(';
@@ -24,6 +23,10 @@ NAME: [a-zA-Z][a-zA-Z0-9_]*;
 NUMBER: '-'?[0-9]+;
 STRING: '"' (~[\r\n])* '"';
 
+BLOCK_DOC: '/**' .* '*/';
+EOL_DOC: '///' (~[\r\n])*;
+
 BLOCK_COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
 EOL_COMMENT: '//' (~[\r\n])* -> channel(HIDDEN);
 WS: [ \n\t\r]+               -> channel(HIDDEN);
+

@@ -2,20 +2,25 @@ parser grammar PGrammar;
 
 options { tokenVocab=PLexer; }
 
-definitions: list*;
+definitions: type*;
 
-list:
-  LIST name=NAME (COLON type=NAME)? CORCHA property* CORCHC;
+type:
+  TYPE name=NAME (COLON type=NAME)? CORCHA property* CORCHC;
 
-property:
-  DEFINITION name=NAME CORCHA rules=aRule* CORCHC;
+  property:
+    doc=doc* name=NAME COLON type=NAME (CORCHA aRule* CORCHC)? end?;
+
+  doc:
+    BLOCK_DOC
+  | EOL_DOC;
 
 aRule:
-  name=NAME EQUAL case* otherwise=expr SEMICOLON   # ruleEqual
-| name=NAME (IF condition=expr)? SEMICOLON                    # ruleBool
+  name=NAME EQUAL ccase* otherwise=expr end?   # ruleEqual
+| name=NAME (IF condition=expr)? end?          # ruleBool
 ;
 
-case: expr IF expr PIPE;
+end: SEMICOLON;
+ccase: expr IF expr PIPE;
 
 expr:
   value=NUMBER                # exprNumber

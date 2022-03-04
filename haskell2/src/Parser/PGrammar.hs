@@ -40,20 +40,23 @@ pDefinition doc name _ aType rules _ = PDefinition doc name aType rules
 pRules :: s -> [PRule] -> s -> [PRule]
 pRules _ rules _ = rules
 
--- NAME EQUAL exprIfMulti* expr end? -> valueRule
-valueRule :: String -> s -> [IfRule] -> PExpr -> Maybe s -> PRule
-valueRule name _ rules expr _ = ValueRule name rules expr
+-- NAME EQUAL ccase* expr end? -> ruleEqual
+ruleEqual :: String -> s -> [IfRule] -> PExpr -> Maybe s -> PRule
+ruleEqual name _ rules expr _ = ValueRule name rules expr
 
--- NAME exprIf?                 end? -> simpleRule;
-simpleRule :: String -> Maybe PExpr -> Maybe s -> PRule
-simpleRule name expr _ = SimpleRule name expr
+-- NAME ifExpr? end? -> ruleBool
+ruleBool :: String -> Maybe PExpr -> Maybe s -> PRule
+ruleBool name expr _ = SimpleRule name expr
 
--- optType: COLON NAME    -> skip1
--- nameComma : COMMA NAME -> skip1
--- exprComma: COMMA expr  -> skip1
--- exprIf: IF expr        -> skip1
+-- colonName: COLON NAME     -> skip1
+-- ifExpr: IF expr           -> skip1
+-- commaExpr: COMMA expr     -> skip1
 skip1 :: s -> t -> t
 skip1 _ x = x
+
+-- listExpr: expr commaExpr* -> cons
+cons :: PExpr -> [PExpr] -> [PExpr]
+cons x l = x:l
 
 -- exprIfMulti: expr IF expr PIPE -> ifRule
 ifRule :: PExpr -> s -> PExpr -> s -> IfRule
@@ -63,13 +66,13 @@ ifRule valueExpr _ condExpr _ = IfRule valueExpr condExpr
 field :: PExpr -> s -> String -> PExpr
 field expr _ name = Field expr name
 
--- NAME PARA expr exprComma* PARC -> funcCall
-funcCall :: String -> s -> PExpr -> [PExpr] -> s -> PExpr
-funcCall name _ parm0 parmL _ = Call name (parm0:parmL)
+-- NAME PARA listExpr? PARC -> funcCall
+funcCall :: String -> s -> Maybe [PExpr] -> s -> PExpr
+funcCall name _ parmL _ = Call name (maybe [] id parmL)
 
--- expr DOT NAME PARA expr exprComma* PARC -> methCall
-methCall :: PExpr -> s -> String -> s -> PExpr -> [PExpr] -> s -> PExpr
-methCall target _ name _ parm0 parmL _ = Call name (target:(parm0:parmL))
+-- expr DOT func -> methCall
+methCall :: PExpr -> s -> PExpr -> PExpr
+methCall target _ (Call name parmL) = Call name (target:parmL)
 
 -- expr OP expr -> opCall
 opCall :: PExpr -> String -> PExpr -> PExpr
@@ -124,9 +127,8 @@ parExpr _ expr _ = expr
   definitions: type*;
 
   type:
-    TYPE NAME optType? CORCHA property* CORCHC -> pDefinitionList;
+    TYPE NAME colonName? CORCHA property* CORCHC -> pDefinitionList;
 
-  optType: COLON NAME -> skip1;
 
   property:
     doc* NAME COLON NAME optRules? end? -> pDefinition;
@@ -136,33 +138,37 @@ parExpr _ expr _ = expr
   | EOL_DOC;
 
   optRules:
-    CORCHA rule* CORCHC -> pRules;
+    CORCHA aRule* CORCHC -> pRules;
 
-  rule:
-    NAME EQUAL exprIfMulti* expr end? -> valueRule
-  | NAME exprIf?                 end? -> simpleRule;
+  aRule:
+    NAME EQUAL ccase* expr end? -> ruleEqual
+  | NAME ifExpr?           end? -> ruleBool
+  ;
 
   end: SEMICOLON;
+  ccase: expr IF expr PIPE  -> ifRule;
 
-  nameComma : COMMA NAME -> skip1;
+  colonName: COLON NAME     -> skip1;
+  ifExpr: IF expr           -> skip1;
+  commaExpr: COMMA expr     -> skip1;
+  listExpr: expr commaExpr* -> cons;
 
   expr:
-	  NUMBER -> Number
-  | BOOL -> Bool
-	| STRING -> String
-	| NULL -> Null
-  | VALUE -> Value
-	| NAME -> Name
-	| expr DOT NAME -> field
-  | NAME PARA expr exprComma* PARC -> funcCall
-  | expr DOT NAME PARA expr exprComma* PARC -> methCall
-  | expr OP expr -> opCall
-  | NOT expr -> pNot
-  | PARA expr PARC -> parExpr;
-
-  exprComma: COMMA expr          -> skip1;
-  exprIf: IF expr                -> skip1;
-  exprIfMulti: expr IF expr PIPE -> ifRule;
+    NUMBER         -> Number
+  | BOOL           -> Bool
+  | STRING         -> String
+  | NULL           -> Null
+  | VALUE          -> Value
+  | NAME           -> Name
+  | expr DOT NAME  -> field
+  | func
+  | expr DOT func  -> methCall
+  | expr OP expr   -> opCall
+  | NOT expr       -> pNot
+  | PARA expr PARC -> parExpr
+  ;
+  
+  func: NAME PARA listExpr? PARC -> funcCall;
 |]
 
 isWS T_BLOCK_COMMENT = True
