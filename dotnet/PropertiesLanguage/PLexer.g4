@@ -23,7 +23,7 @@ NAME: [a-zA-Z][a-zA-Z0-9_]*;
 NUMBER: '-'?[0-9]+;
 STRING: '"' (~[\r\n])* '"';
 
-BLOCK_DOC: '/**' .* '*/';
+BLOCK_DOC: '/**' .*? '*/';
 EOL_DOC: '///' (~[\r\n])*;
 
 BLOCK_COMMENT: '/*' .*? '*/' -> channel(HIDDEN);

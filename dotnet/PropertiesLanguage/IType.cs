@@ -3,7 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace PropertiesLanguage
 {
-    public interface IType { }
+    public interface IType
+    {
+        public string Name { get; }
+    }
 
     public interface ITypeContext
     {
@@ -19,7 +22,7 @@ namespace PropertiesLanguage
             Name = name;
         }
 
-        public string Name;
+        public string Name { get; private set; }
 
         public override string ToString()
         {

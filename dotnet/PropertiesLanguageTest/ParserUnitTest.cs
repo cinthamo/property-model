@@ -10,7 +10,7 @@ namespace PropertiesLanguage.Test
         {
             var text = File.ReadAllText("test.p");
             var model = Parser.Parse(text);
-            Assert.Equal(6, model.Definitions.Count);
+            Assert.Equal(7, model.Definitions.Count);
 
             foreach (var definitions in model.Definitions)
             {

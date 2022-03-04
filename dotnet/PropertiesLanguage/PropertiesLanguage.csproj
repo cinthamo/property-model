@@ -1,33 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\PropertiesKey.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>..\PropertiesKey.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-		<AntlrGrammar Include="PropsLexer.g4" GrammarType="Lexer" />
-		<AntlrGrammar Include="PropsParser.g4" GrammarType="Parser" />
+	<ItemGroup>
+		<AntlrGrammar Include="PLexer.g4" GrammarType="Lexer" />
+		<AntlrGrammar Include="PGrammar.g4" GrammarType="Parser" />
 	</ItemGroup>
 
-  <ItemGroup>
-		<_AntlrSameFile Include="@(AntlrGrammar-&gt;HasMetadata('GrammarType'))" />
+	<ItemGroup>
 		<_AntlrVisitorAndListener Include="@(AntlrGrammar)" Exclude="@(AntlrGrammar-&gt;WithMetadataValue('GrammarType','Lexer'))" />
-		<_AntlrLexerAndParser Include="@(AntlrGrammar)" Exclude="@(_AntlrSameFile)" />
 
 		<AntlrOutput Include="@(_AntlrSameFile -&gt; 'Parser\%(RelativeDir)%(Filename).cs')" />
 		<AntlrOutput Include="@(_AntlrVisitorAndListener -&gt; 'Parser\%(RelativeDir)%(Filename)BaseVisitor.cs')" />
 		<AntlrOutput Include="@(_AntlrVisitorAndListener -&gt; 'Parser\%(RelativeDir)%(Filename)Visitor.cs')" />
-		<AntlrOutput Include="@(_AntlrLexerAndParser -&gt; 'Parser\%(RelativeDir)%(Filename)Lexer.cs')" />
-		<AntlrOutput Include="@(_AntlrLexerAndParser -&gt; 'Parser\%(RelativeDir)%(Filename)Parser.cs')" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.3" />
+	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Inputs="@(AntlrGrammar)" Outputs="@(AntlrOutput)">
 		<PropertyGroup>

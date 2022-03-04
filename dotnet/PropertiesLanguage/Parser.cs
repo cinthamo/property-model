@@ -8,11 +8,11 @@ namespace PropertiesLanguage
         public static Model Parse(string example)
         {
             var charStream = new AntlrInputStream(example);
-            var lexer = new PropsLexer(charStream);
+            var lexer = new PLexer(charStream);
             var tokenStream = new CommonTokenStream(lexer);
             var output = new StringWriter();
             var error = new StringWriter();
-            var parser = new PropsParser(tokenStream, output, error);
+            var parser = new PGrammar(tokenStream, output, error);
             var tree = parser.definitions();
             var s = output.ToString() + error.ToString();
             if (!string.IsNullOrEmpty(s))

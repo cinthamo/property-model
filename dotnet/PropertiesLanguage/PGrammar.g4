@@ -5,10 +5,10 @@ options { tokenVocab=PLexer; }
 definitions: type*;
 
 type:
-  TYPE name=NAME (COLON type=NAME)? CORCHA property* CORCHC;
+  TYPE name=NAME (COLON ttype=NAME)? CORCHA property* CORCHC;
 
   property:
-    doc=doc* name=NAME COLON type=NAME (CORCHA aRule* CORCHC)? end?;
+    ddoc=doc* name=NAME COLON ttype=NAME (CORCHA aRule* CORCHC)? end?;
 
   doc:
     BLOCK_DOC

@@ -18,6 +18,7 @@ namespace PropertiesLanguage
     {
         public string Name;
         public string Type;
+        public string Description;
         public IExpression Default;
         public IExpression Apply;
         public IExpression Readonly;

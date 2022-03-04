@@ -24,15 +24,15 @@
                 return;
             }
 
-            ValidExpr(tc, definition.Default, type, definition.Name);
-            ValidExpr(tc, definition.Apply, DotNetType.Bool, definition.Name);
-            ValidExpr(tc, definition.Readonly, DotNetType.Bool, definition.Name);
-            ValidExpr(tc, definition.Valid, DotNetType.Bool, definition.Name);
+            ValidExpr(tc, definition.Default, type, definition.Name, true);
+            ValidExpr(tc, definition.Apply, DotNetType.Bool, definition.Name, false);
+            ValidExpr(tc, definition.Readonly, DotNetType.Bool, definition.Name, false);
+            ValidExpr(tc, definition.Valid, DotNetType.Bool, definition.Name, false);
         }
 
-        private void ValidExpr(ITypeContext tc, IExpression expr, IType expectedType, string propertyName)
+        private void ValidExpr(ITypeContext tc, IExpression expr, IType expectedType, string propertyName, bool optional)
         {
-            if (expr == null)
+            if (expr == null || optional && expr is NullExpression)
                 return;
 
             var found = GetTypeCheckNull(tc, expr, propertyName);
@@ -94,7 +94,7 @@
                     return null;
 
                 caseExpr.Conditions.ForEach(c => {
-                    ValidExpr(tc, c.Condition, DotNetType.Bool, propertyName);
+                    ValidExpr(tc, c.Condition, DotNetType.Bool, propertyName, false);
                     var found = GetTypeCheckNull(tc, c.Value, propertyName);
                     if (found != null && !type.Equals(found))
                         Error.WriteLine($"Type mismatch in {propertyName} found {found} expected {type} in expression {expr}");

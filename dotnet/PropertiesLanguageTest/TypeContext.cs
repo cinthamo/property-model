@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace PropertiesLanguage.Test
 {
@@ -64,6 +64,11 @@ namespace PropertiesLanguage.Test
             Copy(predefined.BasicTypes, current.Names);
             Copy(predefined.BasicFunctions, current.Functions);
 
+            foreach (KeyValuePair<string, IType> p in predefined.BasicTypes)
+            {
+                others.Add(p.Value, new TypeObj());
+            }
+
             foreach (KeyValuePair<string, List<string>> p in predefined.BasicEnums)
             {
                 var type = new EnumType(p.Key);
@@ -76,6 +81,10 @@ namespace PropertiesLanguage.Test
                 others.Add(type, typeObj);
             }
 
+            foreach (KeyValuePair<IType, TypeObj> p in predefined.BasicObjects)
+            {
+                current.Names.Add(p.Key.Name, p.Key);
+            }
             Copy(predefined.BasicObjects, others);
 
 

@@ -16,8 +16,8 @@ namespace PropertiesLanguage.Test
                 {
                     return new Dictionary<string, IType>()
                     {
-                        { "number", DotNetType.Int},
-                        { "boolean", DotNetType.Bool},
+                        { "number", DotNetType.Int },
+                        { "boolean", DotNetType.Bool },
                         { "string", DotNetType.String },
                     };
                 }
@@ -30,8 +30,15 @@ namespace PropertiesLanguage.Test
                     return new Dictionary<string, List<IType>>()
                     {
                         { "==", new List<IType> { new GenericType(1), new GenericType(1), DotNetType.Bool } },
+                        { "<>", new List<IType> { new GenericType(1), new GenericType(1), DotNetType.Bool } },
                         { "+", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Int } },
+                        { "-", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Int } },
+                        { ">=", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Bool } },
+                        { "<=", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Bool } },
                         { ">", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Bool } },
+                        { "<", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Bool } },
+                        { "and", new List<IType> { DotNetType.Bool, DotNetType.Bool, DotNetType.Bool } },
+                        { "or", new List<IType> { DotNetType.Bool, DotNetType.Bool, DotNetType.Bool } },
                         { "not", new List<IType> { DotNetType.Bool, DotNetType.Bool } },
                         { "GetExposedName", new List<IType> { DotNetType.String, DotNetType.String } },
                         { "GetName", new List<IType> { DotNetType.String, new ExternalType("Model"), DotNetType.String } },
@@ -68,7 +75,16 @@ namespace PropertiesLanguage.Test
                                     { "model", new ExternalType("Model") }
                                 }
                             }
-                        }
+                        },
+                        { new ExternalType("WithContext"), new TypeObj()
+                            {
+                                Names = new Dictionary<string, IType>()
+                                {
+                                    { "context", new ExternalType("Context") }
+                                }
+                            }
+                        },
+                        { new ExternalType("LocalizableImageReference"), new TypeObj() }
                     };
                 }
             }
@@ -79,7 +95,8 @@ namespace PropertiesLanguage.Test
                 {
                     return new Dictionary<string, List<string>>()
                     {
-                        { "Country", new List<string> { "Uruguay" } }
+                        { "Country", new List<string> { "Uruguay", "Argentina", "Brasil" } },
+                        { "RuntimeContext", new List<string> { "Runtime", "Design" } }
                     };
                 }
             }
