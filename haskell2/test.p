@@ -1,12 +1,12 @@
 type Test {
     /// readonly test
-    one: number {
+    one: numeric {
         default = 3
         readonly
     }
 
     /// default test
-    two: number {
+    two: numeric {
         default = 2 if one == 1
                 | 3 if one == 2
                 | (one + -1) + 4
@@ -19,7 +19,7 @@ type Test {
     }
 
     /// valid test
-    four: number {
+    four: numeric {
         default = 5
         valid if value > 2
     }

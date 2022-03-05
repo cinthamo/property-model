@@ -31,7 +31,7 @@ convertType t = case (lookup t types) of
 types :: [(String, ValueType)]
 types = [
         ("string", TString),
-        ("number", TNumber),
+        ("numeric", TNumber),
         ("boolean", TBool)
     ]
 

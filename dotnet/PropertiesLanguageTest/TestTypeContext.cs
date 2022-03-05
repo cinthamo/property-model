@@ -16,7 +16,7 @@ namespace PropertiesLanguage.Test
                 {
                     return new Dictionary<string, IType>()
                     {
-                        { "number", DotNetType.Int },
+                        { "numeric", DotNetType.Int },
                         { "boolean", DotNetType.Bool },
                         { "string", DotNetType.String },
                     };

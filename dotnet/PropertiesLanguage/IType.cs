@@ -54,7 +54,7 @@ namespace PropertiesLanguage
 
         public Type Type;
 
-        public static readonly IType Int = new DotNetType("number", typeof(int));
+        public static readonly IType Int = new DotNetType("numeric", typeof(int));
         public static readonly IType String = new DotNetType("string", typeof(string));
         public static readonly IType Bool = new DotNetType("boolean", typeof(bool));
     }

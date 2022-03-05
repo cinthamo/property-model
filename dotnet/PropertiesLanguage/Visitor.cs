@@ -147,7 +147,8 @@ namespace PropertiesLanguage
 
         public override IExpression VisitExprString([NotNull] PGrammar.ExprStringContext context)
         {
-            return new StringExpression(context, context.STRING().GetText());
+			var value = context.STRING().GetText();
+			return new StringExpression(context, value.Substring(1, value.Length - 2)); // remove quotes
         }
 
         public override IExpression VisitExprNull([NotNull] PGrammar.ExprNullContext context)
