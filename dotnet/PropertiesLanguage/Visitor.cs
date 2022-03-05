@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Antlr4.Runtime.Misc;
 using PropertiesLanguage.Antlr;
 
@@ -133,7 +136,7 @@ namespace PropertiesLanguage
 
         public override IExpression VisitExprNumber([NotNull] PGrammar.ExprNumberContext context)
         {
-            return new NumberExpression(context, int.Parse(context.NUMBER().GetText()));
+            return new NumericExpression(context, int.Parse(context.NUMBER().GetText()));
         }
 
         public override IExpression VisitExprBool([NotNull] PGrammar.ExprBoolContext context)

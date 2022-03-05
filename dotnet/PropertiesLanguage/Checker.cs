@@ -1,4 +1,7 @@
-﻿namespace PropertiesLanguage
+using System.IO;
+using System.Linq;
+
+namespace PropertiesLanguage
 {
     public class Checker
     {
@@ -55,7 +58,7 @@
             {
                 return DotNetType.String;
             }
-            else if (expr is NumberExpression)
+            else if (expr is NumericExpression)
             {
                 return DotNetType.Int;
             }

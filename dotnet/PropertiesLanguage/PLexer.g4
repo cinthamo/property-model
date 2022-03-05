@@ -29,4 +29,3 @@ EOL_DOC: '///' (~[\r\n])*;
 BLOCK_COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
 EOL_COMMENT: '//' (~[\r\n])* -> channel(HIDDEN);
 WS: [ \n\t\r]+               -> channel(HIDDEN);
-

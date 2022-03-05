@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PropertiesLanguage
@@ -29,7 +30,7 @@ namespace PropertiesLanguage
             return Name;
         }
 
-        public override bool Equals([NotNullWhen(true)] object? obj)
+        public override bool Equals(object? obj)
         {
             if (obj is BaseType o)
                 return Name.Equals(o.Name);

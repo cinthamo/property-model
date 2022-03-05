@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Antlr4.Runtime;
 
 namespace PropertiesLanguage
@@ -65,9 +66,9 @@ namespace PropertiesLanguage
         public string Value { get; private set; }
     }
 
-    public class NumberExpression : BaseExpression
+    public class NumericExpression : BaseExpression
     {
-        public NumberExpression(ParserRuleContext context, int value) : base(context)
+        public NumericExpression(ParserRuleContext context, int value) : base(context)
         {
             Value = value;
         }
