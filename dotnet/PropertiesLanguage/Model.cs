@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Antlr4.Runtime;
 
-namespace PropertiesLanguage
+namespace Genexus.PropertiesLanguage
 {
     public struct Model
     {

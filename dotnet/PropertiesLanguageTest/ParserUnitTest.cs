@@ -1,7 +1,7 @@
 using System.IO;
 using Xunit;
 
-namespace PropertiesLanguage.Test
+namespace Genexus.PropertiesLanguage.Test
 {
     public class ParserUnitTest
     {

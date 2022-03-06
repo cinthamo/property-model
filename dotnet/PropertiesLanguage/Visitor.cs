@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime.Misc;
-using PropertiesLanguage.Antlr;
+using Genexus.PropertiesLanguage.Antlr;
 
-namespace PropertiesLanguage
+namespace Genexus.PropertiesLanguage
 {
     public class ModelVisitor : PGrammarBaseVisitor<Model>
     {

@@ -1,7 +1,7 @@
 using System.IO;
 using System.Linq;
 
-namespace PropertiesLanguage
+namespace Genexus.PropertiesLanguage
 {
     public class Checker
     {

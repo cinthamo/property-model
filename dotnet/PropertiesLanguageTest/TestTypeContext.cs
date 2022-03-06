@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PropertiesLanguage.Test
+namespace Genexus.PropertiesLanguage.Test
 {
 	public class TestTypeContext : TypeContext
 	{

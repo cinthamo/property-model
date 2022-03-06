@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using Antlr4.Runtime;
-using PropertiesLanguage.Antlr;
+using Genexus.PropertiesLanguage.Antlr;
 
-namespace PropertiesLanguage
+namespace Genexus.PropertiesLanguage
 {
     public class Parser
     {
