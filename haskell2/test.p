@@ -9,7 +9,7 @@ type Test {
     two: numeric {
         default = 2 if one == 1
                 | 3 if one == 2
-                | (one + -1) + 4
+                | one + -1 + 4
     }
 
     /// apply test
@@ -22,6 +22,11 @@ type Test {
     four: numeric {
         default = 5
         valid if value > 2
+    }
+
+    /// precedence test
+    five: numeric {
+        readonly if four == 4 or three and two == 2 + 1
     }
 }
 
@@ -71,7 +76,7 @@ type Enum {
         default = Country.Uruguay
     }
     latin: boolean {
-        default = location == (Country.Uruguay)
+        default = location == Country.Uruguay
     }
 }
 
@@ -79,6 +84,6 @@ type Enum {
 type Upload : WithContext {
     AutoUpload: boolean
     HideAdditionalButtons: boolean {
-        apply = (context == (RuntimeContext.Runtime)) or AutoUpload
+        apply = context == RuntimeContext.Runtime or AutoUpload
     }
 }

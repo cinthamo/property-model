@@ -109,7 +109,11 @@ parExpr _ expr _ = expr
   DOT: '.'       -> String;
   PIPE: '|'      -> String;
 
-  OP: [->=<+]+ | 'or' | 'and' -> String;
+  MULT: [*/]     -> String;
+  ADD: [+-]      -> String;
+  COMP: '==' | '<>' | '<=' | '>=' | '<' | '>' -> String;
+  AND: 'and'     -> String;
+  OR: 'or'       -> String;
   NAME: [a-zA-Z][a-zA-Z0-9_]* -> String;
   NUMBER: '-'?[0-9]+          -> Int;
   STRING: '"' (~[\r\n])* '"'  -> String;
@@ -119,7 +123,7 @@ parExpr _ expr _ = expr
 
   BLOCK_COMMENT: '/*' .* '*/'  -> String;
   EOL_COMMENT: '//' (~[\r\n])* -> String;
-  WS: [ \t\r\n]+               -> String;
+  WS: [ \n\t\r]+               -> String;
 
 
   // GRAMMAR //

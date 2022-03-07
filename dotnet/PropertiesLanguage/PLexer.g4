@@ -18,7 +18,11 @@ COMMA: ',';
 DOT: '.';
 PIPE: '|';
 
-OP: [->=<+]+ | 'or' | 'and';
+MULT: [*/];
+ADD: [+-];
+COMP: '==' | '<>' | '<=' | '>=' | '<' | '>';
+AND: 'and';
+OR: 'or';
 NAME: [a-zA-Z][a-zA-Z0-9_]*;
 NUMBER: '-'?[0-9]+;
 STRING: '"' (~[\r\n])* '"';

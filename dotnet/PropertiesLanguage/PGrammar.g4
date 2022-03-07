@@ -23,18 +23,22 @@ end: SEMICOLON;
 ccase: expr IF expr PIPE;
 
 expr:
-  value=NUMBER                # exprNumber
-| value=BOOL                  # exprBool
-| value=STRING                # exprString
-| NULL                        # exprNull
-| VALUE                       # exprValue
-| name=NAME                   # exprName
-| target=expr DOT prop=NAME   # exprProp
-| func                        # exprFunction
-| target=expr DOT func        # exprMethod
-| left=expr OP right=expr     # exprOperator
-| NOT expr                    # exprNot
-| PARA expr PARC              # exprParenthesis
+  value=NUMBER                  # exprNumber
+| value=BOOL                    # exprBool
+| value=STRING                  # exprString
+| NULL                          # exprNull
+| VALUE                         # exprValue
+| name=NAME                     # exprName
+| target=expr DOT prop=NAME     # exprProp
+| func                          # exprFunction
+| target=expr DOT func          # exprMethod
+| left=expr op=MULT right=expr  # exprOperator
+| left=expr op=ADD right=expr   # exprOperator
+| left=expr op=COMP right=expr  # exprOperator
+| left=expr op=AND right=expr   # exprOperator
+| left=expr op=OR right=expr    # exprOperator
+| NOT expr                      # exprNot
+| PARA expr PARC                # exprParenthesis
 ;
 
 func: name=NAME PARA (expr (COMMA expr)*)? PARC;

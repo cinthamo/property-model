@@ -40,21 +40,19 @@ namespace Genexus.PropertiesLanguage
 
         private class AspectVisitor : PGrammarBaseVisitor<IExpression?>
         {
-            public static readonly AspectVisitor Default = new AspectVisitor("default", NullExpression.Null, NullExpression.Null, NullExpression.Null);
-            public static readonly AspectVisitor Apply = new AspectVisitor("apply", BooleanExpression.True, BooleanExpression.True, BooleanExpression.False);
-            public static readonly AspectVisitor Readonly = new AspectVisitor("readonly", BooleanExpression.False, BooleanExpression.True, BooleanExpression.False);
-            public static readonly AspectVisitor Valid = new AspectVisitor("valid", BooleanExpression.True, BooleanExpression.True, BooleanExpression.False);
+            public static readonly AspectVisitor Default = new AspectVisitor("default", NullExpression.Null, NullExpression.Null);
+            public static readonly AspectVisitor Apply = new AspectVisitor("apply", BooleanExpression.True, BooleanExpression.False);
+            public static readonly AspectVisitor Readonly = new AspectVisitor("readonly", BooleanExpression.True, BooleanExpression.False);
+            public static readonly AspectVisitor Valid = new AspectVisitor("valid", BooleanExpression.True, BooleanExpression.False);
 
-            private AspectVisitor(string name, IExpression defaultAbsent, IExpression defaultUsed, IExpression defaultOtherwise)
+            private AspectVisitor(string name, IExpression defaultUsed, IExpression defaultOtherwise)
             {
                 Name = name;
-                Absent = defaultAbsent;
                 Used = defaultUsed;
                 Otherwise = defaultOtherwise;
             }
 
             private readonly string Name;
-            public readonly IExpression Absent;
             private readonly IExpression Used;
             private readonly IExpression Otherwise;
 
@@ -88,7 +86,7 @@ namespace Genexus.PropertiesLanguage
             }
         }
 
-        private IExpression getAspect([NotNull] PGrammar.PropertyContext context, AspectVisitor visitor)
+        private IExpression? getAspect([NotNull] PGrammar.PropertyContext context, AspectVisitor visitor)
         {
             var exprList = context.aRule()
                 .Select(r => r.Accept(visitor))
@@ -96,7 +94,7 @@ namespace Genexus.PropertiesLanguage
                 .ToList();
 
             if (!exprList.Any())
-                return visitor.Absent;
+                return null;
 
             if (exprList.Count() > 1)
                 throw new Exception("Can only be one");
@@ -183,7 +181,7 @@ namespace Genexus.PropertiesLanguage
 
         public override IExpression VisitExprOperator([NotNull] PGrammar.ExprOperatorContext context)
         {
-            return new CallExpression(context, context.OP().GetText(), context.expr().Select(p => p.Accept(this)).ToList());
+            return new CallExpression(context, context.op.Text, context.expr().Select(p => p.Accept(this)).ToList());
         }
 
         public override IExpression VisitExprNot([NotNull] PGrammar.ExprNotContext context)

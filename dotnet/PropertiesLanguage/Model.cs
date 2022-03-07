@@ -87,7 +87,12 @@ namespace Genexus.PropertiesLanguage
 
         public static readonly IExpression True = new BooleanExpression(null, true);
         public static readonly IExpression False = new BooleanExpression(null, false);
-    }
+
+		public override string ToString()
+		{
+			return Value.ToString();
+		}
+	}
 
     public class NullExpression : BaseExpression
     {

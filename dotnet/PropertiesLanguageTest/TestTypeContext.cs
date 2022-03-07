@@ -29,10 +29,12 @@ namespace Genexus.PropertiesLanguage.Test
                 {
                     return new Dictionary<string, List<IType>>()
                     {
-                        { "==", new List<IType> { new GenericType(1), new GenericType(1), DotNetType.Bool } },
-                        { "<>", new List<IType> { new GenericType(1), new GenericType(1), DotNetType.Bool } },
+                        { "*", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Int } },
+                        { "/", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Int } },
                         { "+", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Int } },
                         { "-", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Int } },
+                        { "==", new List<IType> { new GenericType(1), new GenericType(1), DotNetType.Bool } },
+                        { "<>", new List<IType> { new GenericType(1), new GenericType(1), DotNetType.Bool } },
                         { ">=", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Bool } },
                         { "<=", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Bool } },
                         { ">", new List<IType> { DotNetType.Int, DotNetType.Int, DotNetType.Bool } },
