@@ -15,7 +15,9 @@ namespace Genexus.PropertiesInstanceLanguage
         {
             return new Model
             {
-                Root = context.@object().Accept(ObjectVisitor.Instance)
+                Root = context.@object() == null ?
+                    new MObject() :
+                    context.@object().Accept(ObjectVisitor.Instance)
             };
         }
     }

@@ -2,7 +2,7 @@ grammar PInstParser;
 
 import PInstLexer;
 
-instance: object;
+instance: object | ;
 
 object: CORCHA (mapping (COMMA mapping)*)? CORCHC;
 
