@@ -10,14 +10,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<AntlrGrammar Include="PLexer.g4" GrammarType="Lexer" />
-		<AntlrGrammar Include="PGrammar.g4" GrammarType="Parser" />
+		<AntlrGrammar Include="PropParser.g4" GrammarType="Parser" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<_AntlrVisitorAndListener Include="@(AntlrGrammar)" Exclude="@(AntlrGrammar-&gt;WithMetadataValue('GrammarType','Lexer'))" />
 
-		<AntlrOutput Include="@(_AntlrSameFile -&gt; 'Parser\%(RelativeDir)%(Filename).cs')" />
 		<AntlrOutput Include="@(_AntlrVisitorAndListener -&gt; 'Parser\%(RelativeDir)%(Filename)BaseVisitor.cs')" />
 		<AntlrOutput Include="@(_AntlrVisitorAndListener -&gt; 'Parser\%(RelativeDir)%(Filename)Visitor.cs')" />
 	</ItemGroup>
@@ -31,7 +29,7 @@
 			<JavaExe Condition=" '$(JAVA_HOME)' != '' ">"$(JAVA_HOME)\bin\java"</JavaExe>
 			<JavaExe Condition=" '$(JavaExe)' == '' ">java</JavaExe>
 		</PropertyGroup>
-		<Exec Command="$(JavaExe) -cp &quot;antlr4-4.9.3-complete.jar&quot; org.antlr.v4.Tool -visitor -no-listener -Dlanguage=CSharp %(AntlrGrammar.Identity) -o Parser -package $(RootNamespace).Antlr" />
+		<Exec Command="$(JavaExe) -cp &quot;../antlr4-4.9.3-complete.jar&quot; org.antlr.v4.Tool -visitor -no-listener -Dlanguage=CSharp %(AntlrGrammar.Identity) -o Parser -package $(RootNamespace).Antlr" />
 		<ItemGroup>
 			<Compile Include="@(AntlrOutput)" Exclude="@(Compile)" />
 		</ItemGroup>

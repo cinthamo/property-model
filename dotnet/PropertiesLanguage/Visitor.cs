@@ -6,11 +6,11 @@ using Genexus.PropertiesLanguage.Antlr;
 
 namespace Genexus.PropertiesLanguage
 {
-    public class ModelVisitor : PGrammarBaseVisitor<Model>
+    public class ModelVisitor : PropParserBaseVisitor<Model>
     {
         public static readonly ModelVisitor Instance = new();
 
-        public override Model VisitDefinitions([NotNull] PGrammar.DefinitionsContext context)
+        public override Model VisitDefinitions([NotNull] PropParserParser.DefinitionsContext context)
         {
             return new Model
             {
@@ -19,11 +19,11 @@ namespace Genexus.PropertiesLanguage
         }
     }
 
-    public class DefinitionListVisitor : PGrammarBaseVisitor<DefinitionList>
+    public class DefinitionListVisitor : PropParserBaseVisitor<DefinitionList>
     {
         public static readonly DefinitionListVisitor Instance = new();
 
-        public override DefinitionList VisitType([NotNull] PGrammar.TypeContext context)
+        public override DefinitionList VisitType([NotNull] PropParserParser.TypeContext context)
         {
             return new DefinitionList
             {
@@ -34,11 +34,11 @@ namespace Genexus.PropertiesLanguage
         }
     }
 
-    public class DefinitionVisitor : PGrammarBaseVisitor<Definition>
+    public class DefinitionVisitor : PropParserBaseVisitor<Definition>
     {
         public static readonly DefinitionVisitor Instance = new();
 
-        private class AspectVisitor : PGrammarBaseVisitor<IExpression?>
+        private class AspectVisitor : PropParserBaseVisitor<IExpression?>
         {
             public static readonly AspectVisitor Default = new AspectVisitor("default", NullExpression.Null, NullExpression.Null);
             public static readonly AspectVisitor Apply = new AspectVisitor("apply", BooleanExpression.True, BooleanExpression.False);
@@ -56,7 +56,7 @@ namespace Genexus.PropertiesLanguage
             private readonly IExpression Used;
             private readonly IExpression Otherwise;
 
-            public override IExpression? VisitRuleEqual([NotNull] PGrammar.RuleEqualContext context)
+            public override IExpression? VisitRuleEqual([NotNull] PropParserParser.RuleEqualContext context)
             {
                 if (context.name.Text != Name)
                     return null;
@@ -69,7 +69,7 @@ namespace Genexus.PropertiesLanguage
                 );
             }
 
-            public override IExpression? VisitRuleBool([NotNull] PGrammar.RuleBoolContext context)
+            public override IExpression? VisitRuleBool([NotNull] PropParserParser.RuleBoolContext context)
             {
                 if (context.name.Text != Name)
                     return null;
@@ -86,7 +86,7 @@ namespace Genexus.PropertiesLanguage
             }
         }
 
-        private IExpression? getAspect([NotNull] PGrammar.PropertyContext context, AspectVisitor visitor)
+        private IExpression? getAspect([NotNull] PropParserParser.PropertyContext context, AspectVisitor visitor)
         {
             var exprList = context.aRule()
                 .Select(r => r.Accept(visitor))
@@ -102,7 +102,7 @@ namespace Genexus.PropertiesLanguage
             return exprList.First();
         }
 
-        public override Definition VisitProperty([NotNull] PGrammar.PropertyContext context)
+        public override Definition VisitProperty([NotNull] PropParserParser.PropertyContext context)
         {
             return new Definition()
             {
@@ -117,79 +117,79 @@ namespace Genexus.PropertiesLanguage
         }
     }
 
-    public class ConditionValueVisitor : PGrammarBaseVisitor<ConditionValue>
+    public class ConditionValueVisitor : PropParserBaseVisitor<ConditionValue>
     {
         public static readonly ConditionValueVisitor Instance = new();
 
-        public override ConditionValue VisitCcase([NotNull] PGrammar.CcaseContext context)
+        public override ConditionValue VisitCcase([NotNull] PropParserParser.CcaseContext context)
         {
             return new ConditionValue(context.expr(1).Accept(ExpressionVisitor.Instance),
                 context.expr(0).Accept(ExpressionVisitor.Instance));
         }
     }
 
-    public class ExpressionVisitor : PGrammarBaseVisitor<IExpression>
+    public class ExpressionVisitor : PropParserBaseVisitor<IExpression>
     {
         public static readonly ExpressionVisitor Instance = new();
 
-        public override IExpression VisitExprNumber([NotNull] PGrammar.ExprNumberContext context)
+        public override IExpression VisitExprNumber([NotNull] PropParserParser.ExprNumberContext context)
         {
             return new NumericExpression(context, int.Parse(context.NUMBER().GetText()));
         }
 
-        public override IExpression VisitExprBool([NotNull] PGrammar.ExprBoolContext context)
+        public override IExpression VisitExprBool([NotNull] PropParserParser.ExprBoolContext context)
         {
             var value = context.BOOL().GetText() == "true";
             return new BooleanExpression(context, value);
         }
 
-        public override IExpression VisitExprString([NotNull] PGrammar.ExprStringContext context)
+        public override IExpression VisitExprString([NotNull] PropParserParser.ExprStringContext context)
         {
 			var value = context.STRING().GetText();
 			return new StringExpression(context, value.Substring(1, value.Length - 2)); // remove quotes
         }
 
-        public override IExpression VisitExprNull([NotNull] PGrammar.ExprNullContext context)
+        public override IExpression VisitExprNull([NotNull] PropParserParser.ExprNullContext context)
         {
             return new NullExpression(context);
         }
 
-        public override IExpression VisitExprValue([NotNull] PGrammar.ExprValueContext context)
+        public override IExpression VisitExprValue([NotNull] PropParserParser.ExprValueContext context)
         {
             return new ValueReferenceExpression(context);
         }
 
-        public override IExpression VisitExprName([NotNull] PGrammar.ExprNameContext context)
+        public override IExpression VisitExprName([NotNull] PropParserParser.ExprNameContext context)
         {
             return new NameReferenceExpression(context, context.NAME().GetText());
         }
 
-        public override IExpression VisitExprProp([NotNull] PGrammar.ExprPropContext context)
+        public override IExpression VisitExprProp([NotNull] PropParserParser.ExprPropContext context)
         {
             return new PropertyReferenceExpression(context, context.expr().Accept(this), context.NAME().GetText());
         }
 
-        public override IExpression VisitExprFunction([NotNull] PGrammar.ExprFunctionContext context)
+        public override IExpression VisitExprFunction([NotNull] PropParserParser.ExprFunctionContext context)
         {
             return new CallExpression(context, context.func().NAME().GetText(), context.func().expr().Select(p => p.Accept(this)).ToList());
         }
 
-        public override IExpression VisitExprMethod([NotNull] PGrammar.ExprMethodContext context)
+        public override IExpression VisitExprMethod([NotNull] PropParserParser.ExprMethodContext context)
         {
             return new CallExpression(context, context.func().name.Text, context.func().expr().Select(p => p.Accept(this)).Prepend(context.target.Accept(this)).ToList());
         }
 
-        public override IExpression VisitExprOperator([NotNull] PGrammar.ExprOperatorContext context)
+        public override IExpression VisitExprOperator([NotNull] PropParserParser.ExprOperatorContext context)
         {
             return new CallExpression(context, context.op.Text, context.expr().Select(p => p.Accept(this)).ToList());
         }
 
-        public override IExpression VisitExprNot([NotNull] PGrammar.ExprNotContext context)
+        public override IExpression VisitExprNot([NotNull] PropParserParser.ExprNotContext context)
         {
             return new CallExpression(context, context.NOT().GetText(), new List<IExpression> { context.expr().Accept(this) });
         }
 
-        public override IExpression VisitExprParenthesis([NotNull] PGrammar.ExprParenthesisContext context)
+        public override IExpression VisitExprParenthesis([NotNull] PropParserParser.ExprParenthesisContext context)
         {
             return context.expr().Accept(this);
         }

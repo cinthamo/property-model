@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesLanguage", "Prope
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesLanguageTest", "PropertiesLanguageTest\PropertiesLanguageTest.csproj", "{5EB86E3C-5D68-4BD1-915C-2AC6C48051F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesInstanceLanguage", "PropertiesInstanceLanguage\PropertiesInstanceLanguage.csproj", "{69989E54-660A-4711-8937-39AE9277F857}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5EB86E3C-5D68-4BD1-915C-2AC6C48051F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EB86E3C-5D68-4BD1-915C-2AC6C48051F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EB86E3C-5D68-4BD1-915C-2AC6C48051F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69989E54-660A-4711-8937-39AE9277F857}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69989E54-660A-4711-8937-39AE9277F857}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69989E54-660A-4711-8937-39AE9277F857}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69989E54-660A-4711-8937-39AE9277F857}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,18 +1,19 @@
-parser grammar PGrammar;
+grammar PropParser;
 
-options { tokenVocab=PLexer; }
+import PropLexer;
 
 definitions: type*;
 
 type:
   TYPE name=NAME (COLON ttype=NAME)? CORCHA property* CORCHC;
 
-  property:
-    ddoc=doc* name=NAME COLON ttype=NAME (CORCHA aRule* CORCHC)? end?;
+property:
+  ddoc=doc* name=NAME COLON ttype=NAME (CORCHA aRule* CORCHC)? end?;
 
-  doc:
-    BLOCK_DOC
-  | EOL_DOC;
+doc:
+  BLOCK_DOC
+| EOL_DOC
+;
 
 aRule:
   name=NAME EQUAL ccase* otherwise=expr end?   # ruleEqual
