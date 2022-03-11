@@ -22,7 +22,7 @@ STRING: STRING_DOUBLE | STRING_SINGLE;
 
 fragment STRING_DOUBLE: '"' IN_STRING '"';
 fragment STRING_SINGLE: ['] IN_STRING ['];
-fragment IN_STRING: (~[\r\n])*;
+fragment IN_STRING: .*?;
 
 BLOCK_COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
 EOL_COMMENT: '//' (~[\r\n])* -> channel(HIDDEN);
