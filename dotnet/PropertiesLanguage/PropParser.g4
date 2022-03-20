@@ -5,10 +5,10 @@ import PropLexer;
 definitions: type*;
 
 type:
-  TYPE name=NAME (COLON ttype=NAME)? CORCHA property* CORCHC;
+  TYPE name=NAME (COLON ttype=NAME)? open=CORCHA property* CORCHC;
 
 property:
-  ddoc=doc* name=NAME COLON ttype=NAME (CORCHA aRule* CORCHC)? end?;
+  ddoc=doc* name=NAME COLON ttype=NAME (open=CORCHA aRule* CORCHC)? end?;
 
 doc:
   BLOCK_DOC

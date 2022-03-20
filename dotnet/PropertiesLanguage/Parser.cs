@@ -7,11 +7,13 @@ namespace Genexus.PropertiesLanguage
 {
     public class Parser
     {
-        public static Model Parse(string example)
+        public static Model Parse(string text)
+		{
+			return Parse(GetTokenStream(text));
+		}
+
+		public static Model Parse(ITokenStream tokenStream)
         {
-            var charStream = new AntlrInputStream(example);
-            var lexer = new PropParserLexer(charStream);
-            var tokenStream = new CommonTokenStream(lexer);
             var output = new StringWriter();
             var error = new StringWriter();
             var parser = new PropParserParser(tokenStream, output, error);
@@ -23,5 +25,12 @@ namespace Genexus.PropertiesLanguage
             var model = tree.Accept(ModelVisitor.Instance);            
             return model;
         }
-    }
+
+		public static ITokenStream GetTokenStream(string text)
+		{
+			var charStream = new AntlrInputStream(text);
+			var lexer = new PropParserLexer(charStream);
+			return new CommonTokenStream(lexer);			
+		}
+	}
 }

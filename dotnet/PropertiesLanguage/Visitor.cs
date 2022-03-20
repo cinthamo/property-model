@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using Genexus.PropertiesLanguage.Antlr;
 
@@ -29,7 +30,10 @@ namespace Genexus.PropertiesLanguage
             {
                 Name = context.name.Text,
                 ExternalType = context.ttype?.Text,
-                Properties = context.property().Select(p => p.Accept(DefinitionVisitor.Instance)).ToList()
+                Properties = context.property().Select(p => p.Accept(DefinitionVisitor.Instance)).ToList(),
+				StartToken = context.Start,
+				StopToken = context.Stop,
+				OpenBracketToken = context.open
             };
         }
     }
@@ -79,14 +83,49 @@ namespace Genexus.PropertiesLanguage
 
                 return new CaseExpression(context,
                     new List<ConditionValue> {
-                            new ConditionValue(context.condition.Accept(ExpressionVisitor.Instance), Used)
+						new ConditionValue(context.condition.Accept(ExpressionVisitor.Instance), Used)
                     },
                     Otherwise
                 );
             }
         }
 
-        private IExpression? getAspect([NotNull] PropParserParser.PropertyContext context, AspectVisitor visitor)
+		private class IsCollectionVisitor : PropParserBaseVisitor<Tuple<bool, IToken, IToken>?>
+		{
+			public static readonly IsCollectionVisitor Instance = new IsCollectionVisitor();
+
+			private IsCollectionVisitor() { }
+
+			private readonly string Name = "IsCollection";
+
+			public override Tuple<bool, IToken, IToken>? VisitRuleEqual([NotNull] PropParserParser.RuleEqualContext context)
+			{
+				if (context.name.Text != Name)
+					return null;
+
+				if (context.ccase().Count() > 0)
+					throw new Exception("IsCollection can't be conditional");
+
+				IExpression expr = context.otherwise.Accept(ExpressionVisitor.Instance);
+				if (expr is BooleanExpression)
+					return Tuple.Create(expr == BooleanExpression.True, context.Start, context.Stop);
+				else
+					throw new Exception("IsCollection must be boolean");
+			}
+
+			public override Tuple<bool, IToken, IToken>? VisitRuleBool([NotNull] PropParserParser.RuleBoolContext context)
+			{
+				if (context.name.Text != Name)
+					return null;
+
+				if (context.condition != null)
+					throw new Exception("IsCollection can't be conditional");
+
+				return Tuple.Create(true, context.Start, context.Stop);
+			}
+		}
+
+		private T get<T>([NotNull] PropParserParser.PropertyContext context, PropParserBaseVisitor<T> visitor, T _default)
         {
             var exprList = context.aRule()
                 .Select(r => r.Accept(visitor))
@@ -94,26 +133,34 @@ namespace Genexus.PropertiesLanguage
                 .ToList();
 
             if (!exprList.Any())
-                return null;
+                return _default;
 
             if (exprList.Count() > 1)
                 throw new Exception("Can only be one");
 
             return exprList.First();
-        }
+        }		
 
-        public override Definition VisitProperty([NotNull] PropParserParser.PropertyContext context)
+		public override Definition VisitProperty([NotNull] PropParserParser.PropertyContext context)
         {
-            return new Definition()
-            {
-                Name = context.name.Text,
-                Type = context.ttype.Text,
-                Description = context.ddoc?.GetText(),
-                Default = getAspect(context, AspectVisitor.Default),
-                Apply = getAspect(context, AspectVisitor.Apply),
-                Readonly = getAspect(context, AspectVisitor.Readonly),
-                Valid = getAspect(context, AspectVisitor.Valid),
-            };
+			var isCollection = get(context, IsCollectionVisitor.Instance, Tuple.Create(false, (IToken)null, (IToken)null));
+			return new Definition()
+			{
+				Name = context.name.Text,
+				Type = context.ttype.Text,
+				IsCollection = isCollection.Item1,
+				Description = context.ddoc?.GetText(),
+				Default = get(context, AspectVisitor.Default, null),
+				Apply = get(context, AspectVisitor.Apply, null),
+				Readonly = get(context, AspectVisitor.Readonly, null),
+				Valid = get(context, AspectVisitor.Valid, null),
+				StartToken = context.Start,
+				StopToken = context.Stop,
+				TypeToken = context.ttype,
+				OpenBracketToken = context.open,
+				IsCollectionStartToken = isCollection.Item2,
+				IsCollectionStopToken = isCollection.Item3
+			};
         }
     }
 

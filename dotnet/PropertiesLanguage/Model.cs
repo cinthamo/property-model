@@ -3,30 +3,45 @@ using Antlr4.Runtime;
 
 namespace Genexus.PropertiesLanguage
 {
-    public struct Model
+    public partial class Model
     {
-        public List<DefinitionList> Definitions;
-    }
+        public IList<DefinitionList> Definitions;
+	}
 
-    public struct DefinitionList
+    public partial class DefinitionList
     {
         public string Name;
         public string? ExternalType;
-        public List<Definition> Properties;
-    }
+        public IList<Definition> Properties;
+		public bool IsNew;
+		public IToken StartToken;
+		public IToken StopToken;
+		public IToken OpenBracketToken;
+	}
 
-    public struct Definition
+	public partial class Definition
     {
         public string Name;
         public string Type;
-        public string Description;
-        public IExpression Default;
+		public bool IsCollection;
+		public string Description;
+		public IExpression Default;
         public IExpression Apply;
         public IExpression Readonly;
         public IExpression Valid;
-    }
+		public bool IsNew;
+		public bool IsTypeChanged;
+		public bool IsCollectionChanged;
+		public IToken StartToken;
+		public IToken StopToken;
+		public IToken TypeToken;
+		public IToken OpenBracketToken;
+		public IToken IsCollectionStartToken;
+		public IToken IsCollectionStopToken;
+	}
 
-    public interface IExpression {
+	public interface IExpression
+	{
         string Text { get; }
         string Position { get; }
     }
