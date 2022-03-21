@@ -37,28 +37,50 @@ namespace Genexus.PropertiesInstanceLanguage
     {
         public static readonly ObjectVisitor Instance = new();
 
-        public override MObject VisitObject([NotNull] PInstParserParser.ObjectContext context)
-        {
-            return new MObject(context.GetContext())
+		public override MObject VisitObject([NotNull] PInstParserParser.ObjectContext context)
+		{
+			var mappings = context.mapping()
+					.Select(p => p.Accept(MappingVisitor.Instance))
+					.ToList();
+			for (int i = 0; i < context.COMMA().Length; i++)
+				mappings[i].CommaToken = context.COMMA()[i].Symbol;
+
+			return new MObject(context.GetContext())
             {
-                Mappings = context.mapping()
-                    .Select(p => p.Accept(MappingVisitor.Instance))
-					.ToList()
+                Mappings = mappings,
+				OpenBracketToken = context.open
             };
         }
     }
 
-    public class MappingVisitor : PInstParserBaseVisitor<KeyValuePair<string, MBase>>
+    public class MappingVisitor : PInstParserBaseVisitor<MMaping>
     {
         public static readonly MappingVisitor Instance = new();
 
-        public override KeyValuePair<string, MBase> VisitMapping([NotNull] PInstParserParser.MappingContext context)
+        public override MMaping VisitMapping([NotNull] PInstParserParser.MappingContext context)
         {
-            return new KeyValuePair<string, MBase>(
-                context.key().GetText(), context.value().Accept(ValueVisitor.Instance)
-            );
+            return new MMaping() {
+				Name = context.key().Accept(KeyVisitor.Instance),
+				Value = context.value().Accept(ValueVisitor.Instance)
+			};
         }
     }
+
+	public class KeyVisitor : PInstParserBaseVisitor<string>
+	{
+		public static readonly KeyVisitor Instance = new();
+
+		public override string VisitKeyName([NotNull] PInstParserParser.KeyNameContext context)
+		{
+			return context.NAME().GetText();
+		}
+
+		public override string VisitKeyString([NotNull] PInstParserParser.KeyStringContext context)
+		{
+			var value = context.STRING().GetText();
+			return value.Substring(1, value.Length - 2);
+		}
+	}
 
     public class ValueVisitor : PInstParserBaseVisitor<MBase>
     {
@@ -89,7 +111,15 @@ namespace Genexus.PropertiesInstanceLanguage
 			};
         }
 
-        public override MBase VisitValueObject([NotNull] PInstParserParser.ValueObjectContext context)
+		public override MBase VisitValueName([NotNull] PInstParserParser.ValueNameContext context)
+		{
+			return new MString(context.GetContext())
+			{
+				Value = context.NAME().GetText()
+			};
+		}
+
+		public override MBase VisitValueObject([NotNull] PInstParserParser.ValueObjectContext context)
         {
             return context.@object().Accept(ObjectVisitor.Instance);
         }
@@ -106,8 +136,10 @@ namespace Genexus.PropertiesInstanceLanguage
 
         public override MList VisitList([NotNull] PInstParserParser.ListContext context)
         {
-            return new MList(context.GetContext()) {
-                Values = context.value().Select(p => p.Accept(ValueVisitor.Instance)).ToList()
+			var text = context.GetText();
+			return new MList(context.GetContext()) {
+				Values = context.value().Select(p => p.Accept(ValueVisitor.Instance)).ToList(),
+				InnerText = text.Substring(1, text.Length - 2).Trim()
             };
         }
     }

@@ -15,3 +15,4 @@ dotnet/PropertiesInstanceLanguage/Parser
 dotnet/PropertiesLanguage/.antlr
 dotnet/PropertiesLanguage/bin
 dotnet/PropertiesLanguage/Parser
+dotnet/PropertiesInstanceLanguage/bin

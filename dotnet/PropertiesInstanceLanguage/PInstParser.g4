@@ -4,18 +4,21 @@ import PInstLexer;
 
 instance: object | ;
 
-object: CORCHA (mapping (COMMA mapping)*)? CORCHC;
+object: open=CORCHA (mapping (COMMA mapping)*)? CORCHC;
 
-list: BRACKA (value (COMMA value)*)? BRACKC;
+list: open=BRACKA (value (COMMA value)*)? BRACKC;
 
 mapping: key COLON value;
 
-key: NAME;
+key:
+  NAME    # keyName
+| STRING  # keyString;
 
 value:
   NUMBER  # valueNumber
 | BOOL    # valueBool
 | STRING  # valueString
+| NAME    # valueName
 | object  # valueObject
 | list    # valueList
 ;

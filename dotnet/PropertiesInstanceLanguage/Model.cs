@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Antlr4.Runtime;
+using Genexus.PropertiesLanguage;
 
 namespace Genexus.PropertiesInstanceLanguage
 {
@@ -8,7 +10,7 @@ namespace Genexus.PropertiesInstanceLanguage
         public MObject Root;
     }
 
-    public class MContext
+    public partial class MContext
     {
         public IToken StartToken;
         public IToken StopToken;
@@ -38,15 +40,25 @@ namespace Genexus.PropertiesInstanceLanguage
     {
         public MObject(MContext context) : base(context) { }
 
-        public IList<KeyValuePair<string, MBase>> Mappings;
-    }
+        public IList<MMaping> Mappings;
+		public IToken OpenBracketToken;
+	}
 
-    public partial class MList : MBase
+	public class MMaping
+	{
+		public string Name;
+		public MBase Value;
+		public IToken CommaToken;
+		public Definition Definition;
+	}
+
+	public partial class MList : MBase
     {
         public MList(MContext context) : base(context) { }
 
         public IList<MBase> Values;
-    }
+		public string InnerText;
+	}
 
     public partial class MConstant : MBase
     {
@@ -57,7 +69,7 @@ namespace Genexus.PropertiesInstanceLanguage
 
     public partial class MInt : MConstant
     {
-        public MInt(MContext context): base(context) { }
+        public MInt(MContext context) : base(context) { }
     }
 
     public partial class MBool : MConstant
