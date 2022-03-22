@@ -66,7 +66,7 @@ namespace Genexus.PropertiesLanguage.Test
                             {
                                 Names = new Dictionary<string, IType>()
                                 {
-                                    { "parent", new InternalType("AnotherObject") }
+                                    { "parent", new InternalType("+WithParent") }
                                 }
                             }
                         },

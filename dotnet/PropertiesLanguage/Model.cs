@@ -10,8 +10,8 @@ namespace Genexus.PropertiesLanguage
 
     public partial class DefinitionList
     {
-        public string Name;
-        public string? ExternalType;
+        public string? Name;
+        public string? ExtendsType;
         public IList<Definition> Properties;
 		public bool IsNew;
 		public IToken StartToken;

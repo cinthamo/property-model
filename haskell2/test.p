@@ -31,14 +31,14 @@ type Test {
 }
 
 // case 1. external properties
-type ExternalProperties : WithIsInterface {
+type extends WithIsInterface {
     generateObject: boolean {
         default = not isInterface
     }
 }
 
 // case 2. another object
-type AnotherObject : WithParent {
+type extends WithParent {
     autoNumber: boolean {
         default = parent.autoNumber
     }
@@ -63,7 +63,7 @@ type Calculation {
 
 // case 4. object as function parameter
 // procedure GetName
-type ObjectAsFunctionParam : WithModel {
+type extends WithModel {
     image: LocalizableImageReference
     imageName: string {
         default = GetName(image, model)
@@ -81,7 +81,7 @@ type Enum {
 }
 
 // case 6. user control completo Upload
-type Upload : WithContext {
+type extends WithContext {
     AutoUpload: boolean
     HideAdditionalButtons: boolean {
         apply = context == RuntimeContext.Runtime or AutoUpload

@@ -93,8 +93,8 @@ namespace Genexus.PropertiesLanguage.Test
             foreach (var definition in definitions.Properties)
                 dto.Names.Add(definition.Name, current.Names[definition.Type]);
 
-            if (definitions.ExternalType != null &&
-                predefined.BasicObjects.TryGetValue(new ExternalType(definitions.ExternalType), out var extObj))
+            if (definitions.ExtendsType != null &&
+                predefined.BasicObjects.TryGetValue(new ExternalType(definitions.ExtendsType), out var extObj))
             {
                 Copy(extObj.Names, dto.Names);
                 Copy(extObj.Functions, dto.Functions);
@@ -104,7 +104,10 @@ namespace Genexus.PropertiesLanguage.Test
             Copy(dto.Names, current.Names);
             Copy(dto.Functions, current.Functions);
 
-            others.Add(new InternalType(definitions.Name), dto);
+            if (definitions.Name != null)
+                others.Add(new InternalType(definitions.Name), dto);
+            else if (definitions.ExtendsType != null)
+                others.Add(new InternalType($"+{definitions.ExtendsType}"), dto);
         }
 
         #endregion

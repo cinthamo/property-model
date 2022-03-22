@@ -25,6 +25,9 @@
 		<PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.3" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\PropertiesLanguage\PropertiesLanguage.csproj" />
+	</ItemGroup>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Inputs="@(AntlrGrammar)" Outputs="@(AntlrOutput)">
 		<PropertyGroup>
 			<JavaExe Condition=" '$(JAVA_HOME)' != '' ">"$(JAVA_HOME)\bin\java"</JavaExe>

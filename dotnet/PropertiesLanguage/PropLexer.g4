@@ -5,12 +5,13 @@ import PropCommonLexer;
 NOT: 'not';
 NULL: 'null';
 VALUE: 'value';
-TYPE: 'type';  
+TYPE: 'type';
+EXTENDS: 'extends';
 IF: 'if';
 
 MULT: [*/];
 ADD: [+-];
-COMP: [==|<>|<=|>=|<|>];
+COMP: '==' | '<>' | '<=' | '>=' | '<' | '>';
 AND: 'and';
 OR: 'or';
 

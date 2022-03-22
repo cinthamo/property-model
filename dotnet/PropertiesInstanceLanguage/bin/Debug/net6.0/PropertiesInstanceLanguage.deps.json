@@ -8,7 +8,8 @@
     ".NETCoreApp,Version=v6.0": {
       "PropertiesInstanceLanguage/1.0.0": {
         "dependencies": {
-          "Antlr4.Runtime.Standard": "4.9.3"
+          "Antlr4.Runtime.Standard": "4.9.3",
+          "PropertiesLanguage": "1.0.0"
         },
         "runtime": {
           "PropertiesInstanceLanguage.dll": {}
@@ -20,6 +21,14 @@
             "assemblyVersion": "4.9.3.0",
             "fileVersion": "0.0.0.0"
           }
+        }
+      },
+      "PropertiesLanguage/1.0.0": {
+        "dependencies": {
+          "Antlr4.Runtime.Standard": "4.9.3"
+        },
+        "runtime": {
+          "PropertiesLanguage.dll": {}
         }
       }
     }
@@ -36,6 +45,11 @@
       "sha512": "sha512-wn+a34a9r3jOMxnIWxWJQ7QAbKi+KyZ9YAiEVVw0qII0J4Z6Z9F6a1b8WNzU00LlsIt++nZIz1BokksielrQYA==",
       "path": "antlr4.runtime.standard/4.9.3",
       "hashPath": "antlr4.runtime.standard.4.9.3.nupkg.sha512"
+    },
+    "PropertiesLanguage/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

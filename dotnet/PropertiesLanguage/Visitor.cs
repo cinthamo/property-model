@@ -26,15 +26,31 @@ namespace Genexus.PropertiesLanguage
 
         public override DefinitionList VisitType([NotNull] PropParserParser.TypeContext context)
         {
+            var nameExtends = context.nameExtends().Accept(NameExtendsVisitor.Instance);
             return new DefinitionList
             {
-                Name = context.name.Text,
-                ExternalType = context.ttype?.Text,
+                Name = nameExtends.Item1,
+                ExtendsType = nameExtends.Item2,
                 Properties = context.property().Select(p => p.Accept(DefinitionVisitor.Instance)).ToList(),
 				StartToken = context.Start,
 				StopToken = context.Stop,
 				OpenBracketToken = context.open
             };
+        }
+    }
+
+    public class NameExtendsVisitor : PropParserBaseVisitor<Tuple<string?, string?>>
+    {
+        public static readonly NameExtendsVisitor Instance = new();
+
+        public override Tuple<string?, string?> VisitNameNormal([NotNull] PropParserParser.NameNormalContext context)
+        {
+            return Tuple.Create<string?, string?>(context.name.Text, context.ttype?.Text);
+        }
+
+        public override Tuple<string?, string?> VisitNameExternal([NotNull] PropParserParser.NameExternalContext context)
+        {
+            return Tuple.Create<string?, string?>(null, context.etype.Text);
         }
     }
 

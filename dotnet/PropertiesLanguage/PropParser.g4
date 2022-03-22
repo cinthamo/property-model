@@ -5,7 +5,12 @@ import PropLexer;
 definitions: type*;
 
 type:
-  TYPE name=NAME (COLON ttype=NAME)? open=CORCHA property* CORCHC;
+  TYPE nameExtends open=CORCHA property* CORCHC;
+
+nameExtends:
+  name=NAME (EXTENDS ttype=NAME)?  # nameNormal
+| EXTENDS etype=NAME               # nameExternal
+;
 
 property:
   ddoc=doc* name=NAME COLON ttype=NAME (open=CORCHA aRule* CORCHC)? end?;
