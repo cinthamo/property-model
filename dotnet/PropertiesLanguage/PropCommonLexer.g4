@@ -19,7 +19,6 @@ NAME: [a-zA-Z][a-zA-Z0-9_]*;
 NUMBER: '-'?[0-9]+;
 
 STRING: STRING_DOUBLE | STRING_SINGLE;
-
 fragment STRING_DOUBLE: '"' IN_STRING '"';
 fragment STRING_SINGLE: ['] IN_STRING ['];
 fragment IN_STRING: .*?;

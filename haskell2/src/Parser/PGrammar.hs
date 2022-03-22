@@ -89,19 +89,16 @@ parExpr _ expr _ = expr
 [g4|
   grammar Properties;
 
-  // LEXER //
+  // LEXER COMMON //
 
   BOOL: 'true' | 'false' -> String;
-  NOT: 'not'     -> String;
-  NULL: 'null'   -> String;
-  VALUE: 'value' -> String;
-  TYPE: 'type'   -> String;  
-  IF: 'if'       -> String;
 
   PARA: '('      -> String;
   PARC: ')'      -> String;
   CORCHA: '{'    -> String;
   CORCHC: '}'    -> String;
+  BRACKA: '['    -> String;
+  BRACKC: ']'    -> String;
   COLON: ':'     -> String;
   EQUAL: '='     -> String;
   SEMICOLON: ';' -> String;
@@ -109,22 +106,36 @@ parExpr _ expr _ = expr
   DOT: '.'       -> String;
   PIPE: '|'      -> String;
 
-  MULT: [*/]     -> String;
-  ADD: [+-]      -> String;
-  COMP: '==' | '<>' | '<=' | '>=' | '<' | '>' -> String;
-  AND: 'and'     -> String;
-  OR: 'or'       -> String;
   NAME: [a-zA-Z][a-zA-Z0-9_]* -> String;
   NUMBER: '-'?[0-9]+          -> Int;
-  STRING: '"' (~[\r\n])* '"'  -> String;
-
-  BLOCK_DOC: '/**' .* '*/'  -> String;
-  EOL_DOC: '///' (~[\r\n])* -> String;
+  
+  STRING: STRING_DOUBLE | STRING_SINGLE -> String;
+  fragment STRING_DOUBLE: '"' IN_STRING '"';
+  fragment STRING_SINGLE: ['] IN_STRING ['];
+  fragment IN_STRING: .*;
 
   BLOCK_COMMENT: '/*' .* '*/'  -> String;
   EOL_COMMENT: '//' (~[\r\n])* -> String;
   WS: [ \n\t\r]+               -> String;
 
+
+  // LEXER //
+	
+  NOT: 'not'     -> String;
+  NULL: 'null'   -> String;
+  VALUE: 'value' -> String;
+  TYPE: 'type'   -> String;  
+  IF: 'if'       -> String;
+
+  MULT: [*/]     -> String;
+  ADD: '+' | '-' -> String; // doesn't supoort [+-]
+  COMP: [=<>]+   -> String;
+  AND: 'and'     -> String;
+  OR: 'or'       -> String;
+
+  BLOCK_DOC: '/**' .* '*/'  -> String;
+  EOL_DOC: '///' (~[\r\n])* -> String;
+  
 
   // GRAMMAR //
 
@@ -132,7 +143,6 @@ parExpr _ expr _ = expr
 
   type:
     TYPE NAME colonName? CORCHA property* CORCHC -> pDefinitionList;
-
 
   property:
     doc* NAME COLON NAME optRules? end? -> pDefinition;
@@ -167,7 +177,11 @@ parExpr _ expr _ = expr
   | expr DOT NAME  -> field
   | func
   | expr DOT func  -> methCall
-  | expr OP expr   -> opCall
+  | expr MULT expr -> opCall
+  | expr ADD expr  -> opCall
+  | expr COMP expr -> opCall
+  | expr AND expr  -> opCall
+  | expr OR expr   -> opCall
   | NOT expr       -> pNot
   | PARA expr PARC -> parExpr
   ;
