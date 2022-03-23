@@ -31,7 +31,7 @@ externals = [
             ]),
         (TExternal "WithParent", TypeObject
             [
-                ("parent", TInternal "AnotherObject")
+                ("parent", TInternal "+WithParent")
             ] [
 
             ]),

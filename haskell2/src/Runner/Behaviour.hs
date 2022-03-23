@@ -13,7 +13,7 @@ resolver (BResolver r) = r
 emptyDefinition :: DefinitionList
 emptyDefinition = DefinitionList {
     lname = "",
-    externalType = Nothing,
+    extendsType = Nothing,
     properties = []
 }
 

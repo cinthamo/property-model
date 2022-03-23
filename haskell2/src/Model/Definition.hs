@@ -5,7 +5,7 @@ import Model.Value
 
 data DefinitionList = DefinitionList
   { lname :: Name,
-    externalType :: Maybe Name, -- external type of this list
+    extendsType :: Maybe Name,
     properties :: [Definition]
   }
   deriving (Eq, Ord, Show)

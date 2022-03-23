@@ -19,7 +19,7 @@ printOne name = do
 checkAll :: IO ()
 checkAll = do
         ast <- readL
-        pPrint $ map (\d -> (lname d, check d)) ast
+        pPrint $ map (\d -> lname d ++ (if (check d) then " OK" else " Fail")) ast
 
 genOne :: String -> IO ()
 genOne name = do

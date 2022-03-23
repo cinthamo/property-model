@@ -20,5 +20,5 @@ parse s = Prelude.map convert parsed
       ResultAccept ast -> ast2definitions ast
       ResultSet x -> case (head (toList x)) of
         ResultAccept ast -> ast2definitions ast
-        _ -> error $ "Multiple matches " ++ pshow' (ResultSet x)
+        _ -> error $ take 300 $ "Multiple matches " ++ pshow' (ResultSet x)
       ErrorNoAction e _ _ -> error $ show e

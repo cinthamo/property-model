@@ -2,7 +2,13 @@ module Parser.PGrammar where
 
 import Language.ANTLR4
 
-data PDefinitionList = PDefinitionList String (Maybe String) [PDefinition]
+data PDefinitionList = PDefinitionList PNameExtends [PDefinition]
+  deriving (Eq, Ord, Show)
+
+data PNameExtends =
+    NoExtend String |
+    ExternalExtend String |
+    InternalExtend String String
   deriving (Eq, Ord, Show)
 
 data PDefinition =
@@ -28,9 +34,19 @@ data PExpr = Number Int |
   deriving (Eq, Ord, Show)
 
 
--- TYPE NAME optType? CORCHA property* CORCHC -> pDefinitionList
-pDefinitionList :: s -> String -> Maybe String -> s -> [PDefinition] -> s -> PDefinitionList
-pDefinitionList _ name aType _ definitions _ = PDefinitionList name aType definitions
+-- TYPE nameExtends CORCHA property* CORCHC -> pDefinitionList
+pDefinitionList :: s -> PNameExtends -> s -> [PDefinition] -> s -> PDefinitionList
+pDefinitionList _ nameExtends _ definitions _ = PDefinitionList nameExtends definitions
+
+-- NAME extendsType? -> pNameExtendsTwo
+pNameExtendsTwo :: String -> Maybe String -> PNameExtends
+pNameExtendsTwo s e = case (e) of
+  Nothing -> NoExtend s
+  Just t -> InternalExtend s t
+
+-- extendsType -> pNameExtendsOne
+pNameExtendsOne :: String -> PNameExtends
+pNameExtendsOne t = ExternalExtend t
 
 -- doc* NAME COLON NAME optRules? end? -> pDefinition
 pDefinition :: [String] -> String -> s -> String -> Maybe [PRule] -> Maybe s -> PDefinition
@@ -40,9 +56,9 @@ pDefinition doc name _ aType rules _ = PDefinition doc name aType rules
 pRules :: s -> [PRule] -> s -> [PRule]
 pRules _ rules _ = rules
 
--- NAME EQUAL ccase* expr end? -> ruleEqual
-ruleEqual :: String -> s -> [IfRule] -> PExpr -> Maybe s -> PRule
-ruleEqual name _ rules expr _ = ValueRule name rules expr
+-- NAME EQUAL expr ccase* end? -> ruleEqual
+ruleEqual :: String -> s -> PExpr -> [IfRule] -> Maybe s -> PRule
+ruleEqual name _ expr rules _ = ValueRule name rules expr
 
 -- NAME ifExpr? end? -> ruleBool
 ruleBool :: String -> Maybe PExpr -> Maybe s -> PRule
@@ -58,9 +74,9 @@ skip1 _ x = x
 cons :: PExpr -> [PExpr] -> [PExpr]
 cons x l = x:l
 
--- exprIfMulti: expr IF expr PIPE -> ifRule
-ifRule :: PExpr -> s -> PExpr -> s -> IfRule
-ifRule valueExpr _ condExpr _ = IfRule valueExpr condExpr
+-- exprIfMulti: IF expr PIPE expr -> ifRule
+ifRule :: s -> PExpr -> s -> PExpr -> IfRule
+ifRule _ condExpr _ valueExpr = IfRule valueExpr condExpr
 
 -- expr DOT NAME -> field
 field :: PExpr -> s -> String -> PExpr
@@ -89,6 +105,21 @@ parExpr _ expr _ = expr
 [g4|
   grammar Properties;
 
+  // LEXER //
+	
+  NOT: 'not'     -> String;
+  NULL: 'null'   -> String;
+  VALUE: 'value' -> String;
+  TYPE: 'type'   -> String;  
+  EXTENDS: 'extends' -> String;
+  IF: 'if'       -> String;
+
+  OP: [->=<+]+ | 'or' | 'and' -> String; // Change not supported
+
+  BLOCK_DOC: '/**' .* '*/'  -> String;
+  EOL_DOC: '///' (~[\r\n])* -> String;
+  
+  
   // LEXER COMMON //
 
   BOOL: 'true' | 'false' -> String;
@@ -108,33 +139,12 @@ parExpr _ expr _ = expr
 
   NAME: [a-zA-Z][a-zA-Z0-9_]* -> String;
   NUMBER: '-'?[0-9]+          -> Int;
-  
-  STRING: STRING_DOUBLE | STRING_SINGLE -> String;
-  fragment STRING_DOUBLE: '"' IN_STRING '"';
-  fragment STRING_SINGLE: ['] IN_STRING ['];
-  fragment IN_STRING: .*;
+  STRING: '"' (~[\r\n])* '"'  -> String; // Change not supported
+
 
   BLOCK_COMMENT: '/*' .* '*/'  -> String;
   EOL_COMMENT: '//' (~[\r\n])* -> String;
   WS: [ \n\t\r]+               -> String;
-
-
-  // LEXER //
-	
-  NOT: 'not'     -> String;
-  NULL: 'null'   -> String;
-  VALUE: 'value' -> String;
-  TYPE: 'type'   -> String;  
-  IF: 'if'       -> String;
-
-  MULT: [*/]     -> String;
-  ADD: '+' | '-' -> String; // doesn't supoort [+-]
-  COMP: [=<>]+   -> String;
-  AND: 'and'     -> String;
-  OR: 'or'       -> String;
-
-  BLOCK_DOC: '/**' .* '*/'  -> String;
-  EOL_DOC: '///' (~[\r\n])* -> String;
   
 
   // GRAMMAR //
@@ -142,7 +152,12 @@ parExpr _ expr _ = expr
   definitions: type*;
 
   type:
-    TYPE NAME colonName? CORCHA property* CORCHC -> pDefinitionList;
+    TYPE nameExtends CORCHA property* CORCHC -> pDefinitionList;
+
+  nameExtends:
+    NAME extendsType? -> pNameExtendsTwo
+  |      extendsType  -> pNameExtendsOne
+  ;
 
   property:
     doc* NAME COLON NAME optRules? end? -> pDefinition;
@@ -155,14 +170,14 @@ parExpr _ expr _ = expr
     CORCHA aRule* CORCHC -> pRules;
 
   aRule:
-    NAME EQUAL ccase* expr end? -> ruleEqual
+    NAME EQUAL expr ccase* end? -> ruleEqual
   | NAME ifExpr?           end? -> ruleBool
   ;
 
   end: SEMICOLON;
-  ccase: expr IF expr PIPE  -> ifRule;
+  ccase: IF expr PIPE expr -> ifRule;
 
-  colonName: COLON NAME     -> skip1;
+  extendsType: EXTENDS NAME -> skip1;
   ifExpr: IF expr           -> skip1;
   commaExpr: COMMA expr     -> skip1;
   listExpr: expr commaExpr* -> cons;
@@ -177,11 +192,7 @@ parExpr _ expr _ = expr
   | expr DOT NAME  -> field
   | func
   | expr DOT func  -> methCall
-  | expr MULT expr -> opCall
-  | expr ADD expr  -> opCall
-  | expr COMP expr -> opCall
-  | expr AND expr  -> opCall
-  | expr OR expr   -> opCall
+  | expr OP expr   -> opCall // Change not supported
   | NOT expr       -> pNot
   | PARA expr PARC -> parExpr
   ;

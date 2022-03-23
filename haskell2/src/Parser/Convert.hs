@@ -6,11 +6,18 @@ import Model.Value as V
 import Data.List
 
 convert :: PDefinitionList -> DefinitionList
-convert (PDefinitionList n t l) = DefinitionList {
-    lname = n,
-    externalType = t,
-    properties = map convertDefinition l
-}
+convert (PDefinitionList nt l) = DefinitionList {
+        lname = getName nt,
+        extendsType = getType nt,
+        properties = map convertDefinition l
+    }
+    where
+        getName (NoExtend s) = s
+        getName (ExternalExtend t) = "+" ++ t
+        getName (InternalExtend s _) = s
+        getType (NoExtend _) = Nothing
+        getType (ExternalExtend t) = Just t
+        getType (InternalExtend _ t) = Just t
 
 convertDefinition :: PDefinition -> Definition
 convertDefinition (PDefinition d n t l) = Definition {

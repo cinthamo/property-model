@@ -50,7 +50,7 @@ newTypeContext definitionList functions externals enums =
     }
     where
         emptyTO = TypeObject [] []
-        eto = maybe emptyTO (\n -> fromMaybe emptyTO $ lookup (TExternal n) externals) (externalType definitionList)
+        eto = maybe emptyTO (\n -> fromMaybe emptyTO $ lookup (TExternal n) externals) (extendsType definitionList)
         dto = TypeObject {
                 tnames = (map (\d -> (name d, _type d)) $ properties definitionList) ++ tnames eto,
                 tfunctions = tfunctions eto
