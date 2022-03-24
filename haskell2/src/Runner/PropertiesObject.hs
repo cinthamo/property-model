@@ -1,6 +1,5 @@
 module Runner.PropertiesObject where
 
-import Data.Map
 import Model.Definition
 import Model.Value
 import Runner.Const

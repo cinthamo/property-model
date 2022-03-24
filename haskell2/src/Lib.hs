@@ -31,7 +31,7 @@ genOne name file = do
 interactive :: String -> IO()
 interactive file = do
         x <- readL file
-        I.interactive x
+        I.interactive file x
 
 readL :: String -> IO [DefinitionList]
 readL file = do

@@ -6,7 +6,7 @@ import Runner.PropertiesObject
 import Runner.Resolvers.Eval
 import Runner.Resolvers.Resolver
 
-applyResolver :: PropertiesObject obj => Resolver obj
+applyResolver :: PropertiesObject obj => Show obj => Resolver obj
 applyResolver =
   Resolver
     { beforeHas = \context ->
@@ -25,7 +25,7 @@ applyResolver =
       afterClear = \context -> ASNotResolved
     }
 
-notApply :: PropertiesObject obj => Context obj -> Bool
+notApply :: PropertiesObject obj => Show obj => Context obj -> Bool
 notApply context = case (getApplyExpr context) of
   Just expr ->
     case (evalExpr context expr) of

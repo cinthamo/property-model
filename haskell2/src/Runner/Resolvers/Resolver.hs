@@ -11,6 +11,7 @@ data Context obj = Context
     value :: Maybe (Value obj),
     name :: Name
   }
+  deriving Show
 
 type Function obj = [Value obj] -> Value obj
 
@@ -18,6 +19,11 @@ data RefValue obj
   = RefObj obj
   | RefRes (Resolver obj)
   | RefFunc (Function obj) [ValueType]
+
+instance Show (RefValue obj) where
+  show (RefObj _) = "RefObj"
+  show (RefRes _) = "RefRes"
+  show (RefFunc _ _) = "RefFunc"
 
 type RefTable obj = Map Name (RefValue obj)
 

@@ -5,22 +5,23 @@ import Model.Value as V
 import Runner.Context
 import Runner.PropertiesObject
 import Runner.Resolvers.Resolver
+import Data.String.Interpolate ( i )
 
-evalExpr :: PropertiesObject obj => Context obj -> Expr -> Value obj
+evalExpr :: PropertiesObject obj => Show obj => Context obj -> Expr -> Value obj
 evalExpr context expr = case expr of
   Value v -> convertValue v
   PropRef _ name ->
     case get (refTable context) (getInstance context) name of
       Just v -> v
-      Nothing -> error "Reference not found"
+      Nothing -> error [i|"Reference property #{name} not found"|]
   ValueRef ->
     case value context of
       Just v -> v
-      Nothing -> error "Reference not found"
+      Nothing -> error "Reference value not found"
   NameRef name ->
-    case getContextObj context name of
-      Just o -> Object o
-      Nothing -> error "Reference not found"
+    case getByName context name of
+      Just v -> v
+      Nothing -> error [i|"Reference name #{name} not found"|]
   Case l e -> case Prelude.foldr checkIf Nothing l of
     Just v -> v
     Nothing -> case e of
@@ -43,3 +44,11 @@ convertValue :: PropertiesObject obj => ExprValue -> Value obj
 convertValue (V (String s)) = String s
 convertValue (V (Number n)) = Number n
 convertValue (V (Bool b)) = Bool b
+convertValue (V Null) = Null
+convertValue e = error [i|"Can't convert to value #{e}"|]
+
+getByName :: PropertiesObject obj => Context obj -> Name -> Maybe (Value obj)
+getByName context name =
+  case getContextObj context name of
+    Just v -> Just (Object v)
+    Nothing -> get (refTable context) (getInstance context) name

@@ -24,6 +24,7 @@ dependencies:
 - HStringTemplate >= 0.8.8
 - string-interpolate >= 0.3.1
 - unordered-containers >= 0.2.14
+- split >= 0.2.3.4
 
 library:
   source-dirs: src

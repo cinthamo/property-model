@@ -6,7 +6,7 @@ import Runner.PropertiesObject
 import Runner.Resolvers.Resolver
 import Runner.Resolvers.Eval
 
-readonlyResolver :: PropertiesObject obj => Resolver obj
+readonlyResolver :: PropertiesObject obj => Show obj => Resolver obj
 readonlyResolver = Resolver {
     beforeHas   = \context       -> GNotResolved,
     afterHas    = \context hasIt -> GNotResolved,
@@ -22,7 +22,7 @@ readonlyResolver = Resolver {
     afterClear  = \context       -> ASNotResolved
 }
 
-isReadonly :: PropertiesObject obj => Context obj -> Bool
+isReadonly :: PropertiesObject obj => Show obj => Context obj -> Bool
 isReadonly context = case (getReadonlyExpr context) of
             Just expr ->
                 case (evalExpr context expr) of

@@ -9,7 +9,7 @@ import Runner.PropertiesObject
 import Runner.Resolvers.Resolver
 import Runner.Resolvers.Eval
 
-defaultResolver :: PropertiesObject obj => Resolver obj
+defaultResolver :: PropertiesObject obj => Show obj => Resolver obj
 defaultResolver = Resolver {
     beforeHas   = \context       -> GNotResolved,
     afterHas    = \context hasIt ->

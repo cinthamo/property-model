@@ -8,9 +8,11 @@ import Model.Definition as D
 import Model.Value
 import Runner.Const
 import Runner.PropertiesObject
+import Runner.PropertiesInfo
 import Runner.Behaviour
 import Runner.Context
 import Runner.Resolvers.Resolver
+import Runner.Resolvers.ReadonlyResolver as RR
 
 data PropertiesMap = PM (Behaviour PropertiesMap) DefinitionList (Map Name (Value PropertiesMap))
 
@@ -101,6 +103,13 @@ instance PropertiesObject PropertiesMap where
     set   refTable obj@(PM _ definitions _) name = setWithResolver   setAsBag   (getContext refTable obj definitions name) obj name
     clear refTable obj@(PM _ definitions _) name = clearWithResolver clearAsBag (getContext refTable obj definitions name) obj name
     empty behaviour definitions                  = PM behaviour definitions Map.empty
+
+instance PropertiesInfo PropertiesMap where
+    isReadonly refTable obj@(PM _ definitions _) name = RR.isReadonly (getContext refTable obj definitions name)
+    isDefault (PM _ _ map) name = not $ Map.member name map
+    getDoc (PM _ definitions _) n = case (find (\x -> D.name x == n) (properties definitions)) of
+                        Just y -> intercalate "\n" $ doc y
+                        _ -> ""
 
 instance Show PropertiesMap where
     show (PM _ _ map) = show . Map.toList $ map

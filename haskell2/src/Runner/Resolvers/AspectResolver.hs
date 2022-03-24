@@ -13,10 +13,10 @@ import Runner.Resolvers.ApplyResolver
 import Runner.Resolvers.ReadonlyResolver
 import Runner.Resolvers.ValidResolver
 
-emptyWAsp :: PropertiesObject obj => DefinitionList -> obj
+emptyWAsp :: PropertiesObject obj => Show obj => DefinitionList -> obj
 emptyWAsp = empty (BResolver aspectResolver)
 
-aspectResolver :: PropertiesObject obj => Resolver obj
+aspectResolver :: PropertiesObject obj => Show obj => Resolver obj
 aspectResolver = Resolver {
     beforeHas   = \context -> beforeHas   (chainResolver (getResolverList context)) context,
     afterHas    = \context -> afterHas    (chainResolver (getResolverList context)) context,
@@ -28,5 +28,5 @@ aspectResolver = Resolver {
     afterClear  = \context -> afterClear  (chainResolver (getResolverList context)) context
 }
 
-getResolverList :: PropertiesObject obj => Context obj -> [Resolver obj]
+getResolverList :: PropertiesObject obj => Show obj => Context obj -> [Resolver obj]
 getResolverList _ = [ defaultResolver, applyResolver, readonlyResolver, validResolver ]
