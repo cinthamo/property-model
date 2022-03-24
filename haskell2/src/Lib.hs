@@ -9,32 +9,38 @@ import Test.Manual
 import Model.Definition
 import Parser.File
 import Checker.Check
+import Runner.Interactive as I
 
-printOne :: String -> IO ()
-printOne name = do
-        x <- readT name
+printOne :: String -> String -> IO ()
+printOne name file = do
+        x <- readT name file
         pPrint x
         --test x
 
-checkAll :: IO ()
-checkAll = do
-        ast <- readL
+checkAll :: String -> IO ()
+checkAll file = do
+        ast <- readL file
         pPrint $ map (\d -> lname d ++ (if (check d) then " OK" else " Fail")) ast
 
-genOne :: String -> IO ()
-genOne name = do
-        x <- readT name
+genOne :: String -> String -> IO ()
+genOne name file = do
+        x <- readT name file
         print $ check x
         gen x
 
-readL :: IO [DefinitionList]
-readL = do
-        ast <- parseFile "test.p"
+interactive :: String -> IO()
+interactive file = do
+        x <- readL file
+        I.interactive x
+
+readL :: String -> IO [DefinitionList]
+readL file = do
+        ast <- parseFile file
         return ast
 
-readT :: String -> IO DefinitionList
-readT name = do
-        ast <- parseFile "test.p"
+readT :: String -> String -> IO DefinitionList
+readT name file = do
+        ast <- parseFile file
         let x = case (find (\x -> lname x == name) ast) of
                         Just y -> y
                         _ -> error [i|"Definitions for #{name} not found"|]
