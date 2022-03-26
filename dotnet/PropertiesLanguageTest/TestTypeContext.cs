@@ -4,8 +4,8 @@ namespace Genexus.PropertiesLanguage.Test
 {
 	public class TestTypeContext : TypeContext
 	{
-        public TestTypeContext(DefinitionList definitions)
-            : base(definitions, new Predefined())
+        public TestTypeContext(PType type)
+            : base(type, new Predefined())
         { }
 
         private class Predefined : IPredefined

@@ -2,7 +2,17 @@ grammar PropParser;
 
 import PropLexer;
 
-definitions: type*;
+definitions: importt* flags* type*;
+
+importt: IMPORT name=NAME;
+
+flags: FLAGS name=NAME open=CORCHA flagDefinition* CORCHC;
+
+flagDefinition:
+  ddoc=doc* name=NAME COLON ttype=NAME (open=CORCHA fRule* CORCHC)? end?;
+
+fRule:
+  name=NAME (EQUAL value=STRING)? end?;
 
 type:
   TYPE nameExtends open=CORCHA property* CORCHC;
@@ -21,8 +31,13 @@ doc:
 ;
 
 aRule:
-  name=NAME EQUAL ccase* otherwise=expr end?   # ruleEqual
-| name=NAME (IF condition=expr)? end?          # ruleBool
+  name=identifier EQUAL ccase* otherwise=expr end?   # ruleEqual
+| name=identifier (IF condition=expr)? end?          # ruleBool
+;
+
+identifier:
+  name=NAME                  # idName
+| fName=NAME DOT name=NAME   # idFlag
 ;
 
 end: SEMICOLON;

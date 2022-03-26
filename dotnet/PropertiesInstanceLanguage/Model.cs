@@ -49,7 +49,7 @@ namespace Genexus.PropertiesInstanceLanguage
 		public string Name;
 		public MBase Value;
 		public IToken CommaToken;
-		public Definition Definition;
+		public PropertyDefinition Definition;
 	}
 
 	public partial class MList : MBase

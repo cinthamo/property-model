@@ -5,21 +5,37 @@ namespace Genexus.PropertiesLanguage
 {
     public partial class Model
     {
-        public IList<DefinitionList> Definitions;
+        public IList<string> ImportList;
+        public IList<FlagsList> FlagsList;
+        public IList<PType> TypesList;
 	}
 
-    public partial class DefinitionList
+    public partial class FlagsList
+    {
+        public string Name;
+        public IList<FlagDefinition> Flags;
+    }
+
+    public partial class FlagDefinition
+    {
+        public string Name;
+        public string Type;
+        public string RuntimeName;
+        public bool Deprecated;
+    }
+
+    public partial class PType
     {
         public string? Name;
         public string? ExtendsType;
-        public IList<Definition> Properties;
+        public IList<PropertyDefinition> Properties;
 		public bool IsNew;
 		public IToken StartToken;
 		public IToken StopToken;
 		public IToken OpenBracketToken;
 	}
 
-	public partial class Definition
+	public partial class PropertyDefinition
     {
         public string Name;
         public string Type;

@@ -15,23 +15,55 @@ namespace Genexus.PropertiesLanguage
         {
             return new Model
             {
-                Definitions = context.type().Select(d => d.Accept(DefinitionListVisitor.Instance)).ToList()
+                ImportList = context.importt().Select(i => i.name.Text).ToList(),
+                FlagsList = context.flags().Select(f => f.Accept(FlagsListVisitor.Instance)).ToList(),
+                TypesList = context.type().Select(t => t.Accept(PTypeVisitor.Instance)).ToList()
             };
         }
     }
 
-    public class DefinitionListVisitor : PropParserBaseVisitor<DefinitionList>
+    public class FlagsListVisitor : PropParserBaseVisitor<FlagsList>
     {
-        public static readonly DefinitionListVisitor Instance = new();
+        public static readonly FlagsListVisitor Instance = new();
 
-        public override DefinitionList VisitType([NotNull] PropParserParser.TypeContext context)
+        public override FlagsList VisitFlags([NotNull] PropParserParser.FlagsContext context)
+        {
+            return new FlagsList
+            {
+                Name = context.name.Text,
+                Flags = context.flagDefinition().Select(f => f.Accept(FlagDefinitionVisitor.Instance)).ToList()
+            };
+        }
+    }
+
+    public class FlagDefinitionVisitor : PropParserBaseVisitor<FlagDefinition>
+    {
+        public static readonly FlagDefinitionVisitor Instance = new();
+
+        public override FlagDefinition VisitFlagDefinition([NotNull] PropParserParser.FlagDefinitionContext context)
+        {
+            return new FlagDefinition
+            {
+                Name = context.name.Text,
+                Type = context.ttype.Text,
+                RuntimeName = context.fRule().FirstOrDefault(r => r.name.Text == "name")?.value.Text,
+                Deprecated = context.fRule().FirstOrDefault(r => r.name.Text == "deprecated") != null
+            };
+        }
+    }
+
+    public class PTypeVisitor : PropParserBaseVisitor<PType>
+    {
+        public static readonly PTypeVisitor Instance = new();
+
+        public override PType VisitType([NotNull] PropParserParser.TypeContext context)
         {
             var nameExtends = context.nameExtends().Accept(NameExtendsVisitor.Instance);
-            return new DefinitionList
+            return new PType
             {
                 Name = nameExtends.Item1,
                 ExtendsType = nameExtends.Item2,
-                Properties = context.property().Select(p => p.Accept(DefinitionVisitor.Instance)).ToList(),
+                Properties = context.property().Select(p => p.Accept(PropertyDefinitionVisitor.Instance)).ToList(),
 				StartToken = context.Start,
 				StopToken = context.Stop,
 				OpenBracketToken = context.open
@@ -54,9 +86,9 @@ namespace Genexus.PropertiesLanguage
         }
     }
 
-    public class DefinitionVisitor : PropParserBaseVisitor<Definition>
+    public class PropertyDefinitionVisitor : PropParserBaseVisitor<PropertyDefinition>
     {
-        public static readonly DefinitionVisitor Instance = new();
+        public static readonly PropertyDefinitionVisitor Instance = new();
 
         private class AspectVisitor : PropParserBaseVisitor<IExpression?>
         {
@@ -78,7 +110,7 @@ namespace Genexus.PropertiesLanguage
 
             public override IExpression? VisitRuleEqual([NotNull] PropParserParser.RuleEqualContext context)
             {
-                if (context.name.Text != Name)
+                if (context.name.Accept(IdentifierVisitor.Instance) != Name)
                     return null;
 
                 return new CaseExpression(context,
@@ -91,7 +123,7 @@ namespace Genexus.PropertiesLanguage
 
             public override IExpression? VisitRuleBool([NotNull] PropParserParser.RuleBoolContext context)
             {
-                if (context.name.Text != Name)
+                if (context.name.Accept(IdentifierVisitor.Instance) != Name)
                     return null;
 
                 if (context.condition == null)
@@ -106,6 +138,21 @@ namespace Genexus.PropertiesLanguage
             }
         }
 
+        private class IdentifierVisitor : PropParserBaseVisitor<string>
+        {
+            public static readonly IdentifierVisitor Instance = new();
+
+            public override string VisitIdName([NotNull] PropParserParser.IdNameContext context)
+            {
+                return context.name.Text;
+            }
+
+            public override string VisitIdFlag([NotNull] PropParserParser.IdFlagContext context)
+            {
+                return $"{context.fName.Text}.{context.name.Text}";
+            }
+        }
+
 		private class IsCollectionVisitor : PropParserBaseVisitor<Tuple<bool, IToken, IToken>?>
 		{
 			public static readonly IsCollectionVisitor Instance = new IsCollectionVisitor();
@@ -116,7 +163,7 @@ namespace Genexus.PropertiesLanguage
 
 			public override Tuple<bool, IToken, IToken>? VisitRuleEqual([NotNull] PropParserParser.RuleEqualContext context)
 			{
-				if (context.name.Text != Name)
+				if (context.name.Accept(IdentifierVisitor.Instance) != Name)
 					return null;
 
 				if (context.ccase().Count() > 0)
@@ -131,7 +178,7 @@ namespace Genexus.PropertiesLanguage
 
 			public override Tuple<bool, IToken, IToken>? VisitRuleBool([NotNull] PropParserParser.RuleBoolContext context)
 			{
-				if (context.name.Text != Name)
+				if (context.name.Accept(IdentifierVisitor.Instance) != Name)
 					return null;
 
 				if (context.condition != null)
@@ -157,10 +204,10 @@ namespace Genexus.PropertiesLanguage
             return exprList.First();
         }		
 
-		public override Definition VisitProperty([NotNull] PropParserParser.PropertyContext context)
+		public override PropertyDefinition VisitProperty([NotNull] PropParserParser.PropertyContext context)
         {
 			var isCollection = get(context, IsCollectionVisitor.Instance, Tuple.Create(false, (IToken)null, (IToken)null));
-			return new Definition()
+			return new PropertyDefinition()
 			{
 				Name = context.name.Text,
 				Type = context.ttype.Text,

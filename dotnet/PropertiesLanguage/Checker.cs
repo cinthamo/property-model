@@ -12,13 +12,13 @@ namespace Genexus.PropertiesLanguage
 
         private readonly TextWriter Error;
 
-        public void CheckTypes(ITypeContext tc, DefinitionList definitionList)
+        public void CheckTypes(ITypeContext tc, PType type)
         {
-            foreach (var definition in definitionList.Properties)
-                CheckTypes(tc, definition);
+            foreach (var property in type.Properties)
+                CheckTypes(tc, property);
         }
 
-        private void CheckTypes(ITypeContext tc, Definition definition)
+        private void CheckTypes(ITypeContext tc, PropertyDefinition definition)
         {
             var type = tc.GetTypeOfName(definition.Type);
             if (type == null)

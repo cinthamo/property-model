@@ -56,7 +56,7 @@ namespace Genexus.PropertiesLanguage.Test
                 to.Add(p.Key, p.Value);
         }
 
-        protected TypeContext(DefinitionList definitions, IPredefined predefined)
+        protected TypeContext(PType pType, IPredefined predefined)
         {
             current = new TypeObj();
             others = new Dictionary<IType, TypeObj>();
@@ -90,11 +90,11 @@ namespace Genexus.PropertiesLanguage.Test
 
             var dto = new TypeObj();
 
-            foreach (var definition in definitions.Properties)
+            foreach (var definition in pType.Properties)
                 dto.Names.Add(definition.Name, current.Names[definition.Type]);
 
-            if (definitions.ExtendsType != null &&
-                predefined.BasicObjects.TryGetValue(new ExternalType(definitions.ExtendsType), out var extObj))
+            if (pType.ExtendsType != null &&
+                predefined.BasicObjects.TryGetValue(new ExternalType(pType.ExtendsType), out var extObj))
             {
                 Copy(extObj.Names, dto.Names);
                 Copy(extObj.Functions, dto.Functions);
@@ -104,10 +104,10 @@ namespace Genexus.PropertiesLanguage.Test
             Copy(dto.Names, current.Names);
             Copy(dto.Functions, current.Functions);
 
-            if (definitions.Name != null)
-                others.Add(new InternalType(definitions.Name), dto);
-            else if (definitions.ExtendsType != null)
-                others.Add(new InternalType($"+{definitions.ExtendsType}"), dto);
+            if (pType.Name != null)
+                others.Add(new InternalType(pType.Name), dto);
+            else if (pType.ExtendsType != null)
+                others.Add(new InternalType($"+{pType.ExtendsType}"), dto);
         }
 
         #endregion
