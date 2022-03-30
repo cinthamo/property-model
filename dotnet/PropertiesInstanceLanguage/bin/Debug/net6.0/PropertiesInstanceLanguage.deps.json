@@ -9,7 +9,7 @@
       "PropertiesInstanceLanguage/1.0.0": {
         "dependencies": {
           "Antlr4.Runtime.Standard": "4.9.3",
-          "PropertiesLanguage": "1.0.0"
+          "PropertiesDefinitionLanguage": "1.0.0"
         },
         "runtime": {
           "PropertiesInstanceLanguage.dll": {}
@@ -23,12 +23,12 @@
           }
         }
       },
-      "PropertiesLanguage/1.0.0": {
+      "PropertiesDefinitionLanguage/1.0.0": {
         "dependencies": {
           "Antlr4.Runtime.Standard": "4.9.3"
         },
         "runtime": {
-          "PropertiesLanguage.dll": {}
+          "PropertiesDefinitionLanguage.dll": {}
         }
       }
     }
@@ -46,7 +46,7 @@
       "path": "antlr4.runtime.standard/4.9.3",
       "hashPath": "antlr4.runtime.standard.4.9.3.nupkg.sha512"
     },
-    "PropertiesLanguage/1.0.0": {
+    "PropertiesDefinitionLanguage/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

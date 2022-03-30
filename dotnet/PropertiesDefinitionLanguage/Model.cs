@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Antlr4.Runtime;
 
-namespace Genexus.PropertiesLanguage
+namespace Genexus.Language.PropertiesDefinition
 {
     public partial class Model
     {
@@ -29,7 +29,6 @@ namespace Genexus.PropertiesLanguage
         public string? Name;
         public string? ExtendsType;
         public IList<PropertyDefinition> Properties;
-		public bool IsNew;
 		public IToken StartToken;
 		public IToken StopToken;
 		public IToken OpenBracketToken;
@@ -45,7 +44,6 @@ namespace Genexus.PropertiesLanguage
         public IExpression Apply;
         public IExpression Readonly;
         public IExpression Valid;
-		public bool IsNew;
 		public bool IsTypeChanged;
 		public bool IsCollectionChanged;
 		public IToken StartToken;

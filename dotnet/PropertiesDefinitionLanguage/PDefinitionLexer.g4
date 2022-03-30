@@ -1,6 +1,6 @@
-lexer grammar PropLexer;
+lexer grammar PDefinitionLexer;
 
-import PropCommonLexer;
+import PCommonLexer;
 
 NOT: 'not';
 NULL: 'null';

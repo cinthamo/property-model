@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<AntlrGrammar Include="PropParser.g4" GrammarType="Parser" />
+		<AntlrGrammar Include="PDefinitionParser.g4" GrammarType="Parser" />
 	</ItemGroup>
 
 	<ItemGroup>

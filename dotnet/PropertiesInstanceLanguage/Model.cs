@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Antlr4.Runtime;
-using Genexus.PropertiesLanguage;
+using Genexus.Language.PropertiesDefinition;
 
-namespace Genexus.PropertiesInstanceLanguage
+namespace Genexus.Language.PropertiesInstance
 {
     public class Model
     {

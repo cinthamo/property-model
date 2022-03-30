@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using Antlr4.Runtime;
-using Genexus.PropertiesLanguage.Antlr;
+using Genexus.Language.PropertiesDefinition.Antlr;
 
-namespace Genexus.PropertiesLanguage
+namespace Genexus.Language.PropertiesDefinition
 {
     public class Parser
     {
@@ -16,7 +16,7 @@ namespace Genexus.PropertiesLanguage
         {
             var output = new StringWriter();
             var error = new StringWriter();
-            var parser = new PropParserParser(tokenStream, output, error);
+            var parser = new PDefinitionParserParser(tokenStream, output, error);
             var tree = parser.definitions();
             var s = output.ToString() + error.ToString();
             if (!string.IsNullOrEmpty(s))
@@ -29,7 +29,7 @@ namespace Genexus.PropertiesLanguage
 		public static ITokenStream GetTokenStream(string text)
 		{
 			var charStream = new AntlrInputStream(text);
-			var lexer = new PropParserLexer(charStream);
+			var lexer = new PDefinitionParserLexer(charStream);
 			return new CommonTokenStream(lexer);			
 		}
 	}

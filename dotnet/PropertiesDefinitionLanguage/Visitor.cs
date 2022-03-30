@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
-using Genexus.PropertiesLanguage.Antlr;
+using Genexus.Language.PropertiesDefinition.Antlr;
 
-namespace Genexus.PropertiesLanguage
+namespace Genexus.Language.PropertiesDefinition
 {
-    public class ModelVisitor : PropParserBaseVisitor<Model>
+    public class ModelVisitor : PDefinitionParserBaseVisitor<Model>
     {
         public static readonly ModelVisitor Instance = new();
 
-        public override Model VisitDefinitions([NotNull] PropParserParser.DefinitionsContext context)
+        public override Model VisitDefinitions([NotNull] PDefinitionParserParser.DefinitionsContext context)
         {
             return new Model
             {
@@ -22,11 +22,11 @@ namespace Genexus.PropertiesLanguage
         }
     }
 
-    public class FlagsListVisitor : PropParserBaseVisitor<FlagsList>
+    public class FlagsListVisitor : PDefinitionParserBaseVisitor<FlagsList>
     {
         public static readonly FlagsListVisitor Instance = new();
 
-        public override FlagsList VisitFlags([NotNull] PropParserParser.FlagsContext context)
+        public override FlagsList VisitFlags([NotNull] PDefinitionParserParser.FlagsContext context)
         {
             return new FlagsList
             {
@@ -36,11 +36,11 @@ namespace Genexus.PropertiesLanguage
         }
     }
 
-    public class FlagDefinitionVisitor : PropParserBaseVisitor<FlagDefinition>
+    public class FlagDefinitionVisitor : PDefinitionParserBaseVisitor<FlagDefinition>
     {
         public static readonly FlagDefinitionVisitor Instance = new();
 
-        public override FlagDefinition VisitFlagDefinition([NotNull] PropParserParser.FlagDefinitionContext context)
+        public override FlagDefinition VisitFlagDefinition([NotNull] PDefinitionParserParser.FlagDefinitionContext context)
         {
             return new FlagDefinition
             {
@@ -52,11 +52,11 @@ namespace Genexus.PropertiesLanguage
         }
     }
 
-    public class PTypeVisitor : PropParserBaseVisitor<PType>
+    public class PTypeVisitor : PDefinitionParserBaseVisitor<PType>
     {
         public static readonly PTypeVisitor Instance = new();
 
-        public override PType VisitType([NotNull] PropParserParser.TypeContext context)
+        public override PType VisitType([NotNull] PDefinitionParserParser.TypeContext context)
         {
             var nameExtends = context.nameExtends().Accept(NameExtendsVisitor.Instance);
             return new PType
@@ -71,26 +71,26 @@ namespace Genexus.PropertiesLanguage
         }
     }
 
-    public class NameExtendsVisitor : PropParserBaseVisitor<Tuple<string?, string?>>
+    public class NameExtendsVisitor : PDefinitionParserBaseVisitor<Tuple<string?, string?>>
     {
         public static readonly NameExtendsVisitor Instance = new();
 
-        public override Tuple<string?, string?> VisitNameNormal([NotNull] PropParserParser.NameNormalContext context)
+        public override Tuple<string?, string?> VisitNameNormal([NotNull] PDefinitionParserParser.NameNormalContext context)
         {
             return Tuple.Create<string?, string?>(context.name.Text, context.ttype?.Text);
         }
 
-        public override Tuple<string?, string?> VisitNameExternal([NotNull] PropParserParser.NameExternalContext context)
+        public override Tuple<string?, string?> VisitNameExternal([NotNull] PDefinitionParserParser.NameExternalContext context)
         {
             return Tuple.Create<string?, string?>(null, context.etype.Text);
         }
     }
 
-    public class PropertyDefinitionVisitor : PropParserBaseVisitor<PropertyDefinition>
+    public class PropertyDefinitionVisitor : PDefinitionParserBaseVisitor<PropertyDefinition>
     {
         public static readonly PropertyDefinitionVisitor Instance = new();
 
-        private class AspectVisitor : PropParserBaseVisitor<IExpression?>
+        private class AspectVisitor : PDefinitionParserBaseVisitor<IExpression?>
         {
             public static readonly AspectVisitor Default = new AspectVisitor("default", NullExpression.Null, NullExpression.Null);
             public static readonly AspectVisitor Apply = new AspectVisitor("apply", BooleanExpression.True, BooleanExpression.False);
@@ -108,7 +108,7 @@ namespace Genexus.PropertiesLanguage
             private readonly IExpression Used;
             private readonly IExpression Otherwise;
 
-            public override IExpression? VisitRuleEqual([NotNull] PropParserParser.RuleEqualContext context)
+            public override IExpression? VisitRuleEqual([NotNull] PDefinitionParserParser.RuleEqualContext context)
             {
                 if (context.name.Accept(IdentifierVisitor.Instance) != Name)
                     return null;
@@ -121,7 +121,7 @@ namespace Genexus.PropertiesLanguage
                 );
             }
 
-            public override IExpression? VisitRuleBool([NotNull] PropParserParser.RuleBoolContext context)
+            public override IExpression? VisitRuleBool([NotNull] PDefinitionParserParser.RuleBoolContext context)
             {
                 if (context.name.Accept(IdentifierVisitor.Instance) != Name)
                     return null;
@@ -138,22 +138,22 @@ namespace Genexus.PropertiesLanguage
             }
         }
 
-        private class IdentifierVisitor : PropParserBaseVisitor<string>
+        private class IdentifierVisitor : PDefinitionParserBaseVisitor<string>
         {
             public static readonly IdentifierVisitor Instance = new();
 
-            public override string VisitIdName([NotNull] PropParserParser.IdNameContext context)
+            public override string VisitIdName([NotNull] PDefinitionParserParser.IdNameContext context)
             {
                 return context.name.Text;
             }
 
-            public override string VisitIdFlag([NotNull] PropParserParser.IdFlagContext context)
+            public override string VisitIdFlag([NotNull] PDefinitionParserParser.IdFlagContext context)
             {
                 return $"{context.fName.Text}.{context.name.Text}";
             }
         }
 
-		private class IsCollectionVisitor : PropParserBaseVisitor<Tuple<bool, IToken, IToken>?>
+		private class IsCollectionVisitor : PDefinitionParserBaseVisitor<Tuple<bool, IToken, IToken>?>
 		{
 			public static readonly IsCollectionVisitor Instance = new IsCollectionVisitor();
 
@@ -161,7 +161,7 @@ namespace Genexus.PropertiesLanguage
 
 			private readonly string Name = "IsCollection";
 
-			public override Tuple<bool, IToken, IToken>? VisitRuleEqual([NotNull] PropParserParser.RuleEqualContext context)
+			public override Tuple<bool, IToken, IToken>? VisitRuleEqual([NotNull] PDefinitionParserParser.RuleEqualContext context)
 			{
 				if (context.name.Accept(IdentifierVisitor.Instance) != Name)
 					return null;
@@ -176,7 +176,7 @@ namespace Genexus.PropertiesLanguage
 					throw new Exception("IsCollection must be boolean");
 			}
 
-			public override Tuple<bool, IToken, IToken>? VisitRuleBool([NotNull] PropParserParser.RuleBoolContext context)
+			public override Tuple<bool, IToken, IToken>? VisitRuleBool([NotNull] PDefinitionParserParser.RuleBoolContext context)
 			{
 				if (context.name.Accept(IdentifierVisitor.Instance) != Name)
 					return null;
@@ -188,7 +188,7 @@ namespace Genexus.PropertiesLanguage
 			}
 		}
 
-		private T get<T>([NotNull] PropParserParser.PropertyContext context, PropParserBaseVisitor<T> visitor, T _default)
+		private T get<T>([NotNull] PDefinitionParserParser.PropertyContext context, PDefinitionParserBaseVisitor<T> visitor, T _default)
         {
             var exprList = context.aRule()
                 .Select(r => r.Accept(visitor))
@@ -204,15 +204,15 @@ namespace Genexus.PropertiesLanguage
             return exprList.First();
         }		
 
-		public override PropertyDefinition VisitProperty([NotNull] PropParserParser.PropertyContext context)
+		public override PropertyDefinition VisitProperty([NotNull] PDefinitionParserParser.PropertyContext context)
         {
 			var isCollection = get(context, IsCollectionVisitor.Instance, Tuple.Create(false, (IToken)null, (IToken)null));
 			return new PropertyDefinition()
 			{
-				Name = context.name.Text,
+				Name = context.name.GetText(),
 				Type = context.ttype.Text,
 				IsCollection = isCollection.Item1,
-				Description = context.ddoc?.GetText(),
+				Description = context.ddoc?.Accept(DescriptionVisitor.Instance),
 				Default = get(context, AspectVisitor.Default, null),
 				Apply = get(context, AspectVisitor.Apply, null),
 				Readonly = get(context, AspectVisitor.Readonly, null),
@@ -227,79 +227,108 @@ namespace Genexus.PropertiesLanguage
         }
     }
 
-    public class ConditionValueVisitor : PropParserBaseVisitor<ConditionValue>
+	public class DescriptionVisitor : PDefinitionParserBaseVisitor<string>
+	{
+		public static readonly DescriptionVisitor Instance = new();
+
+		public override string VisitDoc([NotNull] PDefinitionParserParser.DocContext context)
+		{
+			if (context.EOL_DOC() != null)
+				return context.EOL_DOC().GetText().Substring(3).TrimStart();
+
+			if (context.BLOCK_DOC() != null)
+			{
+				var text = context.BLOCK_DOC().GetText();
+				text = text.Substring(3, text.Length - 5);
+				int startIndex = text.IndexOf("\n");
+				if (startIndex != -1)
+				{
+					int endIndex = startIndex + 1;
+					while (text[endIndex] == ' ' || text[endIndex] == '\t')
+						endIndex++;
+					var space = text.Substring(startIndex, endIndex - startIndex);
+					text = text.Replace(space, "\n").Trim();
+				}
+				return text;
+			}
+
+			throw new Exception("Invalid documentation");
+		}
+	}
+
+    public class ConditionValueVisitor : PDefinitionParserBaseVisitor<ConditionValue>
     {
         public static readonly ConditionValueVisitor Instance = new();
 
-        public override ConditionValue VisitCcase([NotNull] PropParserParser.CcaseContext context)
+        public override ConditionValue VisitCcase([NotNull] PDefinitionParserParser.CcaseContext context)
         {
             return new ConditionValue(context.expr(1).Accept(ExpressionVisitor.Instance),
                 context.expr(0).Accept(ExpressionVisitor.Instance));
         }
     }
 
-    public class ExpressionVisitor : PropParserBaseVisitor<IExpression>
+    public class ExpressionVisitor : PDefinitionParserBaseVisitor<IExpression>
     {
         public static readonly ExpressionVisitor Instance = new();
 
-        public override IExpression VisitExprNumber([NotNull] PropParserParser.ExprNumberContext context)
+        public override IExpression VisitExprNumber([NotNull] PDefinitionParserParser.ExprNumberContext context)
         {
             return new NumericExpression(context, int.Parse(context.NUMBER().GetText()));
         }
 
-        public override IExpression VisitExprBool([NotNull] PropParserParser.ExprBoolContext context)
+        public override IExpression VisitExprBool([NotNull] PDefinitionParserParser.ExprBoolContext context)
         {
             var value = context.BOOL().GetText() == "true";
             return new BooleanExpression(context, value);
         }
 
-        public override IExpression VisitExprString([NotNull] PropParserParser.ExprStringContext context)
+        public override IExpression VisitExprString([NotNull] PDefinitionParserParser.ExprStringContext context)
         {
-			var value = context.STRING().GetText();
+			var value = context.STRING_DOUBLE().GetText();
 			return new StringExpression(context, value.Substring(1, value.Length - 2)); // remove quotes
         }
 
-        public override IExpression VisitExprNull([NotNull] PropParserParser.ExprNullContext context)
+        public override IExpression VisitExprNull([NotNull] PDefinitionParserParser.ExprNullContext context)
         {
             return new NullExpression(context);
         }
 
-        public override IExpression VisitExprValue([NotNull] PropParserParser.ExprValueContext context)
+        public override IExpression VisitExprValue([NotNull] PDefinitionParserParser.ExprValueContext context)
         {
             return new ValueReferenceExpression(context);
         }
 
-        public override IExpression VisitExprName([NotNull] PropParserParser.ExprNameContext context)
+        public override IExpression VisitExprName([NotNull] PDefinitionParserParser.ExprNameContext context)
         {
-            return new NameReferenceExpression(context, context.NAME().GetText());
+            return new NameReferenceExpression(context, context.name.GetText());
         }
 
-        public override IExpression VisitExprProp([NotNull] PropParserParser.ExprPropContext context)
+        public override IExpression VisitExprProp([NotNull] PDefinitionParserParser.ExprPropContext context)
         {
             return new PropertyReferenceExpression(context, context.expr().Accept(this), context.NAME().GetText());
         }
 
-        public override IExpression VisitExprFunction([NotNull] PropParserParser.ExprFunctionContext context)
+        public override IExpression VisitExprFunction([NotNull] PDefinitionParserParser.ExprFunctionContext context)
         {
             return new CallExpression(context, context.func().NAME().GetText(), context.func().expr().Select(p => p.Accept(this)).ToList());
         }
 
-        public override IExpression VisitExprMethod([NotNull] PropParserParser.ExprMethodContext context)
+        public override IExpression VisitExprMethod([NotNull] PDefinitionParserParser.ExprMethodContext context)
         {
             return new CallExpression(context, context.func().name.Text, context.func().expr().Select(p => p.Accept(this)).Prepend(context.target.Accept(this)).ToList());
         }
 
-        public override IExpression VisitExprOperator([NotNull] PropParserParser.ExprOperatorContext context)
+        public override IExpression VisitExprOperator([NotNull] PDefinitionParserParser.ExprOperatorContext context)
         {
             return new CallExpression(context, context.op.Text, context.expr().Select(p => p.Accept(this)).ToList());
         }
 
-        public override IExpression VisitExprNot([NotNull] PropParserParser.ExprNotContext context)
+        public override IExpression VisitExprNot([NotNull] PDefinitionParserParser.ExprNotContext context)
         {
             return new CallExpression(context, context.NOT().GetText(), new List<IExpression> { context.expr().Accept(this) });
         }
 
-        public override IExpression VisitExprParenthesis([NotNull] PropParserParser.ExprParenthesisContext context)
+        public override IExpression VisitExprParenthesis([NotNull] PDefinitionParserParser.ExprParenthesisContext context)
         {
             return context.expr().Accept(this);
         }

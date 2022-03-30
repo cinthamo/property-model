@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
-using Genexus.PropertiesInstanceLanguage.Antlr;
+using Genexus.Language.PropertiesInstance.Antlr;
 
-namespace Genexus.PropertiesInstanceLanguage
+namespace Genexus.Language.PropertiesInstance
 {
 	public static class Extension
 	{

@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PropertiesLanguage\PropertiesLanguage.csproj" />
+    <ProjectReference Include="..\PropertiesDefinitionLanguage\PropertiesDefinitionLanguage.csproj" />
   </ItemGroup>
 
 </Project>

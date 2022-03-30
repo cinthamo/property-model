@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesLanguage", "PropertiesLanguage\PropertiesLanguage.csproj", "{7DAE7108-83CA-42D9-9441-0B9F9ABF608B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesDefinitionLanguage", "PropertiesDefinitionLanguage\PropertiesDefinitionLanguage.csproj", "{7DAE7108-83CA-42D9-9441-0B9F9ABF608B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesLanguageTest", "PropertiesLanguageTest\PropertiesLanguageTest.csproj", "{5EB86E3C-5D68-4BD1-915C-2AC6C48051F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesDefinitionLanguageTest", "PropertiesDefinitionLanguageTest\PropertiesDefinitionLanguageTest.csproj", "{5EB86E3C-5D68-4BD1-915C-2AC6C48051F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesInstanceLanguage", "PropertiesInstanceLanguage\PropertiesInstanceLanguage.csproj", "{69989E54-660A-4711-8937-39AE9277F857}"
 EndProject

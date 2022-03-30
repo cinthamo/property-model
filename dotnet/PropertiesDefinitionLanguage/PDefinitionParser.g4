@@ -1,6 +1,6 @@
-grammar PropParser;
+grammar PDefinitionParser;
 
-import PropLexer;
+import PDefinitionLexer;
 
 definitions: importt* flags* type*;
 
@@ -23,7 +23,27 @@ nameExtends:
 ;
 
 property:
-  ddoc=doc* name=NAME COLON ttype=NAME (open=CORCHA aRule* CORCHC)? end?;
+  ddoc=doc* name=idPropName COLON ttype=NAME (open=CORCHA aRule* CORCHC)? end?;
+
+propName:
+  NAME
+| IMPORT
+| FLAGS
+| TYPE
+| EXTENDS
+| STRING_SINGLE
+;
+
+idPropName:
+  propName
+| BOOL
+| NOT
+| NULL
+| VALUE
+| IF
+| AND
+| OR
+;
 
 doc:
   BLOCK_DOC
@@ -31,11 +51,11 @@ doc:
 ;
 
 aRule:
-  name=identifier EQUAL ccase* otherwise=expr end?   # ruleEqual
-| name=identifier (IF condition=expr)? end?          # ruleBool
+  name=ruleName EQUAL ccase* otherwise=expr end?   # ruleEqual
+| name=ruleName (IF condition=expr)? end?          # ruleBool
 ;
 
-identifier:
+ruleName:
   name=NAME                  # idName
 | fName=NAME DOT name=NAME   # idFlag
 ;
@@ -46,10 +66,10 @@ ccase: expr IF expr PIPE;
 expr:
   value=NUMBER                  # exprNumber
 | value=BOOL                    # exprBool
-| value=STRING                  # exprString
+| value=STRING_DOUBLE           # exprString
 | NULL                          # exprNull
 | VALUE                         # exprValue
-| name=NAME                     # exprName
+| name=propName                 # exprName
 | target=expr DOT prop=NAME     # exprProp
 | func                          # exprFunction
 | target=expr DOT func          # exprMethod
