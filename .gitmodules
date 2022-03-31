@@ -1,0 +1,3 @@
+[submodule "gx-grammars"]
+	path = gx-grammars
+	url = https://github.com/cinthamo/gx-grammars.git

@@ -16,3 +16,4 @@ dotnet/PropertiesDefinitionLanguageTest/bin
 dotnet/PropertiesInstanceLanguage/obj
 dotnet/PropertiesInstanceLanguage/bin
 dotnet/PropertiesInstanceLanguage/Parser
+*.g4

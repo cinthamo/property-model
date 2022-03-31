@@ -29,6 +29,9 @@
 			<JavaExe Condition=" '$(JAVA_HOME)' != '' ">"$(JAVA_HOME)\bin\java"</JavaExe>
 			<JavaExe Condition=" '$(JavaExe)' == '' ">java</JavaExe>
 		</PropertyGroup>
+		<Copy SourceFiles="..\..\gx-grammars\properties\PCommonLexer.g4" DestinationFolder="." />
+		<Copy SourceFiles="..\..\gx-grammars\properties\PDefinitionLexer.g4" DestinationFolder="." />
+		<Copy SourceFiles="..\..\gx-grammars\properties\PDefinitionParser.g4" DestinationFolder="." />
 		<Exec Command="$(JavaExe) -cp &quot;../antlr4-4.9.3-complete.jar&quot; org.antlr.v4.Tool -visitor -no-listener -Dlanguage=CSharp %(AntlrGrammar.Identity) -o Parser -package $(RootNamespace).Antlr" />
 		<ItemGroup>
 			<Compile Include="@(AntlrOutput)" Exclude="@(Compile)" />
