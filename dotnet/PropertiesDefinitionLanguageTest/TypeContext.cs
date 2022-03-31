@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Genexus.Language.PropertiesDefinition;
 
-namespace Genexus.Language.PropertiesDefinition.Test
+namespace Genexus.PropertiesLanguage.Definition.Test
 {
     public class TypeContext : ITypeContext
     {

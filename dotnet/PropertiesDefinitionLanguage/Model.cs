@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Antlr4.Runtime;
 
-namespace Genexus.Language.PropertiesDefinition
+namespace Genexus.PropertiesLanguage.Definition
 {
     public partial class Model
     {

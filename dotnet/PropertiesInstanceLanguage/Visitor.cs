@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
-using Genexus.Language.PropertiesInstance.Antlr;
+using Genexus.PropertiesLanguage.Instance.Antlr;
 
-namespace Genexus.Language.PropertiesInstance
+namespace Genexus.PropertiesLanguage.Instance
 {
 	public static class Extension
 	{
@@ -18,11 +18,11 @@ namespace Genexus.Language.PropertiesInstance
 		}
 	}	
 
-    public class ModelVisitor : PInstParserBaseVisitor<Model>
+    public class ModelVisitor : PInstanceParserBaseVisitor<Model>
     {
         public static readonly ModelVisitor Instance = new();
 
-        public override Model VisitInstance([NotNull] PInstParserParser.InstanceContext context)
+        public override Model VisitInstance([NotNull] PInstanceParserParser.InstanceContext context)
         {
             return new Model
             {
@@ -33,11 +33,11 @@ namespace Genexus.Language.PropertiesInstance
         }
     }
 
-    public class ObjectVisitor : PInstParserBaseVisitor<MObject>
+    public class ObjectVisitor : PInstanceParserBaseVisitor<MObject>
     {
         public static readonly ObjectVisitor Instance = new();
 
-		public override MObject VisitObject([NotNull] PInstParserParser.ObjectContext context)
+		public override MObject VisitObject([NotNull] PInstanceParserParser.ObjectContext context)
 		{
 			var mappings = context.mapping()
 					.Select(p => p.Accept(MappingVisitor.Instance))
@@ -53,11 +53,11 @@ namespace Genexus.Language.PropertiesInstance
         }
     }
 
-    public class MappingVisitor : PInstParserBaseVisitor<MMaping>
+    public class MappingVisitor : PInstanceParserBaseVisitor<MMaping>
     {
         public static readonly MappingVisitor Instance = new();
 
-        public override MMaping VisitMapping([NotNull] PInstParserParser.MappingContext context)
+        public override MMaping VisitMapping([NotNull] PInstanceParserParser.MappingContext context)
         {
             return new MMaping() {
 				Name = context.key().Accept(KeyVisitor.Instance),
@@ -66,27 +66,27 @@ namespace Genexus.Language.PropertiesInstance
         }
     }
 
-	public class KeyVisitor : PInstParserBaseVisitor<string>
+	public class KeyVisitor : PInstanceParserBaseVisitor<string>
 	{
 		public static readonly KeyVisitor Instance = new();
 
-		public override string VisitKeyName([NotNull] PInstParserParser.KeyNameContext context)
+		public override string VisitKeyName([NotNull] PInstanceParserParser.KeyNameContext context)
 		{
 			return context.NAME().GetText();
 		}
 
-		public override string VisitKeyString([NotNull] PInstParserParser.KeyStringContext context)
+		public override string VisitKeyString([NotNull] PInstanceParserParser.KeyStringContext context)
 		{
-			var value = context.STRING().GetText();
+			var value = context.@string().GetText();
 			return value.Substring(1, value.Length - 2);
 		}
 	}
 
-    public class ValueVisitor : PInstParserBaseVisitor<MBase>
+    public class ValueVisitor : PInstanceParserBaseVisitor<MBase>
     {
         public static readonly ValueVisitor Instance = new();
 
-        public override MBase VisitValueNumber([NotNull] PInstParserParser.ValueNumberContext context)
+        public override MBase VisitValueNumber([NotNull] PInstanceParserParser.ValueNumberContext context)
         {
 			return new MInt(context.GetContext())
 			{
@@ -94,7 +94,7 @@ namespace Genexus.Language.PropertiesInstance
 			};
         }
 
-		public override MBase VisitValueBool([NotNull] PInstParserParser.ValueBoolContext context)
+		public override MBase VisitValueBool([NotNull] PInstanceParserParser.ValueBoolContext context)
 		{
 			return new MBool(context.GetContext())
 			{
@@ -102,16 +102,16 @@ namespace Genexus.Language.PropertiesInstance
 			};
         }
 
-		public override MBase VisitValueString([NotNull] PInstParserParser.ValueStringContext context)
+		public override MBase VisitValueString([NotNull] PInstanceParserParser.ValueStringContext context)
 		{
-			var value = context.STRING().GetText();
+			var value = context.@string().GetText();
 			return new MString(context.GetContext())
 			{
 				Value = value.Substring(1, value.Length - 2)
 			};
         }
 
-		public override MBase VisitValueName([NotNull] PInstParserParser.ValueNameContext context)
+		public override MBase VisitValueName([NotNull] PInstanceParserParser.ValueNameContext context)
 		{
 			return new MString(context.GetContext())
 			{
@@ -119,22 +119,22 @@ namespace Genexus.Language.PropertiesInstance
 			};
 		}
 
-		public override MBase VisitValueObject([NotNull] PInstParserParser.ValueObjectContext context)
+		public override MBase VisitValueObject([NotNull] PInstanceParserParser.ValueObjectContext context)
         {
             return context.@object().Accept(ObjectVisitor.Instance);
         }
 
-        public override MBase VisitValueList([NotNull] PInstParserParser.ValueListContext context)
+        public override MBase VisitValueList([NotNull] PInstanceParserParser.ValueListContext context)
         {
             return context.list().Accept(ListVisitor.Instance);
         }
     }
 
-    public class ListVisitor : PInstParserBaseVisitor<MList>
+    public class ListVisitor : PInstanceParserBaseVisitor<MList>
     {
         public static readonly ListVisitor Instance = new();
 
-        public override MList VisitList([NotNull] PInstParserParser.ListContext context)
+        public override MList VisitList([NotNull] PInstanceParserParser.ListContext context)
         {
 			var text = context.GetText();
 			return new MList(context.GetContext()) {

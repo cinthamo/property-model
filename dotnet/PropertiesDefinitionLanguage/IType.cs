@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Genexus.Language.PropertiesDefinition
+namespace Genexus.PropertiesLanguage.Definition
 {
     public interface IType
     {

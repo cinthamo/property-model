@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
-using Genexus.Language.PropertiesDefinition.Antlr;
+using Genexus.PropertiesLanguage.Definition.Antlr;
 
-namespace Genexus.Language.PropertiesDefinition
+namespace Genexus.PropertiesLanguage.Definition
 {
     public class ModelVisitor : PDefinitionParserBaseVisitor<Model>
     {
