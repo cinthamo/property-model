@@ -9,6 +9,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesDefinitionLanguag
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesInstanceLanguage", "PropertiesInstanceLanguage\PropertiesInstanceLanguage.csproj", "{69989E54-660A-4711-8937-39AE9277F857}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grammars", "Grammars", "{7CBB3C99-F834-4575-AEE7-FBE945091C82}"
+	ProjectSection(SolutionItems) = preProject
+		..\gx-grammars\properties\PCommonLexer.g4 = ..\gx-grammars\properties\PCommonLexer.g4
+		..\gx-grammars\properties\PDefinitionLexer.g4 = ..\gx-grammars\properties\PDefinitionLexer.g4
+		..\gx-grammars\properties\PDefinitionParser.g4 = ..\gx-grammars\properties\PDefinitionParser.g4
+		..\gx-grammars\properties\PInstanceLexer.g4 = ..\gx-grammars\properties\PInstanceLexer.g4
+		..\gx-grammars\properties\PInstanceParser.g4 = ..\gx-grammars\properties\PInstanceParser.g4
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

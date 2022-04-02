@@ -28,6 +28,7 @@ namespace Genexus.PropertiesLanguage.Definition
     {
         public string? Name;
         public string? ExtendsType;
+        public IExpression? Condition;
         public IList<PropertyDefinition> Properties;
 		public IToken StartToken;
 		public IToken StopToken;

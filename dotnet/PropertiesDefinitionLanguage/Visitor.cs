@@ -63,6 +63,7 @@ namespace Genexus.PropertiesLanguage.Definition
             {
                 Name = nameExtends.Item1,
                 ExtendsType = nameExtends.Item2,
+                Condition = nameExtends.Item3,
                 Properties = context.property().Select(p => p.Accept(PropertyDefinitionVisitor.Instance)).ToList(),
 				StartToken = context.Start,
 				StopToken = context.Stop,
@@ -71,18 +72,18 @@ namespace Genexus.PropertiesLanguage.Definition
         }
     }
 
-    public class NameExtendsVisitor : PDefinitionParserBaseVisitor<Tuple<string?, string?>>
+    public class NameExtendsVisitor : PDefinitionParserBaseVisitor<Tuple<string?, string?, IExpression?>>
     {
         public static readonly NameExtendsVisitor Instance = new();
 
-        public override Tuple<string?, string?> VisitNameNormal([NotNull] PDefinitionParserParser.NameNormalContext context)
+        public override Tuple<string?, string?, IExpression?> VisitNameNormal([NotNull] PDefinitionParserParser.NameNormalContext context)
         {
-            return Tuple.Create<string?, string?>(context.name.Text, context.ttype?.Text);
+            return Tuple.Create<string?, string?, IExpression?>(context.name.Text, context.ttype?.Text, null);
         }
 
-        public override Tuple<string?, string?> VisitNameExternal([NotNull] PDefinitionParserParser.NameExternalContext context)
+        public override Tuple<string?, string?, IExpression?> VisitNameExternal([NotNull] PDefinitionParserParser.NameExternalContext context)
         {
-            return Tuple.Create<string?, string?>(null, context.etype.Text);
+            return Tuple.Create<string?, string?, IExpression?>(null, context.etype.Text, context.condition?.Accept(ExpressionVisitor.Instance));
         }
     }
 
