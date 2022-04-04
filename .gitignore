@@ -16,7 +16,6 @@ dotnet/PropertiesDefinitionLanguageTest/bin
 dotnet/PropertiesInstanceLanguage/obj
 dotnet/PropertiesInstanceLanguage/bin
 dotnet/PropertiesInstanceLanguage/Parser
-*.g4
-dotnet/PropertiesConversionLanguage/obj
-dotnet/PropertiesConversionLanguage/Parser
-dotnet/PropertiesConversionLanguage/bin
+dotnet/PropertiesTransformationLanguage/obj
+dotnet/PropertiesTransformationLanguage/bin
+dotnet/PropertiesTransformationLanguage/Parser
