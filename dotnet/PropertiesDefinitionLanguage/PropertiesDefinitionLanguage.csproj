@@ -24,11 +24,7 @@
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Inputs="@(AntlrGrammar)" Outputs="@(AntlrOutput)">
-		<PropertyGroup>
-			<JavaExe Condition=" '$(JAVA_HOME)' != '' ">"$(JAVA_HOME)\bin\java"</JavaExe>
-			<JavaExe Condition=" '$(JavaExe)' == '' ">java</JavaExe>
-		</PropertyGroup>
-		<Exec Command="cd ../../gx-grammars/properties;$(JavaExe) -cp &quot;../../dotnet/antlr4-4.9.3-complete.jar&quot; org.antlr.v4.Tool -visitor -no-listener -Dlanguage=CSharp %(AntlrGrammar.FileName).g4 -o ../../dotnet/PropertiesDefinitionLanguage/Parser -package $(RootNamespace).Antlr" />
+		<Exec Command="cd ../../gx-grammars/properties;java -cp ../../gx-grammars/antlr4-4.9.3-complete.jar org.antlr.v4.Tool -visitor -no-listener -Dlanguage=CSharp %(AntlrGrammar.FileName).g4 -o ../../dotnet/PropertiesDefinitionLanguage/Parser -package $(RootNamespace).Antlr" />
 		<ItemGroup>
 			<Compile Include="@(AntlrOutput)" Exclude="@(Compile)" />
 		</ItemGroup>

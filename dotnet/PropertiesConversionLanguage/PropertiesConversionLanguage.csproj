@@ -4,13 +4,13 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<RootNamespace>Genexus.PropertiesLanguage.Instance</RootNamespace>
+		<RootNamespace>Genexus.PropertiesLanguage.Conversion</RootNamespace>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>..\PropertiesKey.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<AntlrGrammar Include="../../gx-grammars/properties/PInstanceParser.g4" GrammarType="Parser" />
+		<AntlrGrammar Include="../../gx-grammars/properties/PConversionParser.g4" GrammarType="Parser" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -27,10 +27,9 @@
 	  <ProjectReference Include="..\PropertiesDefinitionLanguage\PropertiesDefinitionLanguage.csproj" />
 	</ItemGroup>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Inputs="@(AntlrGrammar)" Outputs="@(AntlrOutput)">
-		<Exec Command="cd ../../gx-grammars/properties;java -cp ../../gx-grammars/antlr4-4.9.3-complete.jar org.antlr.v4.Tool -visitor -no-listener -Dlanguage=CSharp %(AntlrGrammar.FileName).g4 -o ../../dotnet/PropertiesInstanceLanguage/Parser -package $(RootNamespace).Antlr;cd ../../dotnet/PropertiesInstanceLanguage" />
+		<Exec Command="cd ../../gx-grammars/properties;java -cp ../../gx-grammars/antlr4-4.9.3-complete.jar org.antlr.v4.Tool -visitor -no-listener -Dlanguage=CSharp %(AntlrGrammar.FileName).g4 -o ../../dotnet/PropertiesConversionLanguage/Parser -package $(RootNamespace).Antlr;cd ../../dotnet/PropertiesConversionLanguage" />
 		<ItemGroup>
 			<Compile Include="@(AntlrOutput)" Exclude="@(Compile)" />
 		</ItemGroup>
 	</Target>
-
 </Project>
