@@ -203,14 +203,26 @@ namespace Genexus.PropertiesLanguage.Definition
                 throw new Exception("Can only be one");
 
             return exprList.First();
-        }		
+        }
+
+		public static string RemoveQuotes(string identifier)
+		{
+			if (identifier[0] == '\'')
+			{
+				identifier = identifier.Substring(1, identifier.Length - 2);
+				if (identifier.Trim().Length == 0)
+					throw new Exception("Invalid empty name");
+			}
+			
+			return identifier;
+		}
 
 		public override PropertyDefinition VisitProperty([NotNull] PDefinitionParserParser.PropertyContext context)
         {
 			var isCollection = get(context, IsCollectionVisitor.Instance, Tuple.Create(false, (IToken)null, (IToken)null));
 			return new PropertyDefinition()
 			{
-				Name = context.name.GetText(),
+				Name = RemoveQuotes(context.name.GetText()),
 				Type = context.ttype.Text,
 				IsCollection = isCollection.Item1,
 				Description = context.ddoc?.Accept(DescriptionVisitor.Instance),
@@ -301,7 +313,7 @@ namespace Genexus.PropertiesLanguage.Definition
 
         public override IExpression VisitExprName([NotNull] PDefinitionParserParser.ExprNameContext context)
         {
-            return new NameReferenceExpression(context, context.name.GetText());
+            return new NameReferenceExpression(context, PropertyDefinitionVisitor.RemoveQuotes(context.name.GetText()));
         }
 
         public override IExpression VisitExprProp([NotNull] PDefinitionParserParser.ExprPropContext context)

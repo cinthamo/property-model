@@ -32,10 +32,32 @@ namespace Genexus.PropertiesLanguage.Transformation
         {
             return new Conversion
             {
-                Name = context.namefromto().name.Text,
-                From = context.namefromto().from.Text,
-                To = context.namefromto().to.Text,
-                RuleList = context.crule().Select(r => r.Accept(CRuleVisitor.Instance)).ToList()
+                Name = context.namefromto().name?.Text,
+                From = context.namefromto().from.Accept(TypeNameVisitor.Instance),
+                To = context.namefromto().to.Accept(TypeNameVisitor.Instance),
+                Object = context.@object().Accept(ObjectExpressionVisitor.Instance)
+            };
+        }
+    }
+
+    public class TypeNameVisitor : PTransformationParserBaseVisitor<TypeName>
+    {
+        public static readonly TypeNameVisitor Instance = new();
+
+        public override TypeName VisitNameSimple([NotNull] PTransformationParserParser.NameSimpleContext context)
+        {
+            return new TypeName()
+            {
+                Type = context.type.Text
+            };
+        }
+
+        public override TypeName VisitNameQualified([NotNull] PTransformationParserParser.NameQualifiedContext context)
+        {
+            return new TypeName()
+            {
+                PropertiesDefinition = context.pdef.Text,
+                Type = context.type.Text
             };
         }
     }
@@ -49,7 +71,8 @@ namespace Genexus.PropertiesLanguage.Transformation
             return new CRule
             {
                 Name = context.name.Text,
-                Expression = context.expr().Accept(ExpressionVisitor.Instance)
+                Value = context.value.Accept(ExpressionValueVisitor.Instance),
+                Condition = context.condition?.Accept(ExpressionValueVisitor.Instance)
             };
         }
     }
@@ -62,9 +85,9 @@ namespace Genexus.PropertiesLanguage.Transformation
         {
             return new Rewrite()
             {
-                Name = context.namefromto().name.Text,
-                From = context.namefromto().from.Text,
-                To = context.namefromto().to.Text,
+                Name = context.namefromto().name?.Text,
+                From = context.namefromto().from.Accept(TypeNameVisitor.Instance),
+                To = context.namefromto().to.Accept(TypeNameVisitor.Instance),
                 RuleList = context.rrule().Select(r => r.Accept(RRuleVisitor.Instance)).ToList()
             };
         }
@@ -92,10 +115,46 @@ namespace Genexus.PropertiesLanguage.Transformation
         {
             return new Transform()
             {
-                Name = context.namefromto().name.Text,
-                From = context.namefromto().from.Text,
-                To = context.namefromto().to.Text,
+                Name = context.namefromto().name?.Text,
+                From = context.namefromto().from.Accept(TypeNameVisitor.Instance),
+                To = context.namefromto().to.Accept(TypeNameVisitor.Instance),
                 TransformList = context.trule().Select(t => t.name.Text).ToList()
+            };
+        }
+    }
+
+    public class ObjectExpressionVisitor : PTransformationParserBaseVisitor<ObjectExpression>
+    {
+        public static readonly ObjectExpressionVisitor Instance = new();
+
+        public override ObjectExpression VisitObject([NotNull] PTransformationParserParser.ObjectContext context)
+        {
+            return new ObjectExpression(context)
+            {
+                RuleList = context.crule().Select(r => r.Accept(CRuleVisitor.Instance)).ToList()
+            };
+        }
+    }
+
+    public class ExpressionValueVisitor : PTransformationParserBaseVisitor<IExpression>
+    {
+        public static readonly ExpressionValueVisitor Instance = new();
+
+        public override IExpression VisitValueExpr([NotNull] PTransformationParserParser.ValueExprContext context)
+        {
+            return context.expr().Accept(ExpressionVisitor.Instance);
+        }
+
+        public override IExpression VisitValueObject([NotNull] PTransformationParserParser.ValueObjectContext context)
+        {
+            return context.@object().Accept(ObjectExpressionVisitor.Instance);
+        }
+
+        public override IExpression VisitValueList([NotNull] PTransformationParserParser.ValueListContext context)
+        {
+            return new ListExpression(context)
+            {
+                Values = context.list().exprvalue().Select(v => v.Accept(this)).ToList()
             };
         }
     }
