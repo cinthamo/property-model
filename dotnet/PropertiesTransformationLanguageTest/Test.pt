@@ -1,0 +1,4 @@
+﻿
+convert from GXP.GXP to P.Model { 
+    typesList: convert(old.Object.Group.Prop)
+}

@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grammars", "Grammars", "{7C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesTransformationLanguage", "PropertiesTransformationLanguage\PropertiesTransformationLanguage.csproj", "{3B234D7B-87AC-4EC9-BA91-1898091E7CCE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertiesTransformationLanguageTest", "PropertiesTransformationLanguageTest\PropertiesTransformationLanguageTest.csproj", "{35D064F8-806B-4FB5-979C-6C17375D28F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{3B234D7B-87AC-4EC9-BA91-1898091E7CCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B234D7B-87AC-4EC9-BA91-1898091E7CCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B234D7B-87AC-4EC9-BA91-1898091E7CCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35D064F8-806B-4FB5-979C-6C17375D28F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35D064F8-806B-4FB5-979C-6C17375D28F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35D064F8-806B-4FB5-979C-6C17375D28F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35D064F8-806B-4FB5-979C-6C17375D28F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

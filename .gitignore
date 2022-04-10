@@ -19,3 +19,5 @@ dotnet/PropertiesInstanceLanguage/Parser
 dotnet/PropertiesTransformationLanguage/obj
 dotnet/PropertiesTransformationLanguage/bin
 dotnet/PropertiesTransformationLanguage/Parser
+dotnet/PropertiesTransformationLanguageTest/obj
+dotnet/PropertiesTransformationLanguageTest/bin

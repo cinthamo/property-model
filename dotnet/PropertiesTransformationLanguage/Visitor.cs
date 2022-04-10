@@ -193,7 +193,8 @@ namespace Genexus.PropertiesLanguage.Transformation
 
         public override IExpression VisitExprName([NotNull] PTransformationParserParser.ExprNameContext context)
         {
-            return new NameReferenceExpression(context, context.name.GetText());
+            var name = PropertyDefinitionVisitor.RemoveQuotes(context.name.GetText());
+            return new NameReferenceExpression(context, name);
         }
 
         public override IExpression VisitExprProp([NotNull] PTransformationParserParser.ExprPropContext context)
@@ -203,12 +204,14 @@ namespace Genexus.PropertiesLanguage.Transformation
 
         public override IExpression VisitExprFunction([NotNull] PTransformationParserParser.ExprFunctionContext context)
         {
-            return new CallExpression(context, context.func().NAME().GetText(), context.func().expr().Select(p => p.Accept(this)).ToList());
+            var name = PropertyDefinitionVisitor.RemoveQuotes(context.func().name.GetText());
+            return new CallExpression(context, name, context.func().expr().Select(p => p.Accept(this)).ToList());
         }
 
         public override IExpression VisitExprMethod([NotNull] PTransformationParserParser.ExprMethodContext context)
         {
-            return new CallExpression(context, context.func().name.Text, context.func().expr().Select(p => p.Accept(this)).Prepend(context.target.Accept(this)).ToList());
+            var name = PropertyDefinitionVisitor.RemoveQuotes(context.func().name.GetText());
+            return new CallExpression(context, name, context.func().expr().Select(p => p.Accept(this)).Prepend(context.target.Accept(this)).ToList());
         }
 
         public override IExpression VisitExprOperator([NotNull] PTransformationParserParser.ExprOperatorContext context)
