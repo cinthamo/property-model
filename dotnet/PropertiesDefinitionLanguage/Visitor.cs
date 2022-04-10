@@ -319,7 +319,8 @@ namespace Genexus.PropertiesLanguage.Definition
 
         public override IExpression VisitExprProp([NotNull] PDefinitionParserParser.ExprPropContext context)
         {
-            return new PropertyReferenceExpression(context, context.expr().Accept(this), context.NAME().GetText());
+            var name = PropertyDefinitionVisitor.RemoveQuotes(context.prop.GetText());
+            return new PropertyReferenceExpression(context, context.expr().Accept(this), name);
         }
 
         public override IExpression VisitExprFunction([NotNull] PDefinitionParserParser.ExprFunctionContext context)

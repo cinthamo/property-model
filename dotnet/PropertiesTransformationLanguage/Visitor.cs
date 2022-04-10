@@ -199,7 +199,8 @@ namespace Genexus.PropertiesLanguage.Transformation
 
         public override IExpression VisitExprProp([NotNull] PTransformationParserParser.ExprPropContext context)
         {
-            return new PropertyReferenceExpression(context, context.expr().Accept(this), context.NAME().GetText());
+            var name = PropertyDefinitionVisitor.RemoveQuotes(context.prop.GetText());
+            return new PropertyReferenceExpression(context, context.expr().Accept(this), name);
         }
 
         public override IExpression VisitExprFunction([NotNull] PTransformationParserParser.ExprFunctionContext context)

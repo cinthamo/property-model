@@ -11,6 +11,6 @@ public class ParserUnitTest
     {
         var text = File.ReadAllText("test.pt");
         var model = Parser.Parse(text);
-        Assert.Equal(1, model.ConversionList.Count);
+        Assert.Equal(2, model.ConversionList.Count);
     }
 }

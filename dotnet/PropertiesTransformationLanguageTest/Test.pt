@@ -2,3 +2,8 @@
 convert from GXP.GXP to P.Model { 
     typesList: convert(old.Object.Group.Prop)
 }
+
+convert from GXP.Group to P.Type {
+    name: old.Name
+    properties: mapConvert(old.Children)
+}
