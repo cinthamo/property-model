@@ -23,6 +23,11 @@
 		<PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.3" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <_AntlrVisitorAndListener Update="..\..\gx-grammars\properties\PDefinitionParser.g4">
+	    <CustomToolNamespace>PropertiesLanguage.Parser.Definition</CustomToolNamespace>
+	  </_AntlrVisitorAndListener>
+	</ItemGroup>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Inputs="@(AntlrGrammar)" Outputs="@(AntlrOutput)">
 		<Exec Command="cd ../../gx-grammars/properties;java -cp ../../gx-grammars/antlr4-4.9.3-complete.jar org.antlr.v4.Tool -visitor -no-listener -Dlanguage=CSharp %(AntlrGrammar.FileName).g4 -o ../../dotnet/PropertiesDefinitionLanguage/Parser -package $(RootNamespace).Antlr" />
 		<ItemGroup>
